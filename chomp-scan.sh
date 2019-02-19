@@ -24,7 +24,7 @@ DNSCAN_IPS=dnscan_ip.txt;
 DNSCAN_DOMAIN=dnscan_domain.txt;
 SUBFINDER=$(command -v subfinder);
 SUBFINDER_DOMAIN=subfinder_domain.txt;
-SUBLIST3R=
+SUBLIST3R=$(command -v sublist3r);
 SUBJACK=
 ALTDNS=
 MASSDNS_BIN=~/bounty/tools/massdns/bin/massdns;
@@ -45,6 +45,12 @@ if [ $# -eq 0 ]; then
 			echo -e "$GREEN""Usage: $0 example.com""$NC";
 			exit;
 fi
+
+# # Check that all paths are set
+# function check_paths() {
+# 		echo "";
+
+# }
 
 mkdir "$WORKING_DIR";
 
@@ -178,11 +184,11 @@ function run_subfinder() {
 
 function run_sublist3r() {
 		echo -e "$GREEN""[i]$BLUE Scanning $1 with sublist3r.""$NC";
-		echo -e "$GREEN""[i]$ORANGE Command: sublist3r -d $1 -o $WORKING_DIR/sublist3r-output.txt.""$NC";
+		echo -e "$GREEN""[i]$ORANGE Command: $SUBLIST3R -d $1 -o $WORKING_DIR/sublist3r-output.txt.""$NC";
 		sleep 2;
 
 		START=$(date +%s);
-		sublist3r -d "$1" -o "$WORKING_DIR"/sublist3r-output.txt
+		"$SUBLIST3R" -d "$1" -o "$WORKING_DIR"/sublist3r-output.txt
 		END=$(date +%s);
 		DIFF=$(( END - START ));
 
