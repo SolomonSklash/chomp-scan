@@ -55,6 +55,10 @@ A variety of wordlists are used, both for subdomain bruteforcing and content dic
 #### Misc.
 * altdns-words.txt - Used for creating domain permutations for [masscan](https://github.com/robertdavidgraham/masscan) to resolve. Borrowed from [altdns](https://github.com/infosec-au/altdns/blob/master/words.txt).
 
+### Installation
+Clone this repo and ensure that the below dependencies are met. Having a working installation of Go will help with some of the tools.
+Then make sure the path variables for each tool are set. Currenttly they default to ~/bounty/tools/[tool-name]
+
 ### Dependencies
 
 The following tools are required for Chomp Scan. Their paths can be set in the relevant variables at the top of the script. Note that this tool was designed with Kali Linux in mind.
