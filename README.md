@@ -88,6 +88,9 @@ AQUATONE=~/bounty/tools/aquatone/aquatone;
 BFAC=~/bounty/tools/bfac/bfac;
 ```
 
+### Usage
+`./chomp-scan.sh example.com`
+
 ### Dependencies
 
 The following tools are required for Chomp Scan. Note that this tool was designed with Kali Linux in mind, so certain tools are expected to be available via package manager.
