@@ -11,6 +11,8 @@ GREEN='\033[0;32m';
 BLUE='\033[0;34m';
 ORANGE='\033[0;33m';
 DOMAIN=$1;
+
+# Wordlists
 SHORT=wordlists/subdomains-top1mil-20000.txt;
 LONG=wordlists/sortedcombined-knock-dnsrecon-fierce-reconng.txt;
 HUGE=wordlists/huge-200k;
@@ -19,6 +21,8 @@ MEDIUM=wordlists/raft-large-combined.txt;
 LARGE=wordlists/seclists-combined.txt;
 XL=wordlists/haddix_content_discovery_all.txt;
 XXL=wordlists/haddix-seclists-combined.txt;
+
+# Tool paths
 DNSCAN=~/bounty/tools/dnscan/dnscan.py;
 DNSCAN_IPS=dnscan_ip.txt;
 DNSCAN_DOMAIN=dnscan_domain.txt;
@@ -33,9 +37,11 @@ AQUATONE=~/bounty/tools/aquatone/aquatone;
 FFUF=$(command -v ffuf);
 BFAC=~/bounty/tools/bfac/bfac;
 GOBUSTER=$(command -v gobuster);
+CHROMIUM=$(command -v chromium);
+
+# Other variables
 INTERESTING=interesting.txt;
 BLACKLIST=blacklist.txt;
-CHROMIUM=$(command -v chromium);
 ALL_IP=all_ip.txt;
 ALL_DOMAIN=all_domain.txt;
 WORKING_DIR="$1"-$(date +%T);
