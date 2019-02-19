@@ -2,6 +2,8 @@
 
 A scripted combination of tools to simplify the bug bounty/penetration test reconnaissance phase, so you can focus on chomping bugs.
 
+![](screenshots/screenshot01.png)
+
 ### What Chomp Scan Does
 Chomp Scan strings together the (in my opinion/experience) best and fastest tools for doing the long and somewhat tedious process of recon. No more looking for word lists and trying to remember when you started a scan and where the ouput is. Chomp Scan creates a timestamped output directory based on the search domain, e.g. example.com-21:38:15, and puts all tool output there, split into individual sub-directories as appropriate.
 
