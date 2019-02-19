@@ -32,6 +32,7 @@ MASSDNS_RESOLVERS=~/bounty/tools/massdns/lists/resolvers.txt;
 AQUATONE=~/bounty/tools/aquatone/aquatone;
 FFUF=$(command -v ffuf);
 BFAC=~/bounty/tools/bfac/bfac;
+GOBUSTER=$(command -v gobuster);
 INTERESTING=interesting.txt;
 BLACKLIST=blacklist.txt;
 CHROMIUM=$(command -v chromium);
@@ -46,11 +47,59 @@ if [ $# -eq 0 ]; then
 			exit;
 fi
 
-# # Check that all paths are set
-# function check_paths() {
-# 		echo "";
+function check_paths() {
+		# Check that all paths are set
+		if [[ "$DNSCAN" == "" ]] || [[ ! -f "$DNSCAN" ]]; then
+				echo -e "$RED""The path or the file specified by the path for dnscan does not exit.";
+				exit;
+		fi
+		if [[ "$SUBFINDER" == "" ]] || [[ ! -f "$SUBFINDER" ]]; then
+				echo -e "$RED""The path or the file specified by the path for subfinder does not exit.";
+				exit;
+		fi
+		if [[ "$SUBLIST3R" == "" ]] || [[ ! -f "$SUBLIST3R" ]]; then
+				echo -e "$RED""The path or the file specified by the path for sublist3r does not exit.";
+				exit;
+		fi
+		if [[ "$SUBJACK" == "" ]] || [[ ! -f "$SUBJACK" ]]; then
+				echo -e "$RED""The path or the file specified by the path for subjack does not exit.";
+				exit;
+		fi
+		if [[ "$ALTDNS" == "" ]] || [[ ! -f "$ALTDNS" ]]; then
+				echo -e "$RED""The path or the file specified by the path for altdns does not exit.";
+				exit;
+		fi
+		if [[ "$MASSDNS_BIN" == "" ]] || [[ ! -f "$MASSDNS_BIN" ]]; then
+				echo -e "$RED""The path or the file specified by the path for the massdns binary does not exit.";
+				exit;
+		fi
+		if [[ "$MASSDNS_RESOLVERS" == "" ]] || [[ ! -f "$MASSDNS_RESOLVERS" ]]; then
+				echo -e "$RED""The path or the file specified by the path for massdns resolver file does not exit.";
+				exit;
+		fi
+		if [[ "$AQUATONE" == "" ]] || [[ ! -f "$AQUATONE" ]]; then
+				echo -e "$RED""The path or the file specified by the path for aquatone does not exit.";
+				exit;
+		fi
+		if [[ "$FFUF" == "" ]] || [[ ! -f "$FFUF" ]]; then
+				echo -e "$RED""The path or the file specified by the path for ffuf does not exit.";
+				exit;
+		fi
+		if [[ "$BFAC" == "" ]] || [[ ! -f "$BFAC" ]]; then
+				echo -e "$RED""The path or the file specified by the path for bfac does not exit.";
+				exit;
+		fi
+		if [[ "$CHROMIUM" == "" ]] || [[ ! -f "$CHROMIUM" ]]; then
+				echo -e "$RED""The path or the file specified by the path for chromium does not exit.";
+				exit;
+		fi
+		if [[ "$GOBUSTER" == "" ]] || [[ ! -f "$GOBUSTER" ]]; then
+				echo -e "$RED""The path or the file specified by the path for gobuster does not exit.";
+				exit;
+		fi
+}
 
-# }
+check_paths;
 
 mkdir "$WORKING_DIR";
 
@@ -546,7 +595,7 @@ function run_gobuster() {
 				COUNT=$(wc -l "$3" | cut -d ' ' -f 1)
 				START=$(date +%s);
 				while read -r ADOMAIN; do
-						gobuster -u https://"$ADOMAIN" -s '200,201,202,204,307,308,401,403,405,500,501,503' -to 3s -e -k -t 20 -w "$2" -o "$WORKING_DIR"/gobuster/"$ADOMAIN".txt;
+						"$GOBUSTER" -u https://"$ADOMAIN" -s '200,201,202,204,307,308,401,403,405,500,501,503' -to 3s -e -k -t 20 -w "$2" -o "$WORKING_DIR"/gobuster/"$ADOMAIN".txt;
 						COUNT=$((COUNT - 1));
 						echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
 				done < "$3"
@@ -561,7 +610,7 @@ function run_gobuster() {
 				COUNT=$(wc -l "$3" | cut -d ' ' -f 1)
 				START=$(date +%s);
 				while read -r ADOMAIN; do
-						gobuster -u https://"$ADOMAIN" -s '200,201,202,204,307,308,401,403,405,500,501,503' -to 3s -e -k -t 20 -w "$2" -o "$WORKING_DIR"/gobuster/"$ADOMAIN".txt;
+						"$GOBUSTER" -u https://"$ADOMAIN" -s '200,201,202,204,307,308,401,403,405,500,501,503' -to 3s -e -k -t 20 -w "$2" -o "$WORKING_DIR"/gobuster/"$ADOMAIN".txt;
 						COUNT=$((COUNT - 1));
 						echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
 				done < "$3"
