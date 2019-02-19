@@ -9,6 +9,8 @@ Various prompts appear asking what wordlists to use, whether to use [aquatone](h
 
 A list of interesting words is included, such as dev, test, uat, staging, etc., and domains containing those terms are flagged. This way you can focus on the interesting domains first if you wish. This list can be customized to suit your own needs.
 
+A blacklist file is included, to exclude certain domains from the results. However it does not prevent those domains from being resolved, only from being used for port scanning and content discovery.
+
 **Note: Chomp Scan is still in development, and new/different tools will be added as I find them. Pull request and comments welcome!**
 
 ### Scanning Phases
