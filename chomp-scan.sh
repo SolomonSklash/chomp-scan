@@ -19,18 +19,18 @@ MEDIUM=wordlists/raft-large-combined.txt;
 LARGE=wordlists/seclists-combined.txt;
 XL=wordlists/haddix_content_discovery_all.txt;
 XXL=wordlists/haddix-seclists-combined.txt;
-DNSCAN_PATH=~/bounty/tools/dnscan/dnscan.py;
+DNSCAN=~/bounty/tools/dnscan/dnscan.py;
 DNSCAN_IPS=dnscan_ip.txt;
 DNSCAN_DOMAIN=dnscan_domain.txt;
-SUBFINDER_PATH=
+SUBFINDER=$(command -v subfinder);
 SUBFINDER_DOMAIN=subfinder_domain.txt;
-SUBLIST3R_PATH=
-SUBJACK_PATH=
-ALTDNS_PATH=
+SUBLIST3R=
+SUBJACK=
+ALTDNS=
 MASSDNS_BIN=~/bounty/tools/massdns/bin/massdns;
 MASSDNS_RESOLVERS=~/bounty/tools/massdns/lists/resolvers.txt;
 AQUATONE=~/bounty/tools/aquatone/aquatone;
-FFUF_PATH=
+FFUF=
 BFAC=~/bounty/tools/bfac/bfac;
 INTERESTING=interesting.txt;
 BLACKLIST=blacklist.txt;
@@ -123,18 +123,18 @@ function run_subdomain_brute() {
 function run_dnscan() {
 		# Call with domain as $1 and wordlist as $2
 
-		# Check that DNSCAN_PATH is set
-		if [[ "$DNSCAN_PATH" == "" ]]; then
+		# Check that DNSCAN path is set
+		if [[ "$DNSCAN" == "" ]]; then
 				echo -e "$GREEN""[i]$RED Dnscan path has not been set. Skipping dnscan...""$NC";
 				return;
 		fi
 
 		echo -e "$GREEN""[i]$BLUE Scanning $1 with dnscan.""$NC";
 
-		echo -e "$GREEN""[i]$ORANGE Command: $DNSCAN_PATH -d $1 -t 25 -o $WORKING_DIR/dnscan_out.txt -w $2.""$NC";
+		echo -e "$GREEN""[i]$ORANGE Command: $DNSCAN -d $1 -t 25 -o $WORKING_DIR/dnscan_out.txt -w $2.""$NC";
 		sleep 2;
 		START=$(date +%s);
-		$DNSCAN_PATH -d "$1" -t 25 -o "$WORKING_DIR"/dnscan_out.txt -w "$2";
+		$DNSCAN -d "$1" -t 25 -o "$WORKING_DIR"/dnscan_out.txt -w "$2";
 		END=$(date +%s);
 		DIFF=$(( END - START ));
 
@@ -164,7 +164,7 @@ function run_subfinder() {
 		sleep 2;
 
 		START=$(date +%s);
-		subfinder -d "$1" -o "$WORKING_DIR"/$SUBFINDER_DOMAIN -t 25 -w "$2";
+		"$SUBFINDER" -d "$1" -o "$WORKING_DIR"/$SUBFINDER_DOMAIN -t 25 -w "$2";
 		END=$(date +%s);
 		DIFF=$(( END - START ));
 		
