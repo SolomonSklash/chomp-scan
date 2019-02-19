@@ -77,7 +77,7 @@ BFAC=~/bounty/tools/bfac/bfac;
 
 ### Dependencies
 
-The following tools are required for Chomp Scan. Their paths can be set in the relevant variables at the top of the script. Note that this tool was designed with Kali Linux in mind.
+The following tools are required for Chomp Scan. Note that this tool was designed with Kali Linux in mind, so certain tools are expected to be available via package manager.
 
 * [dnscan](https://github.com/rbsec/dnscan)- Python
 * [subfinder](https://github.com/subfinder/subfinder) - Go
