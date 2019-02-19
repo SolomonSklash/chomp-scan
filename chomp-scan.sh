@@ -26,11 +26,11 @@ SUBFINDER=$(command -v subfinder);
 SUBFINDER_DOMAIN=subfinder_domain.txt;
 SUBLIST3R=$(command -v sublist3r);
 SUBJACK=$(command -v subjack);
-ALTDNS=
+ALTDNS=~/bounty/tools/altdns/altdns.py;
 MASSDNS_BIN=~/bounty/tools/massdns/bin/massdns;
 MASSDNS_RESOLVERS=~/bounty/tools/massdns/lists/resolvers.txt;
 AQUATONE=~/bounty/tools/aquatone/aquatone;
-FFUF=
+FFUF=$(command -v ffuf);
 BFAC=~/bounty/tools/bfac/bfac;
 INTERESTING=interesting.txt;
 BLACKLIST=blacklist.txt;
@@ -205,11 +205,11 @@ function run_altdns() {
 		# Run altdns with found subdomains combined with altdns-wordlist.txt
 
 		echo -e "$GREEN""[i]$BLUE Running altdns against found subdomains to generate domains for masscan to resolve.""$NC";
-		echo -e "$GREEN""[i]$ORANGE Command: ~/bounty/tools/altdns/altdns.py -i $WORKING_DIR/$ALL_DOMAIN -w wordlists/altdns-words.txt -o $WORKING_DIR/altdns-output.txt -t 20.""$NC";
+		echo -e "$GREEN""[i]$ORANGE Command: altdns.py -i $WORKING_DIR/$ALL_DOMAIN -w wordlists/altdns-words.txt -o $WORKING_DIR/altdns-output.txt -t 20.""$NC";
 		sleep 2;
 
 		START=$(date +%s);
-		~/bounty/tools/altdns/altdns.py -i "$WORKING_DIR"/$ALL_DOMAIN -w wordlists/altdns-words.txt -o "$WORKING_DIR"/altdns-output.txt -t 20
+		"$ALTDNS" -i "$WORKING_DIR"/$ALL_DOMAIN -w wordlists/altdns-words.txt -o "$WORKING_DIR"/altdns-output.txt -t 20
 		END=$(date +%s);
 		DIFF=$(( END - START ));
 
@@ -583,7 +583,7 @@ function run_ffuf() {
 				COUNT=$(wc -l "$3" | cut -d ' ' -f 1)
 				START=$(date +%s);
 				while read -r ADOMAIN; do
-						ffuf -u https://"$ADOMAIN"/FUZZ -w "$2" -fc 301,302 -k -mc 200,201,202,204,401,403,500,502,503 | tee "$WORKING_DIR"/ffuf/"$ADOMAIN";
+						"$FFUF" -u https://"$ADOMAIN"/FUZZ -w "$2" -fc 301,302 -k -mc 200,201,202,204,401,403,500,502,503 | tee "$WORKING_DIR"/ffuf/"$ADOMAIN";
 						COUNT=$((COUNT - 1));
 						echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
 				done < "$3"
@@ -598,7 +598,7 @@ function run_ffuf() {
 				COUNT=$(wc -l "$3" | cut -d ' ' -f 1)
 				START=$(date +%s);
 				while read -r ADOMAIN; do
-						ffuf -u https://"$ADOMAIN"/FUZZ -w "$2" -fc 301,302 -k -mc 200,201,202,204,401,403,500,502,503 | tee "$WORKING_DIR"/ffuf/"$ADOMAIN";
+						"$FFUF" -u https://"$ADOMAIN"/FUZZ -w "$2" -fc 301,302 -k -mc 200,201,202,204,401,403,500,502,503 | tee "$WORKING_DIR"/ffuf/"$ADOMAIN";
 						COUNT=$((COUNT - 1));
 						echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
 				done < "$3"
