@@ -61,21 +61,21 @@ Clone this repo and ensure that the below dependencies are met. Having a working
 Then make sure the path variables for each tool are set. Currenttly they default to ~/bounty/tools/[tool-repo]/[tool-file]
 ```
 # Tool paths
+SUBFINDER=$(command -v subfinder);
+SUBLIST3R=$(command -v sublist3r);
+SUBJACK=$(command -v subjack);
+FFUF=$(command -v ffuf);
+GOBUSTER=$(command -v gobuster);
+CHROMIUM=$(command -v chromium);
 DNSCAN=~/bounty/tools/dnscan/dnscan.py;
 DNSCAN_IPS=dnscan_ip.txt;
 DNSCAN_DOMAIN=dnscan_domain.txt;
-SUBFINDER=$(command -v subfinder);
 SUBFINDER_DOMAIN=subfinder_domain.txt;
-SUBLIST3R=$(command -v sublist3r);
-SUBJACK=$(command -v subjack);
 ALTDNS=~/bounty/tools/altdns/altdns.py;
 MASSDNS_BIN=~/bounty/tools/massdns/bin/massdns;
 MASSDNS_RESOLVERS=~/bounty/tools/massdns/lists/resolvers.txt;
 AQUATONE=~/bounty/tools/aquatone/aquatone;
-FFUF=$(command -v ffuf);
 BFAC=~/bounty/tools/bfac/bfac;
-GOBUSTER=$(command -v gobuster);
-CHROMIUM=$(command -v chromium);
 ```
 
 ### Dependencies
