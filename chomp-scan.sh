@@ -30,9 +30,6 @@ FFUF=$(command -v ffuf);
 GOBUSTER=$(command -v gobuster);
 CHROMIUM=$(command -v chromium);
 DNSCAN=~/bounty/tools/dnscan/dnscan.py;
-DNSCAN_IPS=dnscan_ip.txt;
-DNSCAN_DOMAIN=dnscan_domain.txt;
-SUBFINDER_DOMAIN=subfinder_domain.txt;
 ALTDNS=~/bounty/tools/altdns/altdns.py;
 MASSDNS_BIN=~/bounty/tools/massdns/bin/massdns;
 MASSDNS_RESOLVERS=~/bounty/tools/massdns/lists/resolvers.txt;
@@ -221,16 +218,16 @@ function run_dnscan() {
 
 		# Headers and leading spaces
 		sed '1,/A records/d' "$WORKING_DIR"/dnscan_out.txt | tr -d ' ' > "$WORKING_DIR"/trimmed;
-		cut "$WORKING_DIR"/trimmed -d '-' -f 1 > "$WORKING_DIR"/$DNSCAN_IPS;
-		cut "$WORKING_DIR"/trimmed -d '-' -f 2 > "$WORKING_DIR"/$DNSCAN_DOMAIN;
+		cut "$WORKING_DIR"/trimmed -d '-' -f 1 > "$WORKING_DIR"/dnscan-ips.txt;
+		cut "$WORKING_DIR"/trimmed -d '-' -f 2 > "$WORKING_DIR"/dnscan-domains.txt;
 		rm "$WORKING_DIR"/trimmed;
 
 		# Cat output into main lists
-		cat "$WORKING_DIR"/$DNSCAN_IPS >> "$WORKING_DIR"/$ALL_IP;
-		cat "$WORKING_DIR"/$DNSCAN_DOMAIN >> "$WORKING_DIR"/$ALL_DOMAIN;
+		cat "$WORKING_DIR"/dnscan-ips.txt >> "$WORKING_DIR"/$ALL_IP;
+		cat "$WORKING_DIR"/dnscan-domains.txt >> "$WORKING_DIR"/"$ALL_DOMAIN";
 
 		echo -e "$GREEN""[i]$BLUE dnsscan took $DIFF seconds to run.""$NC";
-		echo -e "$GREEN""[!]$ORANGE dnscan found $(wc -l "$WORKING_DIR"/$DNSCAN_IPS | cut -d ' ' -f 1) IP/domain pairs.""$NC";
+		echo -e "$GREEN""[!]$ORANGE dnscan found $(wc -l "$WORKING_DIR"/dnscan-ips.txt | cut -d ' ' -f 1) IP/domain pairs.""$NC";
 		list_found;
 		sleep 1;
 }
@@ -241,18 +238,18 @@ function run_subfinder() {
 		# Check for wordlist argument, else run without
 		echo -e "$GREEN""[i]$BLUE Scanning $1 with subfinder.""$NC";
 
-		echo -e "$GREEN""[i]$ORANGE Command: subfinder -d $1 -o $WORKING_DIR/$SUBFINDER_DOMAIN -t 25 -w $2.""$NC";
+		echo -e "$GREEN""[i]$ORANGE Command: subfinder -d $1 -o $WORKING_DIR/subfinder-domains.txt -t 25 -w $2.""$NC";
 		sleep 2;
 
 		START=$(date +%s);
-		"$SUBFINDER" -d "$1" -o "$WORKING_DIR"/$SUBFINDER_DOMAIN -t 25 -w "$2";
+		"$SUBFINDER" -d "$1" -o "$WORKING_DIR"/subfinder-domains.txt -t 25 -w "$2";
 		END=$(date +%s);
 		DIFF=$(( END - START ));
 		
-		cat "$WORKING_DIR"/$SUBFINDER_DOMAIN >> "$WORKING_DIR"/$ALL_DOMAIN;
+		cat "$WORKING_DIR"/subfinder-domains.txt >> "$WORKING_DIR"/$ALL_DOMAIN;
 
 		echo -e "$GREEN""[i]$BLUE Subfinder took $DIFF seconds to run.""$NC";
-		echo -e "$GREEN""[!]$ORANGE Subfinder found $(wc -l "$WORKING_DIR"/$SUBFINDER_DOMAIN | cut -d ' ' -f 1) domains.""$N";
+		echo -e "$GREEN""[!]$ORANGE Subfinder found $(wc -l "$WORKING_DIR"/subfinder-domains.txt | cut -d ' ' -f 1) domains.""$N";
 		list_found;
 		sleep 1;
 }
