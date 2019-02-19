@@ -9,7 +9,7 @@ Chomp Scan is a Bash script that strings together the (in my opinion/experience)
 
 Various prompts appear asking what wordlists to use, whether to use [aquatone](https://github.com/michenriksen/aquatone) to take screenshots of discovered domains, whether to perform port scanning, and whether to begin bruteforce content discovery.
 
-A list of interesting words is included, such as dev, test, uat, staging, etc., and domains containing those terms are flagged. This way you can focus on the interesting domains first if you wish. This list can be customized to suit your own needs.
+A list of interesting words is included, such as *dev, test, uat, staging,* etc., and domains containing those terms are flagged. This way you can focus on the interesting domains first if you wish. This list can be customized to suit your own needs.
 
 A blacklist file is included, to exclude certain domains from the results. However it does not prevent those domains from being resolved, only from being used for port scanning and content discovery.
 
