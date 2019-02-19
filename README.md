@@ -98,3 +98,6 @@ The following tools are required for Chomp Scan. Their paths can be set in the r
 ![](screenshots/screenshot05.png)
 ![](screenshots/screenshot07.png)
 ![](screenshots/screenshot09.png)
+
+## Thanks
+Thanks to all the authors of the included tools. They do all the heavy lifting.
