@@ -57,6 +57,7 @@ A variety of wordlists are used, both for subdomain bruteforcing and content dic
 
 ### Installation
 Clone this repo and ensure that the below dependencies are met. Having a working installation of Go will help with several of the tools.
+
 Then make sure the path variables for each tool are set. Currenttly they default to ~/bounty/tools/[tool-repo]/[tool-file]
 
 ### Dependencies
