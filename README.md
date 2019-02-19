@@ -58,6 +58,19 @@ A variety of wordlists are used, both for subdomain bruteforcing and content dic
 ### Installation
 Clone this repo and ensure that the below dependencies are met. Having a working installation of Go will help with several of the tools.
 
+```
+git clone https://github.com/SolomonSklash/chomp-scan.git;
+sudo apt install sublist3r masscan nmap nikto gobuster chromium;
+go get github.com/subfinder/subfinder;
+go get github.com/haccer/subjack;
+go get github.com/ffuf/ffuf;
+wget https://github.com/michenriksen/aquatone/releases/download/v1.4.3/aquatone_linux_amd64_1.4.3.zip;
+git clone https://github.com/rbsec/dnscan.git;
+git clone https://github.com/infosec-au/altdns.git; # Needs to be compiled with make
+git clone https://github.com/blechschmidt/massdns.git;
+git clone https://github.com/mazen160/bfac.git;
+```
+
 Then make sure the path variables for each tool are set. Currenttly they default to ~/bounty/tools/[tool-repo]/[tool-file]
 ```
 # Tool paths
@@ -79,20 +92,20 @@ BFAC=~/bounty/tools/bfac/bfac;
 
 The following tools are required for Chomp Scan. Note that this tool was designed with Kali Linux in mind, so certain tools are expected to be available via package manager.
 
-* [dnscan](https://github.com/rbsec/dnscan)- Python
-* [subfinder](https://github.com/subfinder/subfinder) - Go
 * [sublist3r](https://github.com/aboul3la/Sublist3r) - Kali package
-* [altdns](https://github.com/infosec-au/altdns) - Python
-* [massdns](https://github.com/blechschmidt/massdns) - Compiled with C
-* [subjack](https://github.com/haccer/subjack) Go
-* [aquatone](https://github.com/michenriksen/aquatone) Precompiled Go binary
-* [chromium](https://www.chromium.org/) (for aquatone)
 * [masscan](https://github.com/robertdavidgraham/masscan) Kali package
 * [nmap](https://www.nmap.org) Kali package
-* [bfac](https://github.com/mazen160/bfac) Python3
 * [nikto](https://cirt.net/nikto2) Kali package
 * [gobuster](https://github.com/OJ/gobuster) Kali package
+* [chromium](https://www.chromium.org/) Kali package (for aquatone)
+* [dnscan](https://github.com/rbsec/dnscan)- Python
+* [altdns](https://github.com/infosec-au/altdns) - Python
+* [bfac](https://github.com/mazen160/bfac) Python3
+* [massdns](https://github.com/blechschmidt/massdns) - Compiled with C
+* [subfinder](https://github.com/subfinder/subfinder) - Go
+* [subjack](https://github.com/haccer/subjack) Go
 * [ffuf](https://github.com/ffuf/ffuf) Go
+* [aquatone](https://github.com/michenriksen/aquatone) Precompiled Go binary
 
 ### Examples
 ![](screenshots/screenshot05.png)
