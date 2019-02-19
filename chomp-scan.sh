@@ -25,7 +25,7 @@ DNSCAN_DOMAIN=dnscan_domain.txt;
 SUBFINDER=$(command -v subfinder);
 SUBFINDER_DOMAIN=subfinder_domain.txt;
 SUBLIST3R=$(command -v sublist3r);
-SUBJACK=
+SUBJACK=$(command -v subjack);
 ALTDNS=
 MASSDNS_BIN=~/bounty/tools/massdns/bin/massdns;
 MASSDNS_RESOLVERS=~/bounty/tools/massdns/lists/resolvers.txt;
@@ -272,7 +272,7 @@ function run_subjack() {
 		sleep 2;
 
 		START=$(date +%s);
-		subjack -d "$1" -w "$2" -v -t 20 -ssl -o "$WORKING_DIR"/subjack-output.txt;
+		"$SUBJACK" -d "$1" -w "$2" -v -t 20 -ssl -o "$WORKING_DIR"/subjack-output.txt;
 		END=$(date +%s);
 		DIFF=$(( END - START ));
 
