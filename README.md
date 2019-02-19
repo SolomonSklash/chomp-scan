@@ -55,7 +55,7 @@ A variety of wordlists are used, both for subdomain bruteforcing and content dic
 
 ### Dependencies
 
-The following tools are required for Chomp Scan. Their paths can be set in the relevant variables at the top of the script.
+The following tools are required for Chomp Scan. Their paths can be set in the relevant variables at the top of the script. Note that this tool was designed with Kali Linux in mind.
 
 * [dnscan](https://github.com/rbsec/dnscan)- Python
 * [subfinder](https://github.com/subfinder/subfinder) - Go
