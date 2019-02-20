@@ -54,6 +54,7 @@ A variety of wordlists are used, both for subdomain bruteforcing and content dic
 
 #### Misc.
 * altdns-words.txt - 240 words - Used for creating domain permutations for [masscan](https://github.com/robertdavidgraham/masscan) to resolve. Borrowed from [altdns](https://github.com/infosec-au/altdns/blob/master/words.txt).
+* interesting.txt - 42 words - A list I created of potentially interesting words appearing in domain names.
 
 ### Installation
 Clone this repo and ensure that the below dependencies are met. Having a working installation of Go will help with several of the tools.
