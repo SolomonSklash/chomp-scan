@@ -61,7 +61,7 @@ Clone this repo and ensure that the below dependencies are met. Having a working
 
 ```
 git clone https://github.com/SolomonSklash/chomp-scan.git;
-sudo apt install sublist3r masscan nmap nikto gobuster chromium;
+sudo apt install sublist3r masscan nmap nikto gobuster chromium whatweb;
 go get github.com/subfinder/subfinder;
 go get github.com/haccer/subjack;
 go get github.com/ffuf/ffuf;
@@ -101,6 +101,7 @@ The following tools are required for Chomp Scan. Note that this tool was designe
 * [nmap](https://www.nmap.org) Kali package
 * [nikto](https://cirt.net/nikto2) Kali package
 * [gobuster](https://github.com/OJ/gobuster) Kali package
+* [whatweb](https://www.morningstarsecurity.com/research/whatweb) Kali package
 * [chromium](https://www.chromium.org/) Kali package (for aquatone)
 * [dnscan](https://github.com/rbsec/dnscan)- Python
 * [altdns](https://github.com/infosec-au/altdns) - Python
