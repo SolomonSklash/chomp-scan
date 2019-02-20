@@ -41,16 +41,16 @@ A blacklist file is included, to exclude certain domains from the results. Howev
 A variety of wordlists are used, both for subdomain bruteforcing and content dicovery. Daniel Miessler's [Seclists](https://github.com/danielmiessler/SecLists) are used heavily, as well as Jason Haddix's [lists](https://gist.github.com/jhaddix). Different wordlists can be used by changing relevant variables at the top of the script.
 
 #### Subdomain Bruteforcing
-* subdomains-top1mil-20000.txt - From [Seclists](https://github.com/danielmiessler/SecLists)
-* sortedcombined-knock-dnsrecon-fierce-reconng.txt - From [Seclists](https://github.com/danielmiessler/SecLists) 
-* huge-200k - A combination I made of various wordlists, including Seclists
+* subdomains-top1mil-20000.txt - 22k words - From [Seclists](https://github.com/danielmiessler/SecLists)
+* sortedcombined-knock-dnsrecon-fierce-reconng.txt - 102k words - From [Seclists](https://github.com/danielmiessler/SecLists) 
+* huge-200k - 199k words - A combination I made of various wordlists, including Seclists
 
 #### Content Discovery
-* big.txt - From [Seclists](https://github.com/danielmiessler/SecLists)
-* raft-large-combined.txt - A combination of the raft wordlists in [Seclists](https://github.com/danielmiessler/SecLists)
-* seclists-combined.txt - A larger combination of all the Discovery/DNS lists in [Seclists](https://github.com/danielmiessler/SecLists)
-* haddix_content_discovery_all.txt - Jason Haddix's [all](https://gist.github.com/jhaddix/b80ea67d85c13206125806f0828f4d10/) content discovery list
-* haddix-seclists-combined.txt - A combination of the two previous lists
+* big.txt - 20k words - From [Seclists](https://github.com/danielmiessler/SecLists)
+* raft-large-combined.txt - 167k words - A combination of the raft wordlists in [Seclists](https://github.com/danielmiessler/SecLists)
+* seclists-combined.txt - 215k words - A larger combination of all the Discovery/DNS lists in [Seclists](https://github.com/danielmiessler/SecLists)
+* haddix_content_discovery_all.txt - 373k words - Jason Haddix's [all](https://gist.github.com/jhaddix/b80ea67d85c13206125806f0828f4d10/) content discovery list
+* haddix-seclists-combined.txt - 486k words - A combination of the two previous lists
 
 #### Misc.
 * altdns-words.txt - Used for creating domain permutations for [masscan](https://github.com/robertdavidgraham/masscan) to resolve. Borrowed from [altdns](https://github.com/infosec-au/altdns/blob/master/words.txt).
