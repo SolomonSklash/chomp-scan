@@ -767,6 +767,41 @@ function run_nikto() {
 		fi
 }
 
+function run_whatweb() {
+		# Call with domain as $1 and domain list as $2
+		if [[ $2 == $WORKING_DIR/$ALL_DOMAIN ]]; then
+				echo -e "$GREEN""[i]$BLUE Running whatweb against all $(wc -l "$1" | cut -d ' ' -f 1) unique discovered domains.""$NC";
+				echo -e "$GREEN""[i]$BLUE Command: whatweb -v -a 3 -h https://$DOMAIN | tee $WORKING_DIR/whatweb.""$NC";
+				# Run whatweb
+				COUNT=$(wc -l "$2" | cut -d ' ' -f 1)
+				mkdir "$WORKING_DIR"/whatweb;
+				START=$(date +%s);
+				while read -r ADOMAIN; do
+						whatweb -v -a 3 https://"$ADOMAIN" | tee "$WORKING_DIR"/whatweb/"$ADOMAIN";
+						COUNT=$((COUNT - 1));
+						echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
+				done < "$2"
+				END=$(date +%s);
+				DIFF=$(( END - START ));
+				echo -e "$GREEN""[i]$BLUE whatweb took $DIFF seconds to run.""$NC";
+		else
+				echo -e "$GREEN""[i]$BLUE Running whatweb against $(wc -l "$1" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
+				echo -e "$GREEN""[i]$BLUE Command: whatweb -v -a 3 -h https://$DOMAIN | tee $WORKING_DIR/whatweb.""$NC";
+				# Run whatweb
+				COUNT=$(wc -l "$2" | cut -d ' ' -f 1)
+				mkdir "$WORKING_DIR"/whatweb;
+				START=$(date +%s);
+				while read -r ADOMAIN; do
+						whatweb -v -a 3 https://"$ADOMAIN" | tee "$WORKING_DIR"/whatweb/"$ADOMAIN";
+						COUNT=$((COUNT - 1));
+						echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
+				done < "$2"
+				END=$(date +%s);
+				DIFF=$(( END - START ));
+				echo -e "$GREEN""[i]$BLUE whatweb took $DIFF seconds to run.""$NC";
+		fi
+}
+
 run_subdomain_brute;
 sleep 1;
 run_aquatone;
