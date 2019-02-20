@@ -174,7 +174,7 @@ function run_subdomain_brute() {
 				   run_subfinder "$DOMAIN" "$SHORT";
 				   run_sublist3r "$DOMAIN";
 				   run_massdns "$DOMAIN" "$SHORT";
-				   run_subjack "$DOMAIN" "$ALL_DOMAIN";
+				   run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
 				   break
 				   ;;
 
@@ -183,7 +183,7 @@ function run_subdomain_brute() {
 				   run_subfinder "$DOMAIN" "$LONG";
 				   run_sublist3r "$DOMAIN";
 				   run_massdns "$DOMAIN" "$LONG";
-				   run_subjack "$DOMAIN" "$ALL_DOMAIN";
+				   run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
 				   return;
 				   ;;
 
@@ -192,7 +192,7 @@ function run_subdomain_brute() {
 				   run_subfinder "$DOMAIN" "$HUGE";
 				   run_sublist3r "$DOMAIN";
 				   run_massdns "$DOMAIN" "$HUGE";
-				   run_subjack "$DOMAIN" "$LONG";
+				   run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
 				   break;
 				   ;;
 		   * )     
@@ -584,7 +584,7 @@ while true; do
 		   return;
 		   ;;
    [iI]* ) 
-		   if [[ ! -s "$INTERESTING_DOMAINS" ]]; then
+		   if [[ -s "$INTERESTING_DOMAINS" ]]; then
 				   echo -e "$RED""[!] No interesting domains have been discovered.""$NC";
 				   return;
 		   fi
