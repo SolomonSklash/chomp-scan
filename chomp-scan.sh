@@ -127,6 +127,8 @@ check_paths;
 mkdir "$WORKING_DIR";
 touch "$WORKING_DIR"/interesting-domains.txt;
 INTERESTING_DOMAINS="$WORKING_DIR"/interesting-domains.txt;
+touch "$ALL_DOMAIN";
+touch "$ALL_IP";
 
 function unique() {
 		# Remove domains from blacklist
