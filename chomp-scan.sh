@@ -126,7 +126,7 @@ check_paths;
 
 mkdir "$WORKING_DIR";
 touch "$WORKING_DIR"/interesting-domains.txt;
-INTERESTING_DOMAINS="$WORKING_DIR"/interesting-domains.txt;
+INTERESTING_DOMAINS=interesting-domains.txt;
 touch "$WORKING_DIR"/"$ALL_DOMAIN";
 touch "$WORKING_DIR"/"$ALL_IP";
 
@@ -155,9 +155,9 @@ function list_found() {
 function get_interesting() {
 		echo -e "$RED""[!] The following $(wc -l "$WORKING_DIR"/interesting-domains.txt | cut -d ' ' -f 1) potentially interesting subdomains have been found ($WORKING_DIR/interesting-domains.txt):""$ORANGE";
 		while read -r word; do
-				grep "$word" "$WORKING_DIR"/$ALL_DOMAIN >> "$INTERESTING_DOMAINS";
+				grep "$word" "$WORKING_DIR"/$ALL_DOMAIN >> "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 		done < $INTERESTING;
-		cat "$INTERESTING_DOMAINS";
+		cat "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 }
 
 function run_subdomain_brute() {
@@ -585,7 +585,8 @@ while true; do
 		   ;;
    [iI]* ) 
 		   # Check if any interesting domains have been found.'
-		   if [[ ! -s "$INTERESTING_DOMAINS" ]]; then
+		   COUNT=$(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1);
+		   if [[ "$COUNT" -lt 1 ]]; then
 				   echo -e "$RED""[!] No interesting domains have been discovered.""$NC";
 				   return;
 		   fi
@@ -601,43 +602,43 @@ while true; do
 				   read -rp "[i] Enter S/M/L/X/2 " CHOICE;
 				   case $CHOICE in
 						   [sS]* )
-								   run_ffuf "$DOMAIN" "$SMALL" "$INTERESTING_DOMAINS";
-								   # run_gobuster "$DOMAIN" "$SMALL" "$INTERESTING_DOMAINS";
-								   run_bfac "$INTERESTING_DOMAINS";
-								   run_nikto "$INTERESTING_DOMAINS";
-								   run_whatweb "$DOMAIN" "$INTERESTING_DOMAINS";
+								   run_ffuf "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   # run_gobuster "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   break;
 								   ;;
 							[mM]* )
-								   run_ffuf "$DOMAIN" "$MEDIUM" "$INTERESTING_DOMAINS";
-								   # run_gobuster "$DOMAIN" "$MEDIUM" "$INTERESTING_DOMAINS";
-								   run_bfac "$INTERESTING_DOMAINS";
-								   run_nikto "$INTERESTING_DOMAINS";
-								   run_whatweb "$DOMAIN" "$INTERESTING_DOMAINS";
+								   run_ffuf "$DOMAIN" "$MEDIUM" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   # run_gobuster "$DOMAIN" "$MEDIUM" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   break;
 								   ;;
 							[lL]* )
-								   run_ffuf "$DOMAIN" "$LARGE" "$INTERESTING_DOMAINS";
-								   # run_gobuster "$DOMAIN" "$LARGE" "$INTERESTING_DOMAINS";
-								   run_bfac "$INTERESTING_DOMAINS";
-								   run_nikto "$INTERESTING_DOMAINS";
-								   run_whatweb "$INTERESTING_DOMAINS";
+								   run_ffuf "$DOMAIN" "$LARGE" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   # run_gobuster "$DOMAIN" "$LARGE" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_whatweb "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   break;
 								   ;;
 							[xX]* )
-								   run_ffuf "$DOMAIN" "$XL" "$INTERESTING_DOMAINS";
-								   # run_gobuster "$DOMAIN" "$XL" "$INTERESTING_DOMAINS";
-								   run_bfac "$INTERESTING_DOMAINS";
-								   run_nikto "$INTERESTING_DOMAINS";
-								   run_whatweb "$INTERESTING_DOMAINS";
+								   run_ffuf "$DOMAIN" "$XL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   # run_gobuster "$DOMAIN" "$XL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_whatweb "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   break;
 								   ;;
 							[2]* )
-								   run_ffuf "$DOMAIN" "$XXL" "$INTERESTING_DOMAINS";
-								   # run_gobuster "$DOMAIN" "$XXL" "$INTERESTING_DOMAINS";
-								   run_bfac "$INTERESTING_DOMAINS";
-								   run_nikto "$INTERESTING_DOMAINS";
-								   run_whatweb "$DOMAIN" "$INTERESTING_DOMAINS";
+								   run_ffuf "$DOMAIN" "$XXL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   # run_gobuster "$DOMAIN" "$XXL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   break;
 								   ;;
 				   esac
@@ -824,12 +825,12 @@ function run_whatweb() {
 
 run_subdomain_brute;
 sleep 1;
-# run_aquatone;
-# sleep 1;
-# get_interesting;
-# sleep 5;
-# run_portscan;
-# sleep 1;
+run_aquatone;
+sleep 1;
+get_interesting;
+sleep 5;
+run_portscan;
+sleep 1;
 run_content_discovery;
 sleep 1;
 get_interesting;
