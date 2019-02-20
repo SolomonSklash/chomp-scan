@@ -66,7 +66,7 @@ go get github.com/haccer/subjack;
 go get github.com/ffuf/ffuf;
 wget https://github.com/michenriksen/aquatone/releases/download/v1.4.3/aquatone_linux_amd64_1.4.3.zip;
 git clone https://github.com/rbsec/dnscan.git;
-git clone https://github.com/infosec-au/altdns.git; # Needs to be compiled with make
+git clone https://github.com/infosec-au/altdns.git; # Needs to be compiled with make, see repo for details
 git clone https://github.com/blechschmidt/massdns.git;
 git clone https://github.com/mazen160/bfac.git;
 ```
