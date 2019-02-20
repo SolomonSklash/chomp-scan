@@ -53,7 +53,7 @@ A variety of wordlists are used, both for subdomain bruteforcing and content dic
 * haddix-seclists-combined.txt - 486k words - A combination of the two previous lists
 
 #### Misc.
-* altdns-words.txt - Used for creating domain permutations for [masscan](https://github.com/robertdavidgraham/masscan) to resolve. Borrowed from [altdns](https://github.com/infosec-au/altdns/blob/master/words.txt).
+* altdns-words.txt - 240 words - Used for creating domain permutations for [masscan](https://github.com/robertdavidgraham/masscan) to resolve. Borrowed from [altdns](https://github.com/infosec-au/altdns/blob/master/words.txt).
 
 ### Installation
 Clone this repo and ensure that the below dependencies are met. Having a working installation of Go will help with several of the tools.
