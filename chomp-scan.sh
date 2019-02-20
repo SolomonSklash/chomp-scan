@@ -514,7 +514,7 @@ function run_nmap() {
 }
 
 function run_content_discovery() {
-# Ask user to do directory bruteforcing on discover domains
+# Ask user to do directory bruteforcing on discovered domains
 while true; do
   echo -e "$ORANGE";
   read -rp "[!] Do you want to begin content bruteforcing on all/interesting/no discovered domains? [A/I/N] " ANSWER
