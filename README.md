@@ -23,7 +23,6 @@ A blacklist file is included, to exclude certain domains from the results. Howev
 * sublist3r
 * massdns + altdns
 * subjack
-* whatweb
 
 #### Screenshots (optional)
 * aquatone
@@ -35,6 +34,7 @@ A blacklist file is included, to exclude certain domains from the results. Howev
 * ffuf
 * bfac
 * nikto
+* whatweb
 
 
 ### Wordlists
