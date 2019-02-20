@@ -71,7 +71,7 @@ git clone https://github.com/blechschmidt/massdns.git; # Needs to be compiled wi
 git clone https://github.com/mazen160/bfac.git;
 ```
 
-Then make sure the path variables for each tool are set. Currenttly they default to ~/bounty/tools/[tool-repo]/[tool-file]
+Then make sure the path variables for each tool are set. Currently they default to ~/bounty/tools/[tool-repo]/[tool-file].
 ```
 # Tool paths
 SUBFINDER=$(command -v subfinder);
