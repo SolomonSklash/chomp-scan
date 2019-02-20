@@ -1,6 +1,6 @@
 # Chomp Scan
 
-A scripted combination of tools to simplify the bug bounty/penetration test reconnaissance phase, so you can focus on chomping bugs.
+A scripted pipeline of tools to simplify the bug bounty/penetration test reconnaissance phase, so you can focus on chomping bugs.
 
 ![](screenshots/screenshot10.png)
 
