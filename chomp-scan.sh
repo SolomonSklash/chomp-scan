@@ -124,6 +124,7 @@ function check_paths() {
 
 check_paths;
 
+SCAN_START=$(date +%s);
 mkdir "$WORKING_DIR";
 touch "$WORKING_DIR"/interesting-domains.txt;
 INTERESTING_DOMAINS=interesting-domains.txt;
@@ -836,3 +837,6 @@ sleep 1;
 get_interesting;
 sleep 3;
 list_found;
+SCAN_END=$(date +%s);
+SCAN_DIFF=$(( SCAN_END - SCAN_START ));
+echo -e "$BLUE""[i] Total script run time: $SCAN_DIFF seconds.""$NC";
