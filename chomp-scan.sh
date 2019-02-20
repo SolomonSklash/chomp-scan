@@ -444,6 +444,14 @@ function run_masscan() {
 		echo -e "$GREEN""[i]$BLUE Running masscan against $(wc -l "$WORKING_DIR"/$ALL_IP | cut -d ' ' -f 1) unique IP addresses.""$NC";
 		echo -e "$GREEN""[i]$BLUE Command: masscan -p1-65535 -il $WORKING_DIR/$ALL_IP --rate=7000 -oL $WORKING_DIR/masscan-output.txt.""$NC";
 
+		# Check that IP list is not empty
+		IP_COUNT=$(wc -l "$WORKING_DIR"/$ALL_IP | cut -d ' ' -f 1);
+		if [[ "$IP_COUNT" -lt 1 ]]; then
+				echo -e "$RED""[i] No IP addresses have been found. Skipping masscan scan.""$NC";
+				return;
+		fi
+
+
 		START=$(date +%s);
 		sudo masscan -p1-65535 -iL "$WORKING_DIR"/$ALL_IP --rate=7000 -oL "$WORKING_DIR"/masscan-output.txt;
 		END=$(date +%s);
@@ -456,6 +464,13 @@ function run_masscan() {
 }
 
 function run_nmap() {
+		# Check that IP list is not empty
+		IP_COUNT=$(wc -l "$WORKING_DIR"/$ALL_IP | cut -d ' ' -f 1);
+		if [[ "$IP_COUNT" -lt 1 ]]; then
+				echo -e "$RED""[i] No IP addresses have been found. Skipping nmap scan.""$NC";
+				return;
+		fi
+
 		# Run nmap against all-ip.txt against ports found by masscan, unless alone arg is passed as $1
 		if [[ "$1" == "alone" ]]; then
 				echo -e "$GREEN""[i]$BLUE Running nmap against $(wc -l "$WORKING_DIR"/live-ips.txt | cut -d ' ' -f 1) unique IP addresses.""$NC";
