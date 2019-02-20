@@ -235,6 +235,9 @@ function run_dnscan() {
 function run_subfinder() {
 		# Call with domain as $1 and wordlist as $2
 
+		# Trap SIGINT so broken subfinder runs can be cancelled
+		trap "Cancelling process." SIGINT;
+
 		# Check for wordlist argument, else run without
 		echo -e "$GREEN""[i]$BLUE Scanning $1 with subfinder.""$NC";
 
@@ -255,6 +258,11 @@ function run_subfinder() {
 }
 
 function run_sublist3r() {
+		# Call with domain as $1
+
+		# Trap SIGINT so broken sublist3r runs can be cancelled
+		trap "Cancelling process." SIGINT;
+
 		echo -e "$GREEN""[i]$BLUE Scanning $1 with sublist3r.""$NC";
 		echo -e "$GREEN""[i]$ORANGE Command: $SUBLIST3R -d $1 -o $WORKING_DIR/sublist3r-output.txt.""$NC";
 		sleep 2;
