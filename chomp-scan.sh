@@ -584,7 +584,7 @@ while true; do
 		   return;
 		   ;;
    [iI]* ) 
-		   if [[ -s "$INTERESTING_DOMAINS" ]]; then
+		   if [[ ! -s "$INTERESTING_DOMAINS" ]]; then
 				   echo -e "$RED""[!] No interesting domains have been discovered.""$NC";
 				   return;
 		   fi
