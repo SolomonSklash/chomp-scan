@@ -125,6 +125,8 @@ function check_paths() {
 check_paths;
 
 mkdir "$WORKING_DIR";
+touch "$WORKING_DIR"/interesting-domains.txt;
+INTERESTING_DOMAINS="$WORKING_DIR"/interesting-domains.txt;
 
 function unique() {
 		# Remove domains from blacklist
@@ -151,9 +153,9 @@ function list_found() {
 function get_interesting() {
 		echo -e "$RED""[!] The following $(wc -l "$WORKING_DIR"/interesting-domains.txt | cut -d ' ' -f 1) potentially interesting subdomains have been found ($WORKING_DIR/interesting-domains.txt):""$ORANGE";
 		while read -r word; do
-				grep "$word" "$WORKING_DIR"/$ALL_DOMAIN >> "$WORKING_DIR"/interesting-domains.txt; 
+				grep "$word" "$WORKING_DIR"/$ALL_DOMAIN >> "$INTERESTING_DOMAINS";
 		done < $INTERESTING;
-		cat "$WORKING_DIR"/interesting-domains.txt;
+		cat "$INTERESTING_DOMAINS";
 }
 
 function run_subdomain_brute() {
@@ -170,7 +172,7 @@ function run_subdomain_brute() {
 				   run_subfinder "$DOMAIN" "$SHORT";
 				   run_sublist3r "$DOMAIN";
 				   run_massdns "$DOMAIN" "$SHORT";
-				   run_subjack "$DOMAIN" "$SHORT";
+				   run_subjack "$DOMAIN" "$ALL_DOMAIN";
 				   break
 				   ;;
 
@@ -179,7 +181,7 @@ function run_subdomain_brute() {
 				   run_subfinder "$DOMAIN" "$LONG";
 				   run_sublist3r "$DOMAIN";
 				   run_massdns "$DOMAIN" "$LONG";
-				   run_subjack "$DOMAIN" "$LONG";
+				   run_subjack "$DOMAIN" "$ALL_DOMAIN";
 				   return;
 				   ;;
 
@@ -188,7 +190,7 @@ function run_subdomain_brute() {
 				   run_subfinder "$DOMAIN" "$HUGE";
 				   run_sublist3r "$DOMAIN";
 				   run_massdns "$DOMAIN" "$HUGE";
-				   run_subjack "$DOMAIN" "$HUGE";
+				   run_subjack "$DOMAIN" "$LONG";
 				   break;
 				   ;;
 		   * )     
@@ -580,6 +582,11 @@ while true; do
 		   return;
 		   ;;
    [iI]* ) 
+		   if [[ ! -s "$INTERESTING_DOMAINS" ]]; then
+				   echo -e "$RED""[!] No interesting domains have been discovered.""$NC";
+				   return;
+		   fi
+				   
 		   echo -e "[i] Beginning directory bruteforcing on interesting discovered domains.";
 		   while true; do
 				   echo -e "$GREEN""[i] Which wordlist do you want to use?""$NC";
@@ -591,43 +598,43 @@ while true; do
 				   read -rp "[i] Enter S/M/L/X/2 " CHOICE;
 				   case $CHOICE in
 						   [sS]* )
-								   run_ffuf "$DOMAIN" "$SMALL" "$WORKING_DIR"/interesting-domains.txt;
-								   # run_gobuster "$DOMAIN" "$SMALL" "$WORKING_DIR"/interesting-domains.txt;
-								   run_bfac "$WORKING_DIR"/interesting-domains.txt;
-								   run_nikto "$WORKING_DIR"/interesting-domains.txt;
-								   run_whatweb "$DOMAIN" "$WORKING_DIR"/interesting-domains.txt;
+								   run_ffuf "$DOMAIN" "$SMALL" "$INTERESTING_DOMAINS";
+								   # run_gobuster "$DOMAIN" "$SMALL" "$INTERESTING_DOMAINS";
+								   run_bfac "$INTERESTING_DOMAINS";
+								   run_nikto "$INTERESTING_DOMAINS";
+								   run_whatweb "$DOMAIN" "$INTERESTING_DOMAINS";
 								   break;
 								   ;;
 							[mM]* )
-								   run_ffuf "$DOMAIN" "$MEDIUM" "$WORKING_DIR"/interesting-domains.txt;
-								   # run_gobuster "$DOMAIN" "$MEDIUM" "$WORKING_DIR"/interesting-domains.txt;
-								   run_bfac "$WORKING_DIR"/interesting-domains.txt;
-								   run_nikto "$WORKING_DIR"/interesting-domains.txt;
-								   run_whatweb "$DOMAIN" "$WORKING_DIR"/interesting-domains.txt;
+								   run_ffuf "$DOMAIN" "$MEDIUM" "$INTERESTING_DOMAINS";
+								   # run_gobuster "$DOMAIN" "$MEDIUM" "$INTERESTING_DOMAINS";
+								   run_bfac "$INTERESTING_DOMAINS";
+								   run_nikto "$INTERESTING_DOMAINS";
+								   run_whatweb "$DOMAIN" "$INTERESTING_DOMAINS";
 								   break;
 								   ;;
 							[lL]* )
-								   run_ffuf "$DOMAIN" "$LARGE" "$WORKING_DIR"/interesting-domains.txt;
-								   # run_gobuster "$DOMAIN" "$LARGE" "$WORKING_DIR"/interesting-domains.txt;
-								   run_bfac "$WORKING_DIR"/interesting-domains.txt;
-								   run_nikto "$WORKING_DIR"/interesting-domains.txt;
-								   run_whatweb "$DOMAIN" "$WORKING_DIR"/interesting-domains.txt;
+								   run_ffuf "$DOMAIN" "$LARGE" "$INTERESTING_DOMAINS";
+								   # run_gobuster "$DOMAIN" "$LARGE" "$INTERESTING_DOMAINS";
+								   run_bfac "$INTERESTING_DOMAINS";
+								   run_nikto "$INTERESTING_DOMAINS";
+								   run_whatweb "$INTERESTING_DOMAINS";
 								   break;
 								   ;;
 							[xX]* )
-								   run_ffuf "$DOMAIN" "$XL" "$WORKING_DIR"/interesting-domains.txt;
-								   # run_gobuster "$DOMAIN" "$XL" "$WORKING_DIR"/interesting-domains.txt;
-								   run_bfac "$WORKING_DIR"/interesting-domains.txt;
-								   run_nikto "$WORKING_DIR"/interesting-domains.txt;
-								   run_whatweb "$DOMAIN" "$WORKING_DIR"/interesting-domains.txt;
+								   run_ffuf "$DOMAIN" "$XL" "$INTERESTING_DOMAINS";
+								   # run_gobuster "$DOMAIN" "$XL" "$INTERESTING_DOMAINS";
+								   run_bfac "$INTERESTING_DOMAINS";
+								   run_nikto "$INTERESTING_DOMAINS";
+								   run_whatweb "$INTERESTING_DOMAINS";
 								   break;
 								   ;;
 							[2]* )
-								   run_ffuf "$DOMAIN" "$XXL" "$WORKING_DIR"/interesting-domains.txt;
-								   # run_gobuster "$DOMAIN" "$XXL" "$WORKING_DIR"/interesting-domains.txt;
-								   run_bfac "$WORKING_DIR"/interesting-domains.txt;
-								   run_nikto "$WORKING_DIR"/interesting-domains.txt;
-								   run_whatweb "$DOMAIN" "$WORKING_DIR"/interesting-domains.txt;
+								   run_ffuf "$DOMAIN" "$XXL" "$INTERESTING_DOMAINS";
+								   # run_gobuster "$DOMAIN" "$XXL" "$INTERESTING_DOMAINS";
+								   run_bfac "$INTERESTING_DOMAINS";
+								   run_nikto "$INTERESTING_DOMAINS";
+								   run_whatweb "$DOMAIN" "$INTERESTING_DOMAINS";
 								   break;
 								   ;;
 				   esac
@@ -814,12 +821,12 @@ function run_whatweb() {
 
 run_subdomain_brute;
 sleep 1;
-run_aquatone;
-sleep 1;
-get_interesting;
-sleep 5;
-run_portscan;
-sleep 1;
+# run_aquatone;
+# sleep 1;
+# get_interesting;
+# sleep 5;
+# run_portscan;
+# sleep 1;
 run_content_discovery;
 sleep 1;
 get_interesting;
