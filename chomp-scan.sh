@@ -505,7 +505,18 @@ function run_nmap() {
 
 		# Run nmap against all-ip.txt against ports found by masscan, unless alone arg is passed as $1
 		if [[ "$1" == "alone" ]]; then
-				echo -e "$GREEN""[i]$BLUE Running nmap against $(wc -l "$WORKING_DIR"/live-ips.txt | cut -d ' ' -f 1) unique IP addresses.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running nmap against $(wc -l "$WORKING_DIR"/"$ALL_IP" | cut -d ' ' -f 1) unique IP addresses.""$NC";
+				echo -e "$GREEN""[i]$BLUE Command: nmap -n -v -sV -iL $WORKING_DIR/all_ip.txt -oA $WORKING_DIR/nmap-output.""$NC";
+				sleep 1;
+
+				START=$(date +%s);
+				nmap -n -v -sV -iL "$WORKING_DIR"/"$ALL_IP" -oA "$WORKING_DIR"/nmap-output;
+				END=$(date +%s);
+				DIFF=$(( END - START ));
+				echo -e "$GREEN""[i]$BLUE Nmap took $DIFF seconds to run.""$NC";
+		# Make sure masscan actually created output
+		elif [[ ! -s "$WORKING_DIR"/masscan-output.txt ]]; then
+				echo -e "$GREEN""[i]$BLUE Running nmap against $(wc -l "$WORKING_DIR"/"$ALL_IP" | cut -d ' ' -f 1) unique IP addresses.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: nmap -n -v -sV -iL $WORKING_DIR/all_ip.txt -oA $WORKING_DIR/nmap-output.""$NC";
 				sleep 1;
 
@@ -530,14 +541,14 @@ function run_nmap() {
 				fi
 
 				# Get live IPs from masscan
-				cut -d ' ' -f 4 "$WORKING_DIR"/masscan-output.txt >> "$WORKING_DIR"/live-ips.txt;
+				cut -d ' ' -f 4 "$WORKING_DIR"/masscan-output.txt >> "$WORKING_DIR"/"$ALL_IP";
 				
-				echo -e "$GREEN""[i]$BLUE Running nmap against $(wc -l "$WORKING_DIR"/live-ips.txt | cut -d ' ' -f 1) unique IP addresses and $(wc -l "$WORKING_DIR"/ports | cut -d ' ' -f 1) ports identified by masscan.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running nmap against $(wc -l "$WORKING_DIR"/"$ALL_IP" | cut -d ' ' -f 1) unique IP addresses and $(wc -l "$WORKING_DIR"/ports | cut -d ' ' -f 1) ports identified by masscan.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: nmap -n -v -sV -iL $WORKING_DIR/all_ip.txt -p $(tr '\n' , < "$WORKING_DIR"/ports) -oA $WORKING_DIR/nmap-output.""$NC";
 				sleep 1;
 
 				START=$(date +%s);
-				nmap -n -v -sV -iL "$WORKING_DIR"/live-ips.txt -p "$(tr '\n' , < "$WORKING_DIR"/ports)" -oA "$WORKING_DIR"/nmap-output;
+				nmap -n -v -sV -iL "$WORKING_DIR"/"$ALL_IP" -p "$(tr '\n' , < "$WORKING_DIR"/ports)" -oA "$WORKING_DIR"/nmap-output;
 				END=$(date +%s);
 				DIFF=$(( END - START ));
 				echo -e "$GREEN""[i]$BLUE Nmap took $DIFF seconds to run.""$NC";
