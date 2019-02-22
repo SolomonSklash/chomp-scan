@@ -175,7 +175,7 @@ function get_interesting() {
 }
 
 function cancel() {
-		echo -e "$RED""[!] Cancelling command.""$NC";
+		echo -e "$RED""\\n[!] Cancelling command.""$NC";
 }
 
 function run_subdomain_brute() {
