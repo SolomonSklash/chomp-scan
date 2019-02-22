@@ -113,6 +113,15 @@ The following tools are required for Chomp Scan. Note that this tool was designe
 * [ffuf](https://github.com/ffuf/ffuf) Go
 * [aquatone](https://github.com/michenriksen/aquatone) Precompiled Go binary
 
+### In The Future
+
+Chomp Scan is still in active development, as I use it myself for bug hunting, so I intend to continue adding new features and tools as I come across them. New tool suggestions, feedback, and pull requests are all welcomed. Here is a short list of potential additions I'm considering:
+
+* A non-interactive mode, where certain defaults are selected so the scan can be run and forget
+* Adding a config file, for more granular customization of tools and parameters
+* A possible Python re-write, with a pure CLI mode (and maybe a Go re-write after that!)
+* The generation of an HTML report, similar to what aquatone provides
+
 ### Examples
 ![](screenshots/screenshot05.png)
 ![](screenshots/screenshot07.png)
