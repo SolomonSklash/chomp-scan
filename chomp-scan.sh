@@ -230,7 +230,7 @@ function run_dnscan() {
 		END=$(date +%s);
 		DIFF=$(( END - START ));
 
-		# Headers and leading spaces
+		# Remove headers and leading spaces
 		sed '1,/A records/d' "$WORKING_DIR"/dnscan_out.txt | tr -d ' ' > "$WORKING_DIR"/trimmed;
 		cut "$WORKING_DIR"/trimmed -d '-' -f 1 > "$WORKING_DIR"/dnscan-ips.txt;
 		cut "$WORKING_DIR"/trimmed -d '-' -f 2 > "$WORKING_DIR"/dnscan-domains.txt;
@@ -245,7 +245,7 @@ function run_dnscan() {
 		list_found;
 		sleep 1;
 
-		# Check if Ctrl+C was pressed
+		# Check if Ctrl+C was pressed and added to domain and IP files
 		grep -v 'KeyboardInterrupt' "$WORKING_DIR"/"$ALL_DOMAIN" > "$WORKING_DIR"/tmp;
 		mv "$WORKING_DIR"/tmp "$WORKING_DIR"/"$ALL_DOMAIN";
 		grep -v 'KeyboardInterrupt' "$WORKING_DIR"/"$ALL_IP" > "$WORKING_DIR"/tmp2;
