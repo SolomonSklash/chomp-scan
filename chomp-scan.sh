@@ -157,8 +157,21 @@ function get_interesting() {
 		while read -r word; do
 				grep "$word" "$WORKING_DIR"/$ALL_DOMAIN >> "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 		done < $INTERESTING;
-		echo -e "$RED""[!] The following $(wc -l "$WORKING_DIR"/interesting-domains.txt | cut -d ' ' -f 1) potentially interesting subdomains have been found ($WORKING_DIR/interesting-domains.txt):""$ORANGE";
-		cat "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+
+		# Make sure no there are duplicates
+		sort -u "$WORKING_DIR"/"$INTERESTING_DOMAINS" > "$WORKING_DIR"/tmp3;
+		mv "$WORKING_DIR"/tmp3 "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+
+		# Make sure > 0 domains are found
+		FOUND=$(wc -l "$WORKING_DIR"/interesting-domains.txt | cut -d ' ' -f 1);
+		if [[ $FOUND -gt 0 ]]; then
+				echo -e "$RED""[!] The following $(wc -l "$WORKING_DIR"/interesting-domains.txt | cut -d ' ' -f 1) potentially interesting subdomains have been found ($WORKING_DIR/interesting-domains.txt):""$ORANGE";
+				cat "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+				sleep 2;
+		else
+				echo -e "$RED""[!] No interesting domains have been found yet.""$NC";
+				sleep 2;
+		fi
 }
 
 function run_subdomain_brute() {
@@ -829,13 +842,11 @@ sleep 1;
 run_aquatone;
 sleep 1;
 get_interesting;
-sleep 5;
 run_portscan;
 sleep 1;
 run_content_discovery;
 sleep 1;
 get_interesting;
-sleep 3;
 list_found;
 SCAN_END=$(date +%s);
 SCAN_DIFF=$(( SCAN_END - SCAN_START ));
