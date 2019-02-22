@@ -248,6 +248,12 @@ function run_dnscan() {
 		echo -e "$GREEN""[!]$ORANGE dnscan found $(wc -l "$WORKING_DIR"/dnscan-ips.txt | cut -d ' ' -f 1) IP/domain pairs.""$NC";
 		list_found;
 		sleep 1;
+
+		# Check if Ctrl+C was pressed
+		grep -v 'KeyboardInterrupt' "$WORKING_DIR"/"$ALL_DOMAIN" > "$WORKING_DIR"/tmp;
+		mv "$WORKING_DIR"/tmp "$WORKING_DIR"/"$ALL_DOMAIN";
+		grep -v 'KeyboardInterrupt' "$WORKING_DIR"/"$ALL_IP" > "$WORKING_DIR"/tmp2;
+		mv "$WORKING_DIR"/tmp2 "$WORKING_DIR"/"$ALL_IP";
 }
 
 function run_subfinder() {
