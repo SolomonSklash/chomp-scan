@@ -174,6 +174,10 @@ function get_interesting() {
 		fi
 }
 
+function cancel() {
+		echo -e "$RED""[!] Cancelling command.""$NC";
+}
+
 function run_subdomain_brute() {
 		# Ask user for wordlist size
 		while true; do
@@ -260,7 +264,7 @@ function run_subfinder() {
 		# Call with domain as $1 and wordlist as $2
 
 		# Trap SIGINT so broken subfinder runs can be cancelled
-		trap "Cancelling process." SIGINT;
+		trap cancel SIGINT;
 
 		# Check for wordlist argument, else run without
 		echo -e "$GREEN""[i]$BLUE Scanning $1 with subfinder.""$NC";
@@ -285,7 +289,7 @@ function run_sublist3r() {
 		# Call with domain as $1
 
 		# Trap SIGINT so broken sublist3r runs can be cancelled
-		trap "Cancelling process." SIGINT;
+		trap cancel SIGINT;
 
 		echo -e "$GREEN""[i]$BLUE Scanning $1 with sublist3r.""$NC";
 		echo -e "$GREEN""[i]$ORANGE Command: $SUBLIST3R -d $1 -o $WORKING_DIR/sublist3r-output.txt.""$NC";
@@ -713,7 +717,8 @@ function run_gobuster() {
 
 function run_ffuf() {
 		# Trap SIGINT so broken ffuf runs can be cancelled
-		trap "Cancelling process." SIGINT;
+		trap cancel SIGINT;
+
 		# Call with domain as $1, wordlist size as $2, and domain list as $3
 		if [[ $3 == $WORKING_DIR/$ALL_DOMAIN ]]; then
 				echo -e "$GREEN""[i]$BLUE Running ffuf against all $(wc -l "$3" | cut -d ' ' -f 1) unique discovered domains.""$NC";
