@@ -230,9 +230,7 @@ function run_dnscan() {
 		fi
 
 		echo -e "$GREEN""[i]$BLUE Scanning $1 with dnscan.""$NC";
-
 		echo -e "$GREEN""[i]$ORANGE Command: $DNSCAN -d $1 -t 25 -o $WORKING_DIR/dnscan_out.txt -w $2.""$NC";
-		sleep 2;
 		START=$(date +%s);
 		$DNSCAN -d "$1" -t 25 -o "$WORKING_DIR"/dnscan_out.txt -w "$2";
 		END=$(date +%s);
@@ -268,10 +266,7 @@ function run_subfinder() {
 
 		# Check for wordlist argument, else run without
 		echo -e "$GREEN""[i]$BLUE Scanning $1 with subfinder.""$NC";
-
 		echo -e "$GREEN""[i]$ORANGE Command: subfinder -d $1 -o $WORKING_DIR/subfinder-domains.txt -t 25 -w $2.""$NC";
-		sleep 2;
-
 		START=$(date +%s);
 		"$SUBFINDER" -d "$1" -o "$WORKING_DIR"/subfinder-domains.txt -t 25 -w "$2";
 		END=$(date +%s);
@@ -293,8 +288,6 @@ function run_sublist3r() {
 
 		echo -e "$GREEN""[i]$BLUE Scanning $1 with sublist3r.""$NC";
 		echo -e "$GREEN""[i]$ORANGE Command: $SUBLIST3R -d $1 -o $WORKING_DIR/sublist3r-output.txt.""$NC";
-		sleep 2;
-
 		START=$(date +%s);
 		"$SUBLIST3R" -d "$1" -o "$WORKING_DIR"/sublist3r-output.txt
 		END=$(date +%s);
@@ -318,8 +311,6 @@ function run_altdns() {
 
 		echo -e "$GREEN""[i]$BLUE Running altdns against found subdomains to generate domains for masscan to resolve.""$NC";
 		echo -e "$GREEN""[i]$ORANGE Command: altdns.py -i $WORKING_DIR/$ALL_DOMAIN -w wordlists/altdns-words.txt -o $WORKING_DIR/altdns-output.txt -t 20.""$NC";
-		sleep 2;
-
 		START=$(date +%s);
 		"$ALTDNS" -i "$WORKING_DIR"/$ALL_DOMAIN -w wordlists/altdns-words.txt -o "$WORKING_DIR"/altdns-output.txt -t 20
 		END=$(date +%s);
@@ -352,8 +343,6 @@ function run_massdns() {
 
 		echo -e "$GREEN""[i]$BLUE Scanning $(cat "$WORKING_DIR"/$ALL_DOMAIN "$WORKING_DIR"/$ALL_IP "$WORKING_DIR"/altdns-output.txt "$WORKING_DIR"/massdns-appended.txt | sort | uniq | wc -l) current unique $1 domains and IPs, altdns generated domains, and domain-appended wordlist with massdns (in quiet mode).""$NC";
 		echo -e "$GREEN""[i]$ORANGE Command: cat (all found domains and IPs) | $MASSDNS_BIN -r $MASSDNS_RESOLVERS -q -t A -o S -w $WORKING_DIR/massdns-result.txt.""$NC";
-		sleep 2;
-
 		START=$(date +%s);
 		cat "$WORKING_DIR"/$ALL_DOMAIN "$WORKING_DIR"/$ALL_IP "$WORKING_DIR"/altdns-output.txt "$WORKING_DIR"/massdns-appended.txt | sort | uniq | $MASSDNS_BIN -r $MASSDNS_RESOLVERS -q -t A -o S -w "$WORKING_DIR"/massdns-result.txt;
 		END=$(date +%s);
@@ -379,10 +368,7 @@ function run_subjack() {
 
 		# Check for domain takeover on each found domain
 		echo -e "$GREEN""[i]$BLUE Running subjack against all unique found domains to check for subdomain takeover.""$NC";
-
 		echo -e "$GREEN""[i]$ORANGE Command: subjack -d $1 -w $2 -v -t 20 -ssl -o $WORKING_DIR/subjack-output.txt""$NC";
-		sleep 2;
-
 		START=$(date +%s);
 		"$SUBJACK" -d "$1" -w "$2" -v -t 20 -ssl -o "$WORKING_DIR"/subjack-output.txt;
 		END=$(date +%s);
@@ -507,8 +493,6 @@ function run_nmap() {
 		if [[ "$1" == "alone" ]]; then
 				echo -e "$GREEN""[i]$BLUE Running nmap against $(wc -l "$WORKING_DIR"/"$ALL_IP" | cut -d ' ' -f 1) unique IP addresses.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: nmap -n -v -sV -iL $WORKING_DIR/all_ip.txt -oA $WORKING_DIR/nmap-output.""$NC";
-				sleep 1;
-
 				START=$(date +%s);
 				nmap -n -v -sV -iL "$WORKING_DIR"/"$ALL_IP" -oA "$WORKING_DIR"/nmap-output;
 				END=$(date +%s);
@@ -518,8 +502,6 @@ function run_nmap() {
 		elif [[ ! -s "$WORKING_DIR"/masscan-output.txt ]]; then
 				echo -e "$GREEN""[i]$BLUE Running nmap against $(wc -l "$WORKING_DIR"/"$ALL_IP" | cut -d ' ' -f 1) unique IP addresses.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: nmap -n -v -sV -iL $WORKING_DIR/all_ip.txt -oA $WORKING_DIR/nmap-output.""$NC";
-				sleep 1;
-
 				START=$(date +%s);
 				nmap -n -v -sV -iL "$WORKING_DIR"/"$ALL_IP" -oA "$WORKING_DIR"/nmap-output;
 				END=$(date +%s);
@@ -545,8 +527,6 @@ function run_nmap() {
 				
 				echo -e "$GREEN""[i]$BLUE Running nmap against $(wc -l "$WORKING_DIR"/"$ALL_IP" | cut -d ' ' -f 1) unique IP addresses and $(wc -l "$WORKING_DIR"/ports | cut -d ' ' -f 1) ports identified by masscan.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: nmap -n -v -sV -iL $WORKING_DIR/all_ip.txt -p $(tr '\n' , < "$WORKING_DIR"/ports) -oA $WORKING_DIR/nmap-output.""$NC";
-				sleep 1;
-
 				START=$(date +%s);
 				nmap -n -v -sV -iL "$WORKING_DIR"/"$ALL_IP" -p "$(tr '\n' , < "$WORKING_DIR"/ports)" -oA "$WORKING_DIR"/nmap-output;
 				END=$(date +%s);
