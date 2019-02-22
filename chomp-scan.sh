@@ -296,11 +296,15 @@ function run_sublist3r() {
 		END=$(date +%s);
 		DIFF=$(( END - START ));
 
-		# Cat output into main lists
-		cat "$WORKING_DIR"/sublist3r-output.txt >> "$WORKING_DIR"/$ALL_DOMAIN;
 
-		echo -e "$GREEN""[i]$BLUE sublist3r took $DIFF seconds to run.""$NC";
-		echo -e "$GREEN""[!]$ORANGE sublist3r found $(wc -l "$WORKING_DIR"/sublist3r-output.txt | cut -d ' ' -f 1) domains.""$NC";
+		# Check that output file exists
+		if [[ -f "$WORKING_DIR"/sublist3r-output.txt ]]; then
+				# Cat output into main lists
+				cat "$WORKING_DIR"/sublist3r-output.txt >> "$WORKING_DIR"/$ALL_DOMAIN;
+				echo -e "$GREEN""[i]$BLUE sublist3r took $DIFF seconds to run.""$NC";
+				echo -e "$GREEN""[!]$ORANGE sublist3r found $(wc -l "$WORKING_DIR"/sublist3r-output.txt | cut -d ' ' -f 1) domains.""$NC";
+		fi
+
 		list_found;
 		sleep 1;
 }
