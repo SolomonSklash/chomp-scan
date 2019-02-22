@@ -223,12 +223,6 @@ function run_subdomain_brute() {
 function run_dnscan() {
 		# Call with domain as $1 and wordlist as $2
 
-		# Check that DNSCAN path is set
-		if [[ "$DNSCAN" == "" ]]; then
-				echo -e "$GREEN""[i]$RED Dnscan path has not been set. Skipping dnscan...""$NC";
-				return;
-		fi
-
 		echo -e "$GREEN""[i]$BLUE Scanning $1 with dnscan.""$NC";
 		echo -e "$GREEN""[i]$ORANGE Command: $DNSCAN -d $1 -t 25 -o $WORKING_DIR/dnscan_out.txt -w $2.""$NC";
 		START=$(date +%s);
