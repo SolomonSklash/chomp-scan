@@ -275,7 +275,7 @@ function run_subfinder() {
 }
 
 function run_sublist3r() {
-		# Call with domain as $1
+		# Call with domain as $1, doesn't support wordlists
 
 		# Trap SIGINT so broken sublist3r runs can be cancelled
 		trap cancel SIGINT;
@@ -286,7 +286,6 @@ function run_sublist3r() {
 		"$SUBLIST3R" -d "$1" -o "$WORKING_DIR"/sublist3r-output.txt
 		END=$(date +%s);
 		DIFF=$(( END - START ));
-
 
 		# Check that output file exists
 		if [[ -f "$WORKING_DIR"/sublist3r-output.txt ]]; then
@@ -310,7 +309,6 @@ function run_altdns() {
 		END=$(date +%s);
 		DIFF=$(( END - START ));
 
-
 		echo -e "$GREEN""[i]$BLUE Altdns took $DIFF seconds to run.""$NC";
 		echo -e "$GREEN""[i]$BLUE Altdns generated $(wc -l "$WORKING_DIR"/altdns-output.txt | cut -d ' ' -f 1) subdomains.""$NC";
 		sleep 1;
@@ -318,16 +316,6 @@ function run_altdns() {
 
 function run_massdns() {
 		# Call with domain as $1 and wordlist as $2
-
-		# Make sure MASSDNS_BIN and MASSDNS_RESOLVERS paths are set
-		if [[ "$MASSDNS_BIN" == "" ]]; then
-			echo -e "$GREEN""[i]$RED MASSDNS_BIN path is not set.""$NC";
-			return;
-		fi
-		if [[ "$MASSDNS_RESOLVERS" == "" ]]; then
-			echo -e "$GREEN""[i]$RED MASSDNS_RESOLVERS path is not set.""$NC";
-			return;
-		fi
 
 		# Run altdns to get altered domains to resolve along with other found domains
 		run_altdns;
