@@ -174,48 +174,6 @@ function cancel() {
 		echo -e "$RED""\\n[!] Cancelling command.""$NC";
 }
 
-function run_subdomain_brute() {
-		# Ask user for wordlist size
-		while true; do
-		  echo -e "$GREEN""[i] What size wordlist would you like to use for subdomain bruteforcing?";
-		  echo -e "$GREEN""[i] Sizes are [S]mall (22k domains), [L]arge (102k domains), and [H]uge (199k domains).";
-		  echo -e "$ORANGE";
-		  read -rp "[!] Please enter S/s, L/l, or H/h. " ANSWER
-
-		  case $ANSWER in
-		   [sS]* ) 
-				   run_dnscan "$DOMAIN" "$SHORT";
-				   run_subfinder "$DOMAIN" "$SHORT";
-				   run_sublist3r "$DOMAIN";
-				   run_massdns "$DOMAIN" "$SHORT";
-				   run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
-				   break
-				   ;;
-
-		   [lL]* ) 
-				   run_dnscan "$DOMAIN" "$LONG";
-				   run_subfinder "$DOMAIN" "$LONG";
-				   run_sublist3r "$DOMAIN";
-				   run_massdns "$DOMAIN" "$LONG";
-				   run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
-				   return;
-				   ;;
-
-		   [hH]* ) 
-				   run_dnscan "$DOMAIN" "$SHORT";
-				   run_subfinder "$DOMAIN" "$HUGE";
-				   run_sublist3r "$DOMAIN";
-				   run_massdns "$DOMAIN" "$HUGE";
-				   run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
-				   break;
-				   ;;
-		   * )     
-				   echo -e "$RED"""[!] Please enter S/s, L/l, or H/h."$NC"
-				   ;;
-		  esac
-		done
-}
-
 function run_dnscan() {
 		# Call with domain as $1 and wordlist as $2
 
@@ -360,6 +318,48 @@ function run_subjack() {
 		sleep 1;
 }
 
+function run_subdomain_brute() {
+		# Ask user for wordlist size
+		while true; do
+		  echo -e "$GREEN""[i] What size wordlist would you like to use for subdomain bruteforcing?";
+		  echo -e "$GREEN""[i] Sizes are [S]mall (22k domains), [L]arge (102k domains), and [H]uge (199k domains).";
+		  echo -e "$ORANGE";
+		  read -rp "[!] Please enter S/s, L/l, or H/h. " ANSWER
+
+		  case $ANSWER in
+		   [sS]* ) 
+				   run_dnscan "$DOMAIN" "$SHORT";
+				   run_subfinder "$DOMAIN" "$SHORT";
+				   run_sublist3r "$DOMAIN";
+				   run_massdns "$DOMAIN" "$SHORT";
+				   run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
+				   break
+				   ;;
+
+		   [lL]* ) 
+				   run_dnscan "$DOMAIN" "$LONG";
+				   run_subfinder "$DOMAIN" "$LONG";
+				   run_sublist3r "$DOMAIN";
+				   run_massdns "$DOMAIN" "$LONG";
+				   run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
+				   return;
+				   ;;
+
+		   [hH]* ) 
+				   run_dnscan "$DOMAIN" "$SHORT";
+				   run_subfinder "$DOMAIN" "$HUGE";
+				   run_sublist3r "$DOMAIN";
+				   run_massdns "$DOMAIN" "$HUGE";
+				   run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
+				   break;
+				   ;;
+		   * )     
+				   echo -e "$RED"""[!] Please enter S/s, L/l, or H/h."$NC"
+				   ;;
+		  esac
+		done
+}
+
 function run_aquatone () {
 		# Make sure AQUATONE path is set
 		if [[ "$AQUATONE" == "" ]]; then
@@ -394,48 +394,6 @@ function run_aquatone () {
 		END=$(date +%s);
 		DIFF=$(( END - START ));
 		echo -e "$GREEN""[i]$BLUE Aquatone took $DIFF seconds to run.""$NC";
-}
-
-function run_portscan() {
-		   while true; do
-				   echo -e "$GREEN""[i] Do you want to perform port scanning?""$NC";
-				   echo -e "$ORANGE";
-				   read -rp "[i] Enter Y/N " CHOICE;
-				   case $CHOICE in
-						   [yY]* )
-								   while true; do
-										   echo -e "$GREEN""[i] Do you want to run [B]oth masscan and nmap, only [N]map, or only [M]asscan?";
-										   read -rp "[i] Enter B/N/M " CHOICE;
-										   case $CHOICE in
-												   [bB]* )
-														   run_masscan;
-														   run_nmap;
-														   break;
-														   ;;
-													[nN]* )
-														   run_nmap alone;
-														   break;
-														   ;;
-													[mM]* )
-														   run_masscan;
-														   break;
-														   ;;
-												   * )     
-														   echo -e "$RED""[!] Please enter B/b, N/n, or M/m.""$NC"
-														   ;;
-										   esac
-								   done
-								   break;
-								   ;;
-							[nN]* )
-								   echo -e "$RED""[!] Cancelling port scan.""$NC";
-								   return;
-								   ;;
-						        * )     
-								   echo -e "$RED""[!] Please enter Y/y or N/n.""$NC"
-								   ;;
-				   esac
-		   done
 }
 
 function run_masscan() {
@@ -517,139 +475,46 @@ function run_nmap() {
 		echo -e "$GREEN""[i]$BLUE Nmap took $DIFF seconds to run.""$NC";
 }
 
-function run_content_discovery() {
-# Ask user to do directory bruteforcing on discovered domains
-while true; do
-  echo -e "$ORANGE";
-  read -rp "[!] Do you want to begin content bruteforcing on all/interesting/no discovered domains? [A/I/N] " ANSWER
-
-  case $ANSWER in
-   [aA]* ) 
-		   echo -e "[i] Beginning directory bruteforcing on all discovered domains.";
+function run_portscan() {
 		   while true; do
-				   echo -e "$GREEN""[i] Which wordlist do you want to use?""$NC";
-				   echo -e "$BLUE""   Small: ~20k words""$NC";
-				   echo -e "$BLUE""   Medium: ~167k words""$NC";
-				   echo -e "$BLUE""   Large: ~215k words""$NC";
-				   echo -e "$BLUE""   XL: ~373k words""$NC";
-				   echo -e "$BLUE""   2XL: ~486k words""$GREEN";
-				   read -rp "[i] Enter S/M/L/X/2 " CHOICE;
+				   echo -e "$GREEN""[i] Do you want to perform port scanning?""$NC";
+				   echo -e "$ORANGE";
+				   read -rp "[i] Enter Y/N " CHOICE;
 				   case $CHOICE in
-						   [sS]* )
-								   run_ffuf "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$ALL_DOMAIN";
-								   # run_gobuster "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_bfac "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_whatweb "$WORKING_DIR"/"$ALL_DOMAIN";
+						   [yY]* )
+								   while true; do
+										   echo -e "$GREEN""[i] Do you want to run [B]oth masscan and nmap, only [N]map, or only [M]asscan?";
+										   read -rp "[i] Enter B/N/M " CHOICE;
+										   case $CHOICE in
+												   [bB]* )
+														   run_masscan;
+														   run_nmap;
+														   break;
+														   ;;
+													[nN]* )
+														   run_nmap alone;
+														   break;
+														   ;;
+													[mM]* )
+														   run_masscan;
+														   break;
+														   ;;
+												   * )     
+														   echo -e "$RED""[!] Please enter B/b, N/n, or M/m.""$NC"
+														   ;;
+										   esac
+								   done
 								   break;
 								   ;;
-							[mM]* )
-								   run_ffuf "$DOMAIN" "$MEDIUM" "$WORKING_DIR"/"$ALL_DOMAIN";
-								   # run_gobuster "$DOMAIN" "$MEDIUM" "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_bfac "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_whatweb "$WORKING_DIR"/"$ALL_DOMAIN";
-								   break;
+							[nN]* )
+								   echo -e "$RED""[!] Cancelling port scan.""$NC";
+								   return;
 								   ;;
-							[lL]* )
-								   run_ffuf "$DOMAIN" "$LARGE" "$WORKING_DIR"/"$ALL_DOMAIN";
-								   # run_gobuster "$DOMAIN" "$LARGE" "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_bfac "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_whatweb "$WORKING_DIR"/"$ALL_DOMAIN";
-								   break;
-								   ;;
-							[xX]* )
-								   run_ffuf "$DOMAIN" "$XL" "$WORKING_DIR"/"$ALL_DOMAIN";
-								   # run_gobuster "$DOMAIN" "$XL" "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_bfac "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_whatweb "$WORKING_DIR"/"$ALL_DOMAIN";
-								   break;
-								   ;;
-							[2]* )
-								   run_ffuf "$DOMAIN" "$XXL" "$WORKING_DIR"/"$ALL_DOMAIN";
-								   # run_gobuster "$DOMAIN" "$XXL" "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_bfac "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_whatweb "$WORKING_DIR"/"$ALL_DOMAIN";
-								   break;
+						        * )     
+								   echo -e "$RED""[!] Please enter Y/y or N/n.""$NC"
 								   ;;
 				   esac
 		   done
-		   break;
-		   ;;
-   [nN]* ) 
-		   echo -e "$RED""[!] Skipping directory bruteforcing on all domains.""$NC";
-		   return;
-		   ;;
-   [iI]* ) 
-		   # Check if any interesting domains have been found.'
-		   COUNT=$(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1);
-		   if [[ "$COUNT" -lt 1 ]]; then
-				   echo -e "$RED""[!] No interesting domains have been discovered.""$NC";
-				   return;
-		   fi
-				   
-		   echo -e "[i] Beginning directory bruteforcing on interesting discovered domains.";
-		   while true; do
-				   echo -e "$GREEN""[i] Which wordlist do you want to use?""$NC";
-				   echo -e "$BLUE""   Small: ~20k words""$NC";
-				   echo -e "$BLUE""   Medium: ~167k words""$NC";
-				   echo -e "$BLUE""   Large: ~215k words""$NC";
-				   echo -e "$BLUE""   XL: ~373k words""$NC";
-				   echo -e "$BLUE""   2XL: ~486k words""$GREEN";
-				   read -rp "[i] Enter S/M/L/X/2 " CHOICE;
-				   case $CHOICE in
-						   [sS]* )
-								   run_ffuf "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-								   # run_gobuster "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-								   break;
-								   ;;
-							[mM]* )
-								   run_ffuf "$DOMAIN" "$MEDIUM" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-								   # run_gobuster "$DOMAIN" "$MEDIUM" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-								   break;
-								   ;;
-							[lL]* )
-								   run_ffuf "$DOMAIN" "$LARGE" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-								   # run_gobuster "$DOMAIN" "$LARGE" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-								   run_whatweb "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-								   break;
-								   ;;
-							[xX]* )
-								   run_ffuf "$DOMAIN" "$XL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-								   # run_gobuster "$DOMAIN" "$XL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-								   run_whatweb "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-								   break;
-								   ;;
-							[2]* )
-								   run_ffuf "$DOMAIN" "$XXL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-								   # run_gobuster "$DOMAIN" "$XXL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-								   break;
-								   ;;
-				   esac
-		   done
-		   break;
-		   ;;
-   * )     
-		   echo -e "$RED""Please enter Y/y, N/n, or A/a.""$NC";
-		   ;;
-  esac
-done
 }
 
 function run_gobuster() {
@@ -822,6 +687,141 @@ function run_whatweb() {
 				DIFF=$(( END - START ));
 				echo -e "$GREEN""[i]$BLUE whatweb took $DIFF seconds to run.""$NC";
 		fi
+}
+
+function run_content_discovery() {
+# Ask user to do directory bruteforcing on discovered domains
+while true; do
+  echo -e "$ORANGE";
+  read -rp "[!] Do you want to begin content bruteforcing on all/interesting/no discovered domains? [A/I/N] " ANSWER
+
+  case $ANSWER in
+   [aA]* ) 
+		   echo -e "[i] Beginning directory bruteforcing on all discovered domains.";
+		   while true; do
+				   echo -e "$GREEN""[i] Which wordlist do you want to use?""$NC";
+				   echo -e "$BLUE""   Small: ~20k words""$NC";
+				   echo -e "$BLUE""   Medium: ~167k words""$NC";
+				   echo -e "$BLUE""   Large: ~215k words""$NC";
+				   echo -e "$BLUE""   XL: ~373k words""$NC";
+				   echo -e "$BLUE""   2XL: ~486k words""$GREEN";
+				   read -rp "[i] Enter S/M/L/X/2 " CHOICE;
+				   case $CHOICE in
+						   [sS]* )
+								   run_ffuf "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$ALL_DOMAIN";
+								   # run_gobuster "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_bfac "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_whatweb "$WORKING_DIR"/"$ALL_DOMAIN";
+								   break;
+								   ;;
+							[mM]* )
+								   run_ffuf "$DOMAIN" "$MEDIUM" "$WORKING_DIR"/"$ALL_DOMAIN";
+								   # run_gobuster "$DOMAIN" "$MEDIUM" "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_bfac "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_whatweb "$WORKING_DIR"/"$ALL_DOMAIN";
+								   break;
+								   ;;
+							[lL]* )
+								   run_ffuf "$DOMAIN" "$LARGE" "$WORKING_DIR"/"$ALL_DOMAIN";
+								   # run_gobuster "$DOMAIN" "$LARGE" "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_bfac "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_whatweb "$WORKING_DIR"/"$ALL_DOMAIN";
+								   break;
+								   ;;
+							[xX]* )
+								   run_ffuf "$DOMAIN" "$XL" "$WORKING_DIR"/"$ALL_DOMAIN";
+								   # run_gobuster "$DOMAIN" "$XL" "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_bfac "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_whatweb "$WORKING_DIR"/"$ALL_DOMAIN";
+								   break;
+								   ;;
+							[2]* )
+								   run_ffuf "$DOMAIN" "$XXL" "$WORKING_DIR"/"$ALL_DOMAIN";
+								   # run_gobuster "$DOMAIN" "$XXL" "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_bfac "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_whatweb "$WORKING_DIR"/"$ALL_DOMAIN";
+								   break;
+								   ;;
+				   esac
+		   done
+		   break;
+		   ;;
+   [nN]* ) 
+		   echo -e "$RED""[!] Skipping directory bruteforcing on all domains.""$NC";
+		   return;
+		   ;;
+   [iI]* ) 
+		   # Check if any interesting domains have been found.'
+		   COUNT=$(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1);
+		   if [[ "$COUNT" -lt 1 ]]; then
+				   echo -e "$RED""[!] No interesting domains have been discovered.""$NC";
+				   return;
+		   fi
+				   
+		   echo -e "[i] Beginning directory bruteforcing on interesting discovered domains.";
+		   while true; do
+				   echo -e "$GREEN""[i] Which wordlist do you want to use?""$NC";
+				   echo -e "$BLUE""   Small: ~20k words""$NC";
+				   echo -e "$BLUE""   Medium: ~167k words""$NC";
+				   echo -e "$BLUE""   Large: ~215k words""$NC";
+				   echo -e "$BLUE""   XL: ~373k words""$NC";
+				   echo -e "$BLUE""   2XL: ~486k words""$GREEN";
+				   read -rp "[i] Enter S/M/L/X/2 " CHOICE;
+				   case $CHOICE in
+						   [sS]* )
+								   run_ffuf "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   # run_gobuster "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   break;
+								   ;;
+							[mM]* )
+								   run_ffuf "$DOMAIN" "$MEDIUM" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   # run_gobuster "$DOMAIN" "$MEDIUM" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   break;
+								   ;;
+							[lL]* )
+								   run_ffuf "$DOMAIN" "$LARGE" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   # run_gobuster "$DOMAIN" "$LARGE" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_whatweb "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   break;
+								   ;;
+							[xX]* )
+								   run_ffuf "$DOMAIN" "$XL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   # run_gobuster "$DOMAIN" "$XL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_whatweb "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   break;
+								   ;;
+							[2]* )
+								   run_ffuf "$DOMAIN" "$XXL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   # run_gobuster "$DOMAIN" "$XXL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   break;
+								   ;;
+				   esac
+		   done
+		   break;
+		   ;;
+   * )     
+		   echo -e "$RED""Please enter Y/y, N/n, or A/a.""$NC";
+		   ;;
+  esac
+done
 }
 
 run_subdomain_brute;
