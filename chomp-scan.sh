@@ -316,7 +316,7 @@ function run_subjack() {
 		DIFF=$(( END - START ));
 
 		echo -e "$GREEN""[i]$BLUE Subjack took $DIFF seconds to run.""$NC";
-		echo -e "$GREEN""[!]$ORANGE Full Subjack results are at $WORKING_DIR/subjack-output.txt.""$NC";
+		echo -e "$GREEN""[i]$ORANGE Full Subjack results are at $WORKING_DIR/subjack-output.txt.""$NC";
 		sleep 1;
 }
 
@@ -357,7 +357,7 @@ function run_subdomain_brute() {
 				   break;
 				   ;;
 		   * )     
-				   echo -e "$RED"""[!] Please enter S/s, L/l, or H/h."$NC"
+				   echo -e "$RED"""[!] Please enter S/s, L/l, or H/h. "$NC"
 				   ;;
 		  esac
 		done
@@ -380,7 +380,7 @@ function run_aquatone () {
 				   ;;
 
 		   * )     
-				   echo -e "$RED""[!] Please enter Y/y or N/n.""$NC"
+				   echo -e "$RED""[!] Please enter Y/y or N/n. ""$NC"
 				   ;;
 		  esac
 		done
@@ -499,7 +499,7 @@ function run_portscan() {
 														   break;
 														   ;;
 												   * )     
-														   echo -e "$RED""[!] Please enter B/b, N/n, or M/m.""$NC"
+														   echo -e "$RED""[!] Please enter B/b, N/n, or M/m. ""$NC"
 														   ;;
 										   esac
 								   done
@@ -510,7 +510,7 @@ function run_portscan() {
 								   return;
 								   ;;
 						        * )     
-								   echo -e "$RED""[!] Please enter Y/y or N/n.""$NC"
+								   echo -e "$RED""[!] Please enter Y/y or N/n. ""$NC"
 								   ;;
 				   esac
 		   done
@@ -693,7 +693,7 @@ function run_content_discovery() {
 while true; do
   echo -e "$GREEN""[?] Do you want to begin content bruteforcing on [A]ll/[I]nteresting/[N]o discovered domains?";
   echo -e "$ORANGE""[i] This will run ffuf, bfac, nikto, whatweb, and wafw00f.";
-  read -rp "[?] Please enter A/a, I/i, or N/n." ANSWER
+  read -rp "[?] Please enter A/a, I/i, or N/n. " ANSWER
 
   case $ANSWER in
    [aA]* ) 
@@ -828,7 +828,7 @@ while true; do
 		   break;
 		   ;;
    * )     
-		   echo -e "$RED""Please enter Y/y, N/n, or A/a.""$NC";
+		   echo -e "$RED""Please enter Y/y, N/n, or A/a. ""$NC";
 		   ;;
   esac
 done
