@@ -790,6 +790,7 @@ while true; do
 								   # run_gobuster "$DOMAIN" "$MEDIUM" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_whatweb "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   break;
 								   ;;
