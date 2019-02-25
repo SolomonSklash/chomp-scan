@@ -394,7 +394,7 @@ function run_aquatone () {
 
 function run_masscan() {
 		# Run masscan against all IPs found on all ports
-		echo -e "$GREEN""[i]$BLUE Running masscan against $(wc -l "$WORKING_DIR"/$ALL_IP | cut -d ' ' -f 1) unique IP addresses.""$NC";
+		echo -e "$GREEN""[i]$BLUE Running masscan against $(wc -l "$WORKING_DIR"/$ALL_IP | cut -d ' ' -f 1) unique discovered IP addresses.""$NC";
 		echo -e "$GREEN""[i]$BLUE Command: masscan -p1-65535 -il $WORKING_DIR/$ALL_IP --rate=7000 -oL $WORKING_DIR/masscan-output.txt.""$NC";
 
 		# Check that IP list is not empty
