@@ -2,7 +2,7 @@
 
 A scripted pipeline of tools to simplify the bug bounty/penetration test reconnaissance phase, so you can focus on chomping bugs.
 
-![](screenshots/screenshot10.png)
+![](screenshots/screenshot01.png)
 
 ### Scope
 Chomp Scan is a Bash script that chains together the (in my opinion/experience) fastest and most effective tools for doing the long and sometimes tedious process of recon. No more looking for word lists and trying to remember when you started a scan and where the ouput is. Chomp Scan creates a timestamped output directory based on the search domain, e.g. *example.com-21:38:15*, and puts all tool output there, split into individual sub-directories as appropriate.
@@ -128,9 +128,12 @@ Chomp Scan is still in active development, as I use it myself for bug hunting, s
 * The generation of an HTML report, similar to what aquatone provides
 
 ### Examples
+![](screenshots/screenshot02.png)
+![](screenshots/screenshot03.png)
+![](screenshots/screenshot04.png)
 ![](screenshots/screenshot05.png)
+![](screenshots/screenshot06.png)
 ![](screenshots/screenshot07.png)
-![](screenshots/screenshot09.png)
 
 ## Thanks
 Thanks to all the authors of the included tools. They do all the heavy lifting.
