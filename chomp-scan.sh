@@ -460,7 +460,7 @@ function run_nmap() {
 				# Get live IPs from masscan
 				cut -d ' ' -f 4 "$WORKING_DIR"/masscan-output.txt >> "$WORKING_DIR"/"$ALL_IP";
 				
-				echo -e "$GREEN""[i]$BLUE Running nmap against $(wc -l "$WORKING_DIR"/"$ALL_IP" | cut -d ' ' -f 1) unique IP addresses and $(wc -l "$WORKING_DIR"/ports | cut -d ' ' -f 1) ports identified by masscan.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running nmap against $(wc -l "$WORKING_DIR"/"$ALL_IP" | cut -d ' ' -f 1) unique discovered IP addresses and $(wc -l "$WORKING_DIR"/ports | cut -d ' ' -f 1) ports identified by masscan.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: nmap -n -v -sV -iL $WORKING_DIR/all_ip.txt -p $(tr '\n' , < "$WORKING_DIR"/ports) -oA $WORKING_DIR/nmap-output.""$NC";
 				START=$(date +%s);
 				nmap -n -v -sV -iL "$WORKING_DIR"/"$ALL_IP" -p "$(tr '\n' , < "$WORKING_DIR"/ports)" -oA "$WORKING_DIR"/nmap-output;
