@@ -118,6 +118,14 @@ function check_paths() {
 		# 		echo -e "$RED""[!] The path or the file specified by the path for gobuster does not exit.";
 		# 		exit;
 		# fi
+		if [[ "$WHATWEB" == "" ]] || [[ ! -f "$WHATWEB" ]]; then
+				echo -e "$RED""[!] The path or the file specified by the path for whatweb does not exit.";
+				exit;
+		fi
+		if [[ "$WAFW00F" == "" ]] || [[ ! -f "$WAFW00F" ]]; then
+				echo -e "$RED""[!] The path or the file specified by the path for wafw00f does not exit.";
+				exit;
+		fi
 }
 
 check_paths;
