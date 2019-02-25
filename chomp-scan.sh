@@ -691,7 +691,7 @@ function run_content_discovery() {
 while true; do
   echo -e "$ORANGE""[?] Do you want to begin content bruteforcing on [A]ll/[I]nteresting/[N]o discovered domains?";
   echo -e "$ORANGE""[i] This will run ffuf, bfac, nikto, and whatweb.";
-  read -rp "Please enter Y/y, N/n, or A/a." ANSWER
+  read -rp "Please enter A/a, I/i, or N/n." ANSWER
 
   case $ANSWER in
    [aA]* ) 
