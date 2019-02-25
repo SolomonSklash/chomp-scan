@@ -163,10 +163,10 @@ function get_interesting() {
 		if [[ $FOUND -gt 0 ]]; then
 				echo -e "$RED""[!] The following $(wc -l "$WORKING_DIR"/interesting-domains.txt | cut -d ' ' -f 1) potentially interesting subdomains have been found ($WORKING_DIR/interesting-domains.txt):""$ORANGE";
 				cat "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-				sleep 2;
+				sleep 1;
 		else
 				echo -e "$RED""[!] No interesting domains have been found yet.""$NC";
-				sleep 2;
+				sleep 1;
 		fi
 }
 
@@ -691,7 +691,7 @@ function run_content_discovery() {
 while true; do
   echo -e "$ORANGE""[?] Do you want to begin content bruteforcing on [A]ll/[I]nteresting/[N]o discovered domains?";
   echo -e "$ORANGE""[i] This will run ffuf, bfac, nikto, and whatweb.";
-  read -rp "Please enter A/a, I/i, or N/n." ANSWER
+  read -rp "[?] Please enter A/a, I/i, or N/n." ANSWER
 
   case $ANSWER in
    [aA]* ) 
@@ -822,15 +822,47 @@ while true; do
 done
 }
 
+function run_wafw00f() {
+		# Call with domain as $1 and domain list as $2
+		if [[ $2 == $WORKING_DIR/$ALL_DOMAIN ]]; then
+				echo -e "$GREEN""[i]$BLUE Running wafw00f against all $(wc -l "$1" | cut -d ' ' -f 1) unique discovered domains.""$NC";
+				echo -e "$GREEN""[i]$BLUE Command: whatweb -v -a 3 -h https://$DOMAIN | tee $WORKING_DIR/whatweb.""$NC";
+				# Run wafw00f
+				COUNT=$(wc -l "$2" | cut -d ' ' -f 1)
+				mkdir "$WORKING_DIR"/wafw00f;
+				START=$(date +%s);
+				while read -r ADOMAIN; do
+						wafw00f https://"$ADOMAIN" -a | tee "$WORKING_DIR"/wafw00f/"$ADOMAIN";
+						COUNT=$((COUNT - 1));
+						echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
+				done < "$2"
+				END=$(date +%s);
+				DIFF=$(( END - START ));
+				echo -e "$GREEN""[i]$BLUE whatweb took $DIFF seconds to run.""$NC";
+		else
+				echo -e "$GREEN""[i]$BLUE Running wafw00f against $(wc -l "$1" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
+				echo -e "$GREEN""[i]$BLUE Command: wafw00f -v -a 3 -h https://$DOMAIN | tee $WORKING_DIR/whatweb.""$NC";
+				# Run wafw00f
+				COUNT=$(wc -l "$2" | cut -d ' ' -f 1)
+				mkdir "$WORKING_DIR"/wafw00f;
+				START=$(date +%s);
+				while read -r ADOMAIN; do
+						wafw00f https://"$ADOMAIN" -a | tee "$WORKING_DIR"/wafw00f/"$ADOMAIN";
+						COUNT=$((COUNT - 1));
+						echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
+				done < "$2"
+				END=$(date +%s);
+				DIFF=$(( END - START ));
+				echo -e "$GREEN""[i]$BLUE wafw00f took $DIFF seconds to run.""$NC";
+		fi
+}
+
 run_subdomain_brute;
-sleep 1;
+run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
 run_aquatone;
-sleep 1;
 get_interesting;
 run_portscan;
-sleep 1;
 run_content_discovery;
-sleep 1;
 get_interesting;
 list_found;
 SCAN_END=$(date +%s);
