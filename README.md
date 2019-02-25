@@ -62,15 +62,16 @@ Clone this repo and ensure that the below dependencies are met. Having a working
 
 ```
 git clone https://github.com/SolomonSklash/chomp-scan.git;
-sudo apt install sublist3r masscan nmap nikto gobuster chromium whatweb;
+sudo apt install sublist3r masscan nmap nikto gobuster chromium whatweb -y;
 go get github.com/subfinder/subfinder;
 go get github.com/haccer/subjack;
 go get github.com/ffuf/ffuf;
-wget https://github.com/michenriksen/aquatone/releases/download/v1.4.3/aquatone_linux_amd64_1.4.3.zip;
-git clone https://github.com/rbsec/dnscan.git;
-git clone https://github.com/infosec-au/altdns.git; 
-git clone https://github.com/blechschmidt/massdns.git; # Needs to be compiled with make, see repo for details
-git clone https://github.com/mazen160/bfac.git;
+mkdir -p ~/bounty/tools/aquatone;
+wget https://github.com/michenriksen/aquatone/releases/download/v1.4.3/aquatone_linux_amd64_1.4.3.zip -O ~/bounty/tools/aquatone;
+git clone https://github.com/rbsec/dnscan.git ~/bounty/tools/dnscan;
+git clone https://github.com/infosec-au/altdns.git ~/bounty/tools/altdns; 
+git clone https://github.com/blechschmidt/massdns.git ~/bounty/tools/massdns; # Needs to be compiled with make, see repo for details
+git clone https://github.com/mazen160/bfac.git ~/bounty/tools/bfac;
 ```
 
 Then make sure the path variables for each tool are set. Currently they default to ~/bounty/tools/[tool-repo]/[tool-file].
@@ -103,7 +104,7 @@ The following tools are required for Chomp Scan. Note that this tool was designe
 * [nikto](https://cirt.net/nikto2) Kali package
 * [gobuster](https://github.com/OJ/gobuster) Kali package
 * [whatweb](https://www.morningstarsecurity.com/research/whatweb) Kali package
-* [chromium](https://www.chromium.org/) Kali package (for aquatone)
+* [chromium](https://www.chromium.org/) Kali package (needed for aquatone)
 * [dnscan](https://github.com/rbsec/dnscan)- Python
 * [altdns](https://github.com/infosec-au/altdns) - Python
 * [bfac](https://github.com/mazen160/bfac) Python3
