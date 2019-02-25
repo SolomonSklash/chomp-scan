@@ -23,6 +23,8 @@ SUBFINDER=$(command -v subfinder);
 SUBLIST3R=$(command -v sublist3r);
 SUBJACK=$(command -v subjack);
 FFUF=$(command -v ffuf);
+WHATWEB=$(command -v whatweb);
+WAFW00F=$(command -v wafw00f);
 #GOBUSTER=$(command -v gobuster);
 CHROMIUM=$(command -v chromium);
 DNSCAN=~/bounty/tools/dnscan/dnscan.py;
@@ -661,7 +663,7 @@ function run_whatweb() {
 				mkdir "$WORKING_DIR"/whatweb;
 				START=$(date +%s);
 				while read -r ADOMAIN; do
-						whatweb -v -a 3 https://"$ADOMAIN" | tee "$WORKING_DIR"/whatweb/"$ADOMAIN";
+						"$WHATWEB" -v -a 3 https://"$ADOMAIN" | tee "$WORKING_DIR"/whatweb/"$ADOMAIN";
 						COUNT=$((COUNT - 1));
 						echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
 				done < "$2"
@@ -676,7 +678,7 @@ function run_whatweb() {
 				mkdir "$WORKING_DIR"/whatweb;
 				START=$(date +%s);
 				while read -r ADOMAIN; do
-						whatweb -v -a 3 https://"$ADOMAIN" | tee "$WORKING_DIR"/whatweb/"$ADOMAIN";
+						"$WHATWEB" -v -a 3 https://"$ADOMAIN" | tee "$WORKING_DIR"/whatweb/"$ADOMAIN";
 						COUNT=$((COUNT - 1));
 						echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
 				done < "$2"
@@ -842,7 +844,7 @@ function run_wafw00f() {
 				mkdir "$WORKING_DIR"/wafw00f;
 				START=$(date +%s);
 				while read -r ADOMAIN; do
-						wafw00f https://"$ADOMAIN" -a | tee "$WORKING_DIR"/wafw00f/"$ADOMAIN";
+						"$WAFW00F" https://"$ADOMAIN" -a | tee "$WORKING_DIR"/wafw00f/"$ADOMAIN";
 						COUNT=$((COUNT - 1));
 						echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
 				done < "$2"
@@ -857,7 +859,7 @@ function run_wafw00f() {
 				mkdir "$WORKING_DIR"/wafw00f;
 				START=$(date +%s);
 				while read -r ADOMAIN; do
-						wafw00f https://"$ADOMAIN" -a | tee "$WORKING_DIR"/wafw00f/"$ADOMAIN";
+						"$WAFW00F" https://"$ADOMAIN" -a | tee "$WORKING_DIR"/wafw00f/"$ADOMAIN";
 						COUNT=$((COUNT - 1));
 						echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
 				done < "$2"
