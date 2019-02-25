@@ -532,7 +532,7 @@ function run_gobuster() {
 				DIFF=$(( END - START ));
 				echo -e "$GREEN""[i]$BLUE Gobuster took $DIFF seconds to run.""$NC";
 		else
-				echo -e "$GREEN""[i]$BLUE Running gobuster against $(wc -l "$3" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running gobuster against all $(wc -l "$3" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: gobuster -u https://$DOMAIN -s '200,201,202,204,307,308,401,403,405,500,501,503' -to 3s -e -k -t 20 -w $2 -o $WORKING_DIR/gobuster""$NC";
 				# Run gobuster
 				mkdir "$WORKING_DIR"/gobuster;
@@ -570,7 +570,7 @@ function run_ffuf() {
 				DIFF=$(( END - START ));
 				echo -e "$GREEN""[i]$BLUE ffuf took $DIFF seconds to run.""$NC";
 		else
-				echo -e "$GREEN""[i]$BLUE Running ffuf against $(wc -l "$3" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running ffuf against all $(wc -l "$3" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: ffuf -u https://$DOMAIN/FUZZ -w $2 -fc 301,302 -k | tee $WORKING_DIR/ffuf.""$NC";
 				# Run ffuf
 				mkdir "$WORKING_DIR"/ffuf;
@@ -602,7 +602,7 @@ function run_bfac() {
 				DIFF=$(( END - START ));
 				echo -e "$GREEN""[i]$BLUE ffuf took $DIFF seconds to run.""$NC";
 		else
-				echo -e "$GREEN""[i]$BLUE Running bfac against $(wc -l "$2" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running bfac against all $(wc -l "$2" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: bfac -u $DOMAIN -xsc 404,301,302,400 -o $WORKING_DIR/bfac.""$NC";
 				# Run ffuf
 				mkdir "$WORKING_DIR"/bfac;
@@ -634,7 +634,7 @@ function run_nikto() {
 				DIFF=$(( END - START ));
 				echo -e "$GREEN""[i]$BLUE ffuf took $DIFF seconds to run.""$NC";
 		else
-				echo -e "$GREEN""[i]$BLUE Running nikto against $(wc -l "$1" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running nikto against all $(wc -l "$1" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: nikto -h https://$DOMAIN -output $WORKING_DIR/nikto.""$NC";
 				# Run nikto
 				COUNT=$(wc -l "$1" | cut -d ' ' -f 1)
@@ -669,7 +669,7 @@ function run_whatweb() {
 				DIFF=$(( END - START ));
 				echo -e "$GREEN""[i]$BLUE whatweb took $DIFF seconds to run.""$NC";
 		else
-				echo -e "$GREEN""[i]$BLUE Running whatweb against $(wc -l "$2" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running whatweb against all $(wc -l "$2" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: whatweb -v -a 3 -h https://$DOMAIN | tee $WORKING_DIR/whatweb.""$NC";
 				# Run whatweb
 				COUNT=$(wc -l "$2" | cut -d ' ' -f 1)
@@ -840,7 +840,7 @@ function run_wafw00f() {
 				DIFF=$(( END - START ));
 				echo -e "$GREEN""[i]$BLUE whatweb took $DIFF seconds to run.""$NC";
 		else
-				echo -e "$GREEN""[i]$BLUE Running wafw00f against $(wc -l "$2" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running wafw00f against all $(wc -l "$2" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: wafw00f https://$1 -a | tee $WORKING_DIR/wafw00f.""$NC";
 				# Run wafw00f
 				COUNT=$(wc -l "$2" | cut -d ' ' -f 1)
