@@ -11,7 +11,7 @@ DOMAIN=$1;
 # Wordlists
 SHORT=wordlists/subdomains-top1mil-20000.txt;
 LONG=wordlists/sortedcombined-knock-dnsrecon-fierce-reconng.txt;
-HUGE=wordlists/huge-200k;
+HUGE=wordlists/huge-200k.txt;
 SMALL=wordlists/big.txt;
 MEDIUM=wordlists/raft-large-combined.txt;
 LARGE=wordlists/seclists-combined.txt;
