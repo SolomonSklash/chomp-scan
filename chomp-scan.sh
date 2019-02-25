@@ -259,7 +259,7 @@ function run_sublist3r() {
 function run_altdns() {
 		# Run altdns with found subdomains combined with altdns-wordlist.txt
 
-		echo -e "$GREEN""[i]$BLUE Running altdns against found subdomains to generate domains for masscan to resolve.""$NC";
+		echo -e "$GREEN""[i]$BLUE Running altdns against all $(wc -l $WORKING_DIR/$ALL_DOMAIN | cut -d ' ' -f 1) unique discovered subdomains to generate domains for masscan to resolve.""$NC";
 		echo -e "$GREEN""[i]$ORANGE Command: altdns.py -i $WORKING_DIR/$ALL_DOMAIN -w wordlists/altdns-words.txt -o $WORKING_DIR/altdns-output.txt -t 20.""$NC";
 		START=$(date +%s);
 		"$ALTDNS" -i "$WORKING_DIR"/$ALL_DOMAIN -w wordlists/altdns-words.txt -o "$WORKING_DIR"/altdns-output.txt -t 20
