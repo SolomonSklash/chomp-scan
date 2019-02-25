@@ -307,9 +307,9 @@ function run_subjack() {
 
 		# Check for domain takeover on each found domain
 		echo -e "$GREEN""[i]$BLUE Running subjack against all unique found domains to check for subdomain takeover.""$NC";
-		echo -e "$GREEN""[i]$ORANGE Command: subjack -d $1 -w $2 -v -t 20 -ssl -o $WORKING_DIR/subjack-output.txt""$NC";
+		echo -e "$GREEN""[i]$ORANGE Command: subjack -d $1 -w $2 -v -t 20 -ssl -m -o $WORKING_DIR/subjack-output.txt""$NC";
 		START=$(date +%s);
-		"$SUBJACK" -d "$1" -w "$2" -v -t 20 -ssl -o "$WORKING_DIR"/subjack-output.txt;
+		"$SUBJACK" -d "$1" -w "$2" -v -t 20 -ssl -m -o "$WORKING_DIR"/subjack-output.txt;
 		END=$(date +%s);
 		DIFF=$(( END - START ));
 
