@@ -600,7 +600,7 @@ function run_ffuf() {
 function run_bfac() {
 		# Call with domain list as $1
 		if [[ $1 == $WORKING_DIR/$ALL_DOMAIN ]]; then
-				echo -e "$GREEN""[i]$BLUE Running bfac against all $(wc -l "$2" | cut -d ' ' -f 1) unique discovered domains.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running bfac against all $(wc -l "$1" | cut -d ' ' -f 1) unique discovered domains.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: bfac -u $DOMAIN -xsc 404,301,302,400 -o $WORKING_DIR/bfac.""$NC";
 				# Run ffuf
 				mkdir "$WORKING_DIR"/bfac;
