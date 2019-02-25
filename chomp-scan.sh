@@ -654,7 +654,7 @@ function run_nikto() {
 function run_whatweb() {
 		# Call with domain as $1 and domain list as $2
 		if [[ $2 == $WORKING_DIR/$ALL_DOMAIN ]]; then
-				echo -e "$GREEN""[i]$BLUE Running whatweb against all $(wc -l "$1" | cut -d ' ' -f 1) unique discovered domains.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running whatweb against all $(wc -l "$2" | cut -d ' ' -f 1) unique discovered domains.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: whatweb -v -a 3 -h https://$DOMAIN | tee $WORKING_DIR/whatweb.""$NC";
 				# Run whatweb
 				COUNT=$(wc -l "$2" | cut -d ' ' -f 1)
@@ -669,7 +669,7 @@ function run_whatweb() {
 				DIFF=$(( END - START ));
 				echo -e "$GREEN""[i]$BLUE whatweb took $DIFF seconds to run.""$NC";
 		else
-				echo -e "$GREEN""[i]$BLUE Running whatweb against $(wc -l "$1" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running whatweb against $(wc -l "$2" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: whatweb -v -a 3 -h https://$DOMAIN | tee $WORKING_DIR/whatweb.""$NC";
 				# Run whatweb
 				COUNT=$(wc -l "$2" | cut -d ' ' -f 1)
@@ -689,7 +689,7 @@ function run_whatweb() {
 function run_content_discovery() {
 # Ask user to do directory bruteforcing on discovered domains
 while true; do
-  echo -e "$ORANGE""[?] Do you want to begin content bruteforcing on [A]ll/[I]nteresting/[N]o discovered domains?";
+  echo -e "$GREEN""[?] Do you want to begin content bruteforcing on [A]ll/[I]nteresting/[N]o discovered domains?";
   echo -e "$ORANGE""[i] This will run ffuf, bfac, nikto, and whatweb.";
   read -rp "[?] Please enter A/a, I/i, or N/n." ANSWER
 
@@ -825,8 +825,8 @@ done
 function run_wafw00f() {
 		# Call with domain as $1 and domain list as $2
 		if [[ $2 == $WORKING_DIR/$ALL_DOMAIN ]]; then
-				echo -e "$GREEN""[i]$BLUE Running wafw00f against all $(wc -l "$1" | cut -d ' ' -f 1) unique discovered domains.""$NC";
-				echo -e "$GREEN""[i]$BLUE Command: whatweb -v -a 3 -h https://$DOMAIN | tee $WORKING_DIR/whatweb.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running wafw00f against all $(wc -l "$2" | cut -d ' ' -f 1) unique discovered domains.""$NC";
+				echo -e "$GREEN""[i]$BLUE Command: wafw00f https://$1 -a | tee $WORKING_DIR/wafw00f.""$NC";
 				# Run wafw00f
 				COUNT=$(wc -l "$2" | cut -d ' ' -f 1)
 				mkdir "$WORKING_DIR"/wafw00f;
@@ -840,8 +840,8 @@ function run_wafw00f() {
 				DIFF=$(( END - START ));
 				echo -e "$GREEN""[i]$BLUE whatweb took $DIFF seconds to run.""$NC";
 		else
-				echo -e "$GREEN""[i]$BLUE Running wafw00f against $(wc -l "$1" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
-				echo -e "$GREEN""[i]$BLUE Command: wafw00f -v -a 3 -h https://$DOMAIN | tee $WORKING_DIR/whatweb.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running wafw00f against $(wc -l "$2" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
+				echo -e "$GREEN""[i]$BLUE Command: wafw00f https://$1 -a | tee $WORKING_DIR/wafw00f.""$NC";
 				# Run wafw00f
 				COUNT=$(wc -l "$2" | cut -d ' ' -f 1)
 				mkdir "$WORKING_DIR"/wafw00f;
