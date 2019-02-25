@@ -45,7 +45,7 @@ A variety of wordlists are used, both for subdomain bruteforcing and content dic
 #### Subdomain Bruteforcing
 * subdomains-top1mil-20000.txt - 22k words - From [Seclists](https://github.com/danielmiessler/SecLists)
 * sortedcombined-knock-dnsrecon-fierce-reconng.txt - 102k words - From [Seclists](https://github.com/danielmiessler/SecLists) 
-* huge-200k - 199k words - A combination I made of various wordlists, including Seclists
+* huge-200k.txt - 199k words - A combination I made of various wordlists, including Seclists
 
 #### Content Discovery
 * big.txt - 20k words - From [Seclists](https://github.com/danielmiessler/SecLists)
