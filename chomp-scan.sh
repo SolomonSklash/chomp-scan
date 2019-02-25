@@ -306,7 +306,7 @@ function run_subjack() {
 		# Call with domain as $1 and wordlist as $2
 
 		# Check for domain takeover on each found domain
-		echo -e "$GREEN""[i]$BLUE Running subjack against all unique found domains to check for subdomain takeover.""$NC";
+		echo -e "$GREEN""[i]$BLUE Running subjack against all $(wc -l "$WORKING_DIR"/$ALL_DOMAIN | cut -d ' ' -f 1) unique discoverd subdomains to check for subdomain takeover.""$NC";
 		echo -e "$GREEN""[i]$ORANGE Command: subjack -d $1 -w $2 -v -t 20 -ssl -m -o $WORKING_DIR/subjack-output.txt""$NC";
 		START=$(date +%s);
 		"$SUBJACK" -d "$1" -w "$2" -v -t 20 -ssl -m -o "$WORKING_DIR"/subjack-output.txt;
