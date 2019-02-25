@@ -596,9 +596,12 @@ function run_bfac() {
 				echo -e "$GREEN""[i]$BLUE Command: bfac -u $DOMAIN -xsc 404,301,302,400 -o $WORKING_DIR/bfac.""$NC";
 				# Run ffuf
 				mkdir "$WORKING_DIR"/bfac;
+				COUNT=$(wc -l "$1" | cut -d ' ' -f 1)
 				START=$(date +%s);
 				while read -r ADOMAIN; do
 						$BFAC -u "$ADOMAIN" -xsc 404,301,302,400 -o "$WORKING_DIR"/bfac/"$ADOMAIN";
+						COUNT=$((COUNT - 1));
+						echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
 				done < "$1"
 				END=$(date +%s);
 				DIFF=$(( END - START ));
@@ -608,9 +611,12 @@ function run_bfac() {
 				echo -e "$GREEN""[i]$BLUE Command: bfac -u $DOMAIN -xsc 404,301,302,400 -o $WORKING_DIR/bfac.""$NC";
 				# Run ffuf
 				mkdir "$WORKING_DIR"/bfac;
+				COUNT=$(wc -l "$1" | cut -d ' ' -f 1)
 				START=$(date +%s);
 				while read -r ADOMAIN; do
 						$BFAC -u "$ADOMAIN" -xsc 404,301,302,400 -o "$WORKING_DIR"/bfac/"$ADOMAIN";
+						COUNT=$((COUNT - 1));
+						echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
 				done < "$1"
 				END=$(date +%s);
 				DIFF=$(( END - START ));
