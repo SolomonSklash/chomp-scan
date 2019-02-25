@@ -1,9 +1,5 @@
 #!/bin/bash
 
-# TODO
-# Check for cloudflare/other CDNs or hosting via whois?
-# Config file for tool options? Resolvers, which tools to run, which wordlists, etc.
-
 # Colors
 NC='\033[0m';
 RED='\033[0;31m';
