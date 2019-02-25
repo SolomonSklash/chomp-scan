@@ -690,7 +690,7 @@ function run_content_discovery() {
 # Ask user to do directory bruteforcing on discovered domains
 while true; do
   echo -e "$GREEN""[?] Do you want to begin content bruteforcing on [A]ll/[I]nteresting/[N]o discovered domains?";
-  echo -e "$ORANGE""[i] This will run ffuf, bfac, nikto, and whatweb.";
+  echo -e "$ORANGE""[i] This will run ffuf, bfac, nikto, whatweb, and wafw00f.";
   read -rp "[?] Please enter A/a, I/i, or N/n." ANSWER
 
   case $ANSWER in
