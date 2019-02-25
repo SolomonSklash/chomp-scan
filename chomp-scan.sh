@@ -23,7 +23,7 @@ SUBFINDER=$(command -v subfinder);
 SUBLIST3R=$(command -v sublist3r);
 SUBJACK=$(command -v subjack);
 FFUF=$(command -v ffuf);
-GOBUSTER=$(command -v gobuster);
+#GOBUSTER=$(command -v gobuster);
 CHROMIUM=$(command -v chromium);
 DNSCAN=~/bounty/tools/dnscan/dnscan.py;
 ALTDNS=~/bounty/tools/altdns/altdns.py;
@@ -69,53 +69,53 @@ echo -e "$BLUE""$BANNER";
 function check_paths() {
 		# Check that all paths are set
 		if [[ "$DNSCAN" == "" ]] || [[ ! -f "$DNSCAN" ]]; then
-				echo -e "$RED""The path or the file specified by the path for dnscan does not exit.";
+				echo -e "$RED""[!] The path or the file specified by the path for dnscan does not exit.";
 				exit;
 		fi
 		if [[ "$SUBFINDER" == "" ]] || [[ ! -f "$SUBFINDER" ]]; then
-				echo -e "$RED""The path or the file specified by the path for subfinder does not exit.";
+				echo -e "$RED""[!] The path or the file specified by the path for subfinder does not exit.";
 				exit;
 		fi
 		if [[ "$SUBLIST3R" == "" ]] || [[ ! -f "$SUBLIST3R" ]]; then
-				echo -e "$RED""The path or the file specified by the path for sublist3r does not exit.";
+				echo -e "$RED""[!] The path or the file specified by the path for sublist3r does not exit.";
 				exit;
 		fi
 		if [[ "$SUBJACK" == "" ]] || [[ ! -f "$SUBJACK" ]]; then
-				echo -e "$RED""The path or the file specified by the path for subjack does not exit.";
+				echo -e "$RED""[!] The path or the file specified by the path for subjack does not exit.";
 				exit;
 		fi
 		if [[ "$ALTDNS" == "" ]] || [[ ! -f "$ALTDNS" ]]; then
-				echo -e "$RED""The path or the file specified by the path for altdns does not exit.";
+				echo -e "$RED""[!] The path or the file specified by the path for altdns does not exit.";
 				exit;
 		fi
 		if [[ "$MASSDNS_BIN" == "" ]] || [[ ! -f "$MASSDNS_BIN" ]]; then
-				echo -e "$RED""The path or the file specified by the path for the massdns binary does not exit.";
+				echo -e "$RED""[!] The path or the file specified by the path for the massdns binary does not exit.";
 				exit;
 		fi
 		if [[ "$MASSDNS_RESOLVERS" == "" ]] || [[ ! -f "$MASSDNS_RESOLVERS" ]]; then
-				echo -e "$RED""The path or the file specified by the path for massdns resolver file does not exit.";
+				echo -e "$RED""[!] The path or the file specified by the path for massdns resolver file does not exit.";
 				exit;
 		fi
 		if [[ "$AQUATONE" == "" ]] || [[ ! -f "$AQUATONE" ]]; then
-				echo -e "$RED""The path or the file specified by the path for aquatone does not exit.";
+				echo -e "$RED""[!] The path or the file specified by the path for aquatone does not exit.";
 				exit;
 		fi
 		if [[ "$FFUF" == "" ]] || [[ ! -f "$FFUF" ]]; then
-				echo -e "$RED""The path or the file specified by the path for ffuf does not exit.";
+				echo -e "$RED""[!] The path or the file specified by the path for ffuf does not exit.";
 				exit;
 		fi
 		if [[ "$BFAC" == "" ]] || [[ ! -f "$BFAC" ]]; then
-				echo -e "$RED""The path or the file specified by the path for bfac does not exit.";
+				echo -e "$RED""[!] The path or the file specified by the path for bfac does not exit.";
 				exit;
 		fi
 		if [[ "$CHROMIUM" == "" ]] || [[ ! -f "$CHROMIUM" ]]; then
-				echo -e "$RED""The path or the file specified by the path for chromium does not exit.";
+				echo -e "$RED""[!] The path or the file specified by the path for chromium does not exit.";
 				exit;
 		fi
-		if [[ "$GOBUSTER" == "" ]] || [[ ! -f "$GOBUSTER" ]]; then
-				echo -e "$RED""The path or the file specified by the path for gobuster does not exit.";
-				exit;
-		fi
+		# if [[ "$GOBUSTER" == "" ]] || [[ ! -f "$GOBUSTER" ]]; then
+		# 		echo -e "$RED""[!] The path or the file specified by the path for gobuster does not exit.";
+		# 		exit;
+		# fi
 }
 
 check_paths;
@@ -321,10 +321,11 @@ function run_subjack() {
 function run_subdomain_brute() {
 		# Ask user for wordlist size
 		while true; do
-		  echo -e "$GREEN""[i] What size wordlist would you like to use for subdomain bruteforcing?";
+		  echo -e "$ORANGE""[i] Beginning subdomain enumeration. This will use dnscan, subfinder, sublist3r, and massdns + altdns.";
+		  echo -e "$GREEN""[?] What size wordlist would you like to use for subdomain bruteforcing?";
 		  echo -e "$GREEN""[i] Sizes are [S]mall (22k domains), [L]arge (102k domains), and [H]uge (199k domains).";
 		  echo -e "$ORANGE";
-		  read -rp "[!] Please enter S/s, L/l, or H/h. " ANSWER
+		  read -rp "[?] Please enter S/s, L/l, or H/h. " ANSWER
 
 		  case $ANSWER in
 		   [sS]* ) 
@@ -361,15 +362,10 @@ function run_subdomain_brute() {
 }
 
 function run_aquatone () {
-		# Make sure AQUATONE path is set
-		if [[ "$AQUATONE" == "" ]]; then
-			echo -e "$GREEN""[i]$RED AQUATONE path is not set.""$NC";
-			return;
-		fi
 		# Ask user to run aquatone
 		while true; do
 		  echo -e "$ORANGE";
-		  read -rp "[!] Do you want to screenshot discovered domains with aquatone? [Y/N] " ANSWER
+		  read -rp "[?] Do you want to screenshot discovered domains with aquatone? [Y/N] " ANSWER
 
 		  case $ANSWER in
 		   [yY]* ) 
@@ -477,7 +473,8 @@ function run_nmap() {
 
 function run_portscan() {
 		   while true; do
-				   echo -e "$GREEN""[i] Do you want to perform port scanning?""$NC";
+				   echo -e "$GREEN""[?] Do you want to perform port scanning?""$NC";
+				   echo -e "$ORANGE""[i] This will use masscan and/or nmap.""$NC";
 				   echo -e "$ORANGE";
 				   read -rp "[i] Enter Y/N " CHOICE;
 				   case $CHOICE in
@@ -692,14 +689,15 @@ function run_whatweb() {
 function run_content_discovery() {
 # Ask user to do directory bruteforcing on discovered domains
 while true; do
-  echo -e "$ORANGE";
-  read -rp "[!] Do you want to begin content bruteforcing on all/interesting/no discovered domains? [A/I/N] " ANSWER
+  echo -e "$ORANGE""[?] Do you want to begin content bruteforcing on [A]ll/[I]nteresting/[N]o discovered domains?";
+  echo -e "$ORANGE""[i] This will run ffuf, bfac, nikto, and whatweb.";
+  read -rp "Please enter Y/y, N/n, or A/a." ANSWER
 
   case $ANSWER in
    [aA]* ) 
 		   echo -e "[i] Beginning directory bruteforcing on all discovered domains.";
 		   while true; do
-				   echo -e "$GREEN""[i] Which wordlist do you want to use?""$NC";
+				   echo -e "$GREEN""[?] Which wordlist do you want to use?""$NC";
 				   echo -e "$BLUE""   Small: ~20k words""$NC";
 				   echo -e "$BLUE""   Medium: ~167k words""$NC";
 				   echo -e "$BLUE""   Large: ~215k words""$NC";
@@ -765,7 +763,7 @@ while true; do
 				   
 		   echo -e "[i] Beginning directory bruteforcing on interesting discovered domains.";
 		   while true; do
-				   echo -e "$GREEN""[i] Which wordlist do you want to use?""$NC";
+				   echo -e "$GREEN""[?] Which wordlist do you want to use?""$NC";
 				   echo -e "$BLUE""   Small: ~20k words""$NC";
 				   echo -e "$BLUE""   Medium: ~167k words""$NC";
 				   echo -e "$BLUE""   Large: ~215k words""$NC";
