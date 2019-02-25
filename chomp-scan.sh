@@ -710,7 +710,8 @@ while true; do
 								   # run_gobuster "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_bfac "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_whatweb "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   break;
 								   ;;
 							[mM]* )
@@ -718,7 +719,8 @@ while true; do
 								   # run_gobuster "$DOMAIN" "$MEDIUM" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_bfac "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_whatweb "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   break;
 								   ;;
 							[lL]* )
@@ -726,7 +728,8 @@ while true; do
 								   # run_gobuster "$DOMAIN" "$LARGE" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_bfac "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_whatweb "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   break;
 								   ;;
 							[xX]* )
@@ -734,7 +737,8 @@ while true; do
 								   # run_gobuster "$DOMAIN" "$XL" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_bfac "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_whatweb "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   break;
 								   ;;
 							[2]* )
@@ -742,7 +746,8 @@ while true; do
 								   # run_gobuster "$DOMAIN" "$XXL" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_bfac "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_whatweb "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   break;
 								   ;;
 				   esac
@@ -777,6 +782,7 @@ while true; do
 								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   break;
 								   ;;
 							[mM]* )
@@ -784,7 +790,7 @@ while true; do
 								   # run_gobuster "$DOMAIN" "$MEDIUM" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   break;
 								   ;;
 							[lL]* )
@@ -793,6 +799,7 @@ while true; do
 								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_whatweb "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   break;
 								   ;;
 							[xX]* )
@@ -800,7 +807,8 @@ while true; do
 								   # run_gobuster "$DOMAIN" "$XL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-								   run_whatweb "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   break;
 								   ;;
 							[2]* )
@@ -809,6 +817,7 @@ while true; do
 								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   break;
 								   ;;
 				   esac
@@ -858,7 +867,6 @@ function run_wafw00f() {
 }
 
 run_subdomain_brute;
-run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
 run_aquatone;
 get_interesting;
 run_portscan;
