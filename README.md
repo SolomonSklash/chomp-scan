@@ -13,7 +13,7 @@ A list of interesting words is included, such as *dev, test, uat, staging,* etc.
 
 A blacklist file is included, to exclude certain domains from the results. However it does not prevent those domains from being resolved, only from being used for port scanning and content discovery.
 
-**Note: Chomp Scan is still in development, and new/different tools will be added as I find them. Pull request and comments welcome!**
+**Note: Chomp Scan is still in development, and new/different tools will be added as I find them. Pull requests and comments welcome!**
 
 ### Scanning Phases
 
