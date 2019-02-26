@@ -1079,6 +1079,8 @@ run_information_gathering;
 run_content_discovery;
 get_interesting;
 list_found;
+
+# Calculate scan runtime
 SCAN_END=$(date +%s);
 SCAN_DIFF=$(( SCAN_END - SCAN_START ));
 echo -e "$BLUE""[i] Total script run time: $SCAN_DIFF seconds.""$NC";
