@@ -24,7 +24,6 @@ Chomp Scan supports limited canceling/skipping of tools by pressing Ctrl-c. This
 * subfinder
 * sublist3r
 * massdns + altdns
-* subjack
 
 #### Screenshots (optional)
 * aquatone
@@ -33,6 +32,7 @@ Chomp Scan supports limited canceling/skipping of tools by pressing Ctrl-c. This
 * masscan and/or nmap
 
 #### Information Gathering (optional) (4 different sized wordlists)
+* subjack
 * bfac
 * nikto
 * whatweb
