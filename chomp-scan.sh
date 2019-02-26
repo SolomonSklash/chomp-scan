@@ -312,22 +312,6 @@ function run_massdns() {
 		sleep 1;
 }
 
-function run_subjack() {
-		# Call with domain as $1 and wordlist as $2
-
-		# Check for domain takeover on each found domain
-		echo -e "$GREEN""[i]$BLUE Running subjack against all $(wc -l "$WORKING_DIR"/$ALL_DOMAIN | cut -d ' ' -f 1) unique discoverd subdomains to check for subdomain takeover.""$NC";
-		echo -e "$GREEN""[i]$ORANGE Command: subjack -d $1 -w $2 -v -t 20 -ssl -m -o $WORKING_DIR/subjack-output.txt""$NC";
-		START=$(date +%s);
-		"$SUBJACK" -d "$1" -w "$2" -v -t 20 -ssl -m -o "$WORKING_DIR"/subjack-output.txt;
-		END=$(date +%s);
-		DIFF=$(( END - START ));
-
-		echo -e "$GREEN""[i]$BLUE Subjack took $DIFF seconds to run.""$NC";
-		echo -e "$GREEN""[i]$ORANGE Full Subjack results are at $WORKING_DIR/subjack-output.txt.""$NC";
-		sleep 1;
-}
-
 function run_subdomain_brute() {
 		# Ask user for wordlist size
 		while true; do
@@ -343,7 +327,6 @@ function run_subdomain_brute() {
 				   run_subfinder "$DOMAIN" "$SHORT";
 				   run_sublist3r "$DOMAIN";
 				   run_massdns "$DOMAIN" "$SHORT";
-				   run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
 				   break
 				   ;;
 
@@ -352,7 +335,6 @@ function run_subdomain_brute() {
 				   run_subfinder "$DOMAIN" "$LONG";
 				   run_sublist3r "$DOMAIN";
 				   run_massdns "$DOMAIN" "$LONG";
-				   run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
 				   return;
 				   ;;
 
@@ -361,7 +343,6 @@ function run_subdomain_brute() {
 				   run_subfinder "$DOMAIN" "$HUGE";
 				   run_sublist3r "$DOMAIN";
 				   run_massdns "$DOMAIN" "$HUGE";
-				   run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
 				   break;
 				   ;;
 		   * )     
@@ -849,11 +830,27 @@ function run_wafw00f() {
 		fi
 }
 
+function run_subjack() {
+		# Call with domain as $1 and wordlist as $2
+
+		# Check for domain takeover on each found domain
+		echo -e "$GREEN""[i]$BLUE Running subjack against all $(wc -l "$WORKING_DIR"/$ALL_DOMAIN | cut -d ' ' -f 1) unique discoverd subdomains to check for subdomain takeover.""$NC";
+		echo -e "$GREEN""[i]$ORANGE Command: subjack -d $1 -w $2 -v -t 20 -ssl -m -o $WORKING_DIR/subjack-output.txt""$NC";
+		START=$(date +%s);
+		"$SUBJACK" -d "$1" -w "$2" -v -t 20 -ssl -m -o "$WORKING_DIR"/subjack-output.txt;
+		END=$(date +%s);
+		DIFF=$(( END - START ));
+
+		echo -e "$GREEN""[i]$BLUE Subjack took $DIFF seconds to run.""$NC";
+		echo -e "$GREEN""[i]$ORANGE Full Subjack results are at $WORKING_DIR/subjack-output.txt.""$NC";
+		sleep 1;
+}
+
 function run_information_gathering() {
 # Ask user to do information gathering on discovered domains
 while true; do
   echo -e "$GREEN""[?] Do you want to begin information gathering on [A]ll/[I]nteresting/[N]o discovered domains?";
-  echo -e "$ORANGE""[i] This will run bfac, nikto, whatweb, and wafw00f.";
+  echo -e "$ORANGE""[i] This will run subjack, bfac, nikto, whatweb, and wafw00f.";
   read -rp "[?] Please enter A/a, I/i, or N/n. " ANSWER
 
   case $ANSWER in
@@ -869,6 +866,7 @@ while true; do
 				   read -rp "[i] Enter S/M/L/X/2 " CHOICE;
 				   case $CHOICE in
 						   [sS]* )
+								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_bfac "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
@@ -876,6 +874,7 @@ while true; do
 								   break;
 								   ;;
 							[mM]* )
+								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_bfac "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
@@ -883,6 +882,7 @@ while true; do
 								   break;
 								   ;;
 							[lL]* )
+								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_bfac "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
@@ -890,6 +890,7 @@ while true; do
 								   break;
 								   ;;
 							[xX]* )
+								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_bfac "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
@@ -897,6 +898,7 @@ while true; do
 								   break;
 								   ;;
 							[2]* )
+								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_bfac "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
@@ -933,6 +935,7 @@ while true; do
 				   read -rp "[i] Enter S/M/L/X/2 " CHOICE;
 				   case $CHOICE in
 						   [sS]* )
+								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
@@ -940,6 +943,7 @@ while true; do
 								   break;
 								   ;;
 							[mM]* )
+								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_whatweb "$WORKING_DIR"/"$INTERESTING_DOMAINS";
@@ -947,6 +951,7 @@ while true; do
 								   break;
 								   ;;
 							[lL]* )
+								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_whatweb "$WORKING_DIR"/"$INTERESTING_DOMAINS";
@@ -954,6 +959,7 @@ while true; do
 								   break;
 								   ;;
 							[xX]* )
+								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
@@ -961,6 +967,7 @@ while true; do
 								   break;
 								   ;;
 							[2]* )
+								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
