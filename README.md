@@ -30,6 +30,7 @@ Chomp Scan supports limited canceling/skipping of tools by pressing Ctrl-c. This
 
 #### Port Scanning (optional)
 * masscan and/or nmap
+* nmap output styled with [nmap-bootstrap-xsl](https://github.com/honze-net/nmap-bootstrap-xsl/)
 
 #### Information Gathering (optional) (4 different sized wordlists)
 * subjack
