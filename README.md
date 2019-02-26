@@ -30,13 +30,15 @@ A blacklist file is included, to exclude certain domains from the results. Howev
 #### Port Scanning (optional)
 * masscan and/or nmap
 
-#### Content Discovery (optional) (4 different sized wordlists)
-* ffuf
+#### Information Gathering (optional) (4 different sized wordlists)
 * bfac
 * nikto
 * whatweb
 * wafw00f
 
+#### Content Discovery (optional) (4 different sized wordlists)
+* ffuf
+* gobuster
 
 ### Wordlists
 
