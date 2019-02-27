@@ -74,6 +74,7 @@ By SolomonSklash - github.com/SolomonSklash/chomp-scan
 		echo -e "$BLUE""$BANNER";
 }
 
+# TODO finish banner
 function usage() {
 		banner;
 		echo -e "$GREEN""Usage: chomp-scan.sh [-h] [-u domain] etc....""$NC";
@@ -95,15 +96,15 @@ function exists() {
 # Handle CLI arguments
 while getopts ":hu:d:c:sSiCb:IaADX:" opt; do
 		case ${opt} in
-				h )
+				h ) # -h help
 						usage;
 						exit;
 						;;
-				u )
+				u ) # -u URL/domain
 						echo "URL is $OPTARG"
 						DOMAIN=$OPTARG;
 						;;
-				d )
+				d ) # -d subdomain enumeration wordlist
 						exists "$OPTARG";
 						RESULT=$?;
 						if [[ "$RESULT" -eq 1 ]]; then
@@ -113,10 +114,10 @@ while getopts ":hu:d:c:sSiCb:IaADX:" opt; do
 								exit 1;
 						fi
 						;;
-				s )
+				s ) # -s enable subdomain enumeration
 						echo "Enable subdomain bruting, requires -d"
 						;;
-				c )
+				c ) # -c content discovery wordlist
 						exists "$OPTARG";
 						RESULT=$?;
 						if [[ "$RESULT" -eq 1 ]]; then
@@ -126,44 +127,44 @@ while getopts ":hu:d:c:sSiCb:IaADX:" opt; do
 								exit 1;
 						fi
 						;;
-				C )
+				C ) # -C enable content discovery
 						echo "Enable content discovery, requires -c"
 						;;
-				S )
+				S ) # -S enable screenshots
 						echo "Enable screenshots with aquatone"
 						;;
-				i )
+				i ) # -i enable information gathering
 						echo "Enable information gathering"
 						;;
-				b )
+				b ) # -b domain blacklist file
 						echo "Blacklist file is $OPTARG"
 						;;
-				I )
+				I ) # -I enable interactive mode
 						echo "Enable interactive mode"
 						;;
-				a )
+				a ) # -a use all discovered domains
 						echo "Use all discovered domains."
 						;;
-				A )
+				A ) # -A use only interesting discovered domains
 						echo "Use only interesting discovered domains."
 						;;
-				D )
+				D ) # -D enable default non-interactive mode
 						echo "Enable non-interactive default mode"
 						;;
-				X )
+				X ) # -X interesting word list file
 						echo "Interesting word list is $OPTARG"
 						;;
-				\? )
+				\? ) # Invalid option
 						echo "Invalid Option: -$OPTARG" 1>&2;
 						usage;
 						exit 1;
 						;;
-				: )
+				: ) # Invalid option
 						echo "Invalid Option: -$OPTARG requires an argument" 1>&2;
 						usage;
 						exit 1;
 						;;
-				* )
+				* ) # Invalid option
 						echo "Invalid Option: -$OPTARG" 1>&2;
 						usage;
 						exit 1;
