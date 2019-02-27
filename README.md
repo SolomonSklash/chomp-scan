@@ -18,7 +18,7 @@ A blacklist file is included, to exclude certain domains from the results. Howev
 
 Chomp Scan supports limited canceling/skipping of tools by pressing Ctrl-c. This can sometimes have unintended side effects, so use with care.
 
-**Note: Chomp Scan is in development, and new/different tools will be added as I find them. Pull requests and comments welcome!**
+**Note: Chomp Scan is in active development, and new/different tools will be added as I find them. Pull requests and comments welcome!**
 
 ### Scanning Phases
 
