@@ -125,6 +125,7 @@ while getopts ":hu:d:c:sSiCb:IaADX:" opt; do
 						;;
 				s ) # -s enable subdomain enumeration
 						echo "Enable subdomain bruting, requires -d"
+						SUBDOMAIN_BRUTE=1;
 						;;
 				c ) # -c content discovery wordlist
 						exists "$OPTARG";
@@ -138,12 +139,15 @@ while getopts ":hu:d:c:sSiCb:IaADX:" opt; do
 						;;
 				C ) # -C enable content discovery
 						echo "Enable content discovery, requires -c"
+						CONTENT_DISCOVERY=1;
 						;;
 				S ) # -S enable screenshots
 						echo "Enable screenshots with aquatone"
+						SCREENSHOTS=1;
 						;;
 				i ) # -i enable information gathering
 						echo "Enable information gathering"
+						INFO_GATHERING=1;
 						;;
 				b ) # -b domain blacklist file
 						exists "$OPTARG";
@@ -157,11 +161,24 @@ while getopts ":hu:d:c:sSiCb:IaADX:" opt; do
 						;;
 				I ) # -I enable interactive mode
 						echo "Enable interactive mode"
+						INTERACTIVE=1;
 						;;
 				a ) # -a use all discovered domains
 						echo "Use all discovered domains."
+						# Check that USE_DISCOVERED is not set
+						if [[ "$USE_DISCOVERED" != 1 ]]; then
+								USE_ALL=1;
+						else
+								echo -e "$RED""[!] Using -A interesting domains is mutually exclusive to using -a all domains.""$NC";
+						fi
 						;;
 				A ) # -A use only interesting discovered domains
+						# Check that USE_DISCOVERED is not set
+						if [[ "$USE_ALL" != 1 ]]; then
+								USE_DISCOVERED=1;
+						else
+								echo -e "$RED""[!] Using -a all domains is mutually exclusive to using -A interesting domains.""$NC";
+						fi
 						echo "Use only interesting discovered domains."
 						;;
 				D ) # -D enable default non-interactive mode
