@@ -151,7 +151,7 @@ while getopts ":hu:d:C:sicb:IaADX:po:" opt; do
 								if [[ "$RESULT" -eq 1 ]]; then
 										SUBDOMAIN_WORDLIST="$OPTARG";
 								else
-										echo -e "$RED""[!] Provided subdomain enumeration wordlist $OPTARG is empty or doesn't exist!""$NC";
+										echo -e "$RED""[!] Provided subdomain enumeration wordlist $OPTARG is empty or doesn't exist.""$NC";
 										usage;
 										exit 1;
 								fi
@@ -188,7 +188,7 @@ while getopts ":hu:d:C:sicb:IaADX:po:" opt; do
 								if [[ "$RESULT" -eq 1 ]]; then
 										CONTENT_WORDLIST="$OPTARG";
 								else
-										echo -e "$RED""[!] Provided content discovery wordlist $OPTARG is empty or doesn't exist!""$NC";
+										echo -e "$RED""[!] Provided content discovery wordlist $OPTARG is empty or doesn't exist.""$NC";
 										usage;
 										exit 1;
 								fi
@@ -209,7 +209,7 @@ while getopts ":hu:d:C:sicb:IaADX:po:" opt; do
 						if [[ "$RESULT" -eq 1 ]]; then
 								BLACKLIST="$OPTARG";
 						else
-								echo -e "$RED""[!] Provided blacklist $OPTARG is empty or doesn't exist!""$NC";
+								echo -e "$RED""[!] Provided blacklist $OPTARG is empty or doesn't exist.""$NC";
 								usage;
 								exit 1;
 						fi
@@ -248,7 +248,7 @@ while getopts ":hu:d:C:sicb:IaADX:po:" opt; do
 						if [[ "$RESULT" -eq 1 ]]; then
 								INTERESTING="$OPTARG";
 						else
-								echo -e "$RED""[!] Provided interesting words file $OPTARG is empty or doesn't exist!""$NC";
+								echo -e "$RED""[!] Provided interesting words file $OPTARG is empty or doesn't exist.""$NC";
 								usage;
 								exit 1;
 						fi
@@ -260,7 +260,7 @@ while getopts ":hu:d:C:sicb:IaADX:po:" opt; do
 						if [[ -w "$OPTARG" ]]; then
 								WORKING_DIR="$OPTARG";
 						else
-								echo -e "$RED""[!] Provided output directory $OPTARG is not writable or doesn't exist!""$NC";
+								echo -e "$RED""[!] Provided output directory $OPTARG is not writable or doesn't exist.""$NC";
 								usage;
 								exit 1;
 						fi
@@ -353,7 +353,7 @@ function check_root() {
 				   read -rp "Do you want to exit and [R]e-run as root, or [S]kip masscan? " CHOICE;
 						   case $CHOICE in
 								   [rR]* )
-										   echo -e "$RED""Exiting script!""$NC";
+										   echo -e "$RED""[!] Exiting script.""$NC";
 										   exit 1;
 										   ;;
 								   [sS]* )
@@ -629,7 +629,7 @@ function run_aquatone () {
 function run_masscan() {
 		# Check if not root and SKIP_MASSCAN is set
 		if [[ "$SKIP_MASSCAN" == 1 ]]; then
-				echo -e "$ORANGE""[!] Skipping masscan since script is not being run as root!""$NC";
+				echo -e "$ORANGE""[!] Skipping masscan since script is not being run as root.""$NC";
 				sleep 1;
 		else
 				# Run masscan against all IPs found on all ports
@@ -1247,6 +1247,7 @@ fi
 # Check for mutually exclusive interactive and non-interactive modes
 if [[ "$INTERACTIVE" == 1 ]] && [[ "$DEFAULT_MODE" == 1 ]]; then
 		echo -e "$RED""[!] Both interactive mode (-I) and non-interactive mode (-D) cannot be run together. Exiting.""$NC";
+		usage;
 		exit 1;
 fi
 
@@ -1279,6 +1280,7 @@ touch "$WORKING_DIR"/"$ALL_IP";
 if [[ "$DEFAULT_MODE" == 1 ]]; then
 		# Check if we're root since we're running masscan
 		check_root;
+
 		# Run all phases with defaults
 		echo -e "$GREEN""Beginning non-interactive mode scan.""$NC";
 		sleep 0.5;
@@ -1312,6 +1314,8 @@ fi
 if [[ "$INTERACTIVE" == 1 ]]; then
 		# Check if we're root since we're running masscan
 		check_root;
+
+		# Run phases interactively
 		echo -e "$GREEN""Beginning interactive mode scan.""$NC";
 		sleep 0.5;
 
