@@ -18,6 +18,10 @@ LARGE=wordlists/seclists-combined.txt;
 XL=wordlists/haddix_content_discovery_all.txt;
 XXL=wordlists/haddix-seclists-combined.txt;
 
+# User defined variables
+ENUM_WORDLIST=;
+CONTENT_WORDLIST=;
+
 # Tool paths
 SUBFINDER=$(command -v subfinder);
 SUBLIST3R=$(command -v sublist3r);
@@ -75,6 +79,19 @@ function usage() {
 		echo -e "$GREEN""Usage: chomp-scan.sh [-h] [-u domain] etc....""$NC";
 }
 
+function exists() {
+		# Check that a file path exists and is not empty
+		if [[ -e "$1" ]]; then
+				if [[ -s "$1" ]]; then
+						return 1;
+				else
+						return 0;
+				fi
+		else
+				return 0;
+		fi
+}
+
 # Handle CLI arguments
 while getopts ":hu:d:c:sSiCb:IaADX:" opt; do
 		case ${opt} in
@@ -87,7 +104,15 @@ while getopts ":hu:d:c:sSiCb:IaADX:" opt; do
 						DOMAIN=$OPTARG;
 						;;
 				d )
-						echo "Domain brute wordlist is $OPTARG"
+						exists "$OPTARG";
+						RESULT=$?;
+						if [[ "$RESULT" -eq 1 ]]; then
+								echo "$OPTARG exists!";
+								ENUM_WORDLIST="$OPTARG";
+						else
+								echo -e "$RED""[!] Provided subdomain wordlist $OPTARG is empty or doesn't exist!""$NC";
+								exit 1;
+						fi
 						;;
 				s )
 						echo "Enable subdomain bruting, requires -d"
@@ -1060,6 +1085,8 @@ fi
 
 # Check tool paths are set
 check_paths;
+
+exit;
 
 # Create working dir, start script timer, and create interesting domains text file
 WORKING_DIR="$DOMAIN"-$(date +%T);
