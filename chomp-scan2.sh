@@ -82,9 +82,9 @@ function usage() {
 		echo -e "$GREEN""chomp-scan.sh -u example.com -a d short -cC large -p -o path/to/directory\\n""$NC";
 		echo -e "$GREEN""Usage of Chomp Scan:""$NC";
 		echo -e "$BLUE""\\t-u domain \\n\\t\\t$ORANGE (required) Domain name to scan. This should not include a scheme, e.g. https:// or http://.""$NC";
-		echo -e "$BLUE""\\t-d wordlist\\n\\t\\t$ORANGE (optional) The wordlist to use for subdomain enumeration. Three built-in lists, short, long, and huge can be used, as well as the path to a custom wordlist.""$NC";
+		echo -e "$BLUE""\\t-d wordlist\\n\\t\\t$ORANGE (optional) The wordlist to use for subdomain enumeration. Three built-in lists, short, long, and huge can be used, as well as the path to a custom wordlist. The default is short.""$NC";
 		echo -e "$BLUE""\\t-c \\n\\t\\t$ORANGE (optional) Enable content discovery phase. The wordlist for this option defaults to short if not provided.""$NC";
-		echo -e "$BLUE""\\t-C wordlist \\n\\t\\t$ORANGE (optional) The wordlist to use for content discovery. Five built-in lists, small, medium, large, xl, and xxl can be used, as well as the path to a custom wordlist.""$NC";
+		echo -e "$BLUE""\\t-C wordlist \\n\\t\\t$ORANGE (optional) The wordlist to use for content discovery. Five built-in lists, small, medium, large, xl, and xxl can be used, as well as the path to a custom wordlist. The default is small.""$NC";
 		echo -e "$BLUE""\\t-s \\n\\t\\t$ORANGE (optional) Enable screenshots using Aquatone.""$NC";
 		echo -e "$BLUE""\\t-i \\n\\t\\t$ORANGE (optional) Enable information gathering phase, using subjack, bfac, whatweb, wafw00f, and nikto.""$NC";
 		echo -e "$BLUE""\\t-p \\n\\t\\t$ORANGE (optional) Enable portscanning phase, using masscan (run as root) and nmap.""$NC";
