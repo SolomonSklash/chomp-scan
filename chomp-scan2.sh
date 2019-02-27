@@ -80,7 +80,10 @@ By SolomonSklash - github.com/SolomonSklash/chomp-scan
 # TODO finish usage
 function usage() {
 		banner;
-		echo -e "$GREEN""Usage: chomp-scan.sh [-h] [-u domain] etc....""$NC";
+		echo -e "$GREEN""Usage of Chomp Scan:""$NC";
+		echo -e "$BLUE""\t-u domain\n\t\t$ORANGE Domain name to scan. This should not include a scheme, e.g. example.com""$NC";
+		echo -e "$BLUE""\t-d wordlist\n\t\t$ORANGE The wordlist to use for subdomain enumeration. This should have one word per line.""$NC";
+		echo -e "$BLUE""\t-C \n\t\t$ORANGE Enable content discovery. The wordlist for this option defaults to short if not provided.""$NC";
 }
 
 # Check that a file path exists and is not empty
@@ -1218,18 +1221,6 @@ done
 # Check that -u domain was passed
 if [[ "$DOMAIN" == "" ]]; then
 		echo -e "$RED""[!] A domain is required: -u example.com""$NC";
-		usage;
-		exit 1;
-fi
-
-# Check that matching arguments are present for -Cc
-if [[ "$CONTENT_WORDLIST" != "" ]] && [[ "$CONTENT_DISCOVERY" == 0 ]]; then
-		echo -e "$RED""[!] If a content discovery wordlist is provided (-C), then the content discovery flag (-c) must be enabled.""$NC";
-		usage;
-		exit 1;
-fi
-if [[ "$CONTENT_WORDLIST" == "" ]] && [[ "$CONTENT_DISCOVERY" == 1 ]]; then
-		echo -e "$RED""[!] The content discovery flag was set, but no wordlist was passed via -c.""$NC";
 		usage;
 		exit 1;
 fi
