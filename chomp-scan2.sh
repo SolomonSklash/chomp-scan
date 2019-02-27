@@ -26,6 +26,7 @@ CONTENT_DISCOVERY=0;
 SCREENSHOTS=0;
 INFO_GATHERING=0;
 PORTSCANNING=0;
+WORKING_DIR="";
 BLACKLIST=blacklist.txt;
 INTERACTIVE=0;
 USE_ALL=0;
@@ -96,14 +97,13 @@ function exists() {
 }
 
 # Handle CLI arguments
-while getopts ":hu:d:c:SiCb:IaADX:p" opt; do
+while getopts ":hu:d:c:SiCb:IaADX:po:" opt; do
 		case ${opt} in
 				h ) # -h help
 						usage;
 						exit;
 						;;
 				u ) # -u URL/domain
-						echo "URL is $OPTARG"
 						DOMAIN=$OPTARG;
 						;;
 				d ) # -d subdomain enumeration wordlist
@@ -233,6 +233,15 @@ while getopts ":hu:d:c:SiCb:IaADX:p" opt; do
 						;;
 				p ) # -p enable port scanning
 						PORTSCANNING=1;
+						;;
+				o ) # -o output directory
+						if [[ -w "$OPTARG" ]]; then
+								WORKING_DIR="$OPTARG";
+						else
+								echo -e "$RED""[!] Provided output directory $OPTARG is not writable or doesn't exist!""$NC";
+								usage;
+								exit 1;
+						fi
 						;;
 				\? ) # Invalid option
 						echo -e "$RED""[!] Invalid Option: -$OPTARG" 1>&2;
@@ -1236,9 +1245,13 @@ check_paths;
 
 #### Begin main script functions
 # Create working dir, start script timer, and create interesting domains text file
-WORKING_DIR="$DOMAIN"-$(date +%T);
+# Check if -o output directory is already set
+if [[ "$WORKING_DIR" == "" ]]; then
+		WORKING_DIR="$DOMAIN"-$(date +%T);
+		mkdir "$WORKING_DIR";
+fi
+
 SCAN_START=$(date +%s);
-mkdir "$WORKING_DIR";
 touch "$WORKING_DIR"/interesting-domains.txt;
 INTERESTING_DOMAINS=interesting-domains.txt;
 touch "$WORKING_DIR"/"$ALL_DOMAIN";
