@@ -25,6 +25,7 @@ CONTENT_WORDLIST="";
 CONTENT_DISCOVERY=0;
 SCREENSHOTS=0;
 INFO_GATHERING=0;
+PORTSCANNING=0;
 BLACKLIST=blacklist.txt;
 INTERACTIVE=0;
 USE_ALL=0;
@@ -95,7 +96,7 @@ function exists() {
 }
 
 # Handle CLI arguments
-while getopts ":hu:d:c:SiCb:IaADX:" opt; do
+while getopts ":hu:d:c:SiCb:IaADX:p" opt; do
 		case ${opt} in
 				h ) # -h help
 						usage;
@@ -235,6 +236,9 @@ while getopts ":hu:d:c:SiCb:IaADX:" opt; do
 								usage;
 								exit 1;
 						fi
+						;;
+				p ) # -p enable port scanning
+						PORTSCANNING=1;
 						;;
 				\? ) # Invalid option
 						echo -e "$RED""[!] Invalid Option: -$OPTARG" 1>&2;
@@ -559,7 +563,7 @@ function run_aquatone () {
 		# Call empty or with default as $1 for -D default non-interactive mode
 		if [[ "$1" == "default" ]]; then
 				mkdir "$WORKING_DIR"/aquatone;
-				echo -e "$GREEN""[i]$BLUE Running aquatone against all $(wc -l "$WORKING_DIR"/$ALL_DOMAIN | cut -d ' ' -f 1) unique discovered subdomains.""$NC";
+				echo -e "$BLUE""[i] Running aquatone against all $(wc -l "$WORKING_DIR"/$ALL_DOMAIN | cut -d ' ' -f 1) unique discovered subdomains.""$NC";
 				START=$(date +%s);
 				$AQUATONE -threads 10 -chrome-path "$CHROMIUM" -ports medium -out "$WORKING_DIR"/aquatone < "$WORKING_DIR"/$ALL_DOMAIN;
 				END=$(date +%s);
@@ -1330,6 +1334,13 @@ if [[ "$SUBDOMAIN_BRUTE" == 1 ]]; then
 		fi
 		# Get interesting domains
 		get_interesting;
+fi
+
+# -S screenshot with aquatone
+if [[ "$SCREENSHOTS" == 1 ]]; then
+		echo -e "$BLUE""[i] Taking screenshots with aquatone.""$NC";
+		sleep 0.5;
+		run_aquatone "default";
 fi
 
 # -C run content discovery
