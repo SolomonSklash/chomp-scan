@@ -1341,14 +1341,18 @@ if [[ "$CONTENT_DISCOVERY" == 1 ]]; then
 		if [[ "$CONTENT_WORDLIST" != "" ]]; then
 				if [[ "$USE_ALL" == 1 ]]; then
 						run_ffuf "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_DOMAIN";
+						run_gobuster "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_DOMAIN";
 				else
 						run_ffuf "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+						run_gobuster "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 				fi
 		else
 				if [[ "$USE_ALL" == 1 ]]; then
 						run_ffuf "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_DOMAIN";
+						run_gobuster "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_DOMAIN";
 				else
 						run_ffuf "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+						run_gobuster "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 				fi
 		fi
 fi
