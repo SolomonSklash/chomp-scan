@@ -31,6 +31,7 @@ USE_ALL=0;
 USE_DISCOVERED=0;
 DEFAULT_MODE=0;
 INTERESTING=interesting.txt;
+SKIP_MASSCAN=0;
 
 # Tool paths
 SUBFINDER=$(command -v subfinder);
@@ -539,27 +540,32 @@ function run_aquatone () {
 }
 
 function run_masscan() {
-		# Run masscan against all IPs found on all ports
-		echo -e "$GREEN""[i]$BLUE Running masscan against all $(wc -l "$WORKING_DIR"/$ALL_IP | cut -d ' ' -f 1) unique discovered IP addresses.""$NC";
-		echo -e "$GREEN""[i]$BLUE Command: masscan -p1-65535 -il $WORKING_DIR/$ALL_IP --rate=7000 -oL $WORKING_DIR/masscan-output.txt.""$NC";
+		# Check if not root and SKIP_MASSCAN is set
+		if [[ "$SKIP_MASSCAN" == 1 ]]; then
+				echo -e "$ORANGE""[!] Skipping masscan since script is not being run as root!""$NC";
+				sleep 1;
+		else
+				# Run masscan against all IPs found on all ports
+				echo -e "$GREEN""[i]$BLUE Running masscan against all $(wc -l "$WORKING_DIR"/$ALL_IP | cut -d ' ' -f 1) unique discovered IP addresses.""$NC";
+				echo -e "$GREEN""[i]$BLUE Command: masscan -p1-65535 -il $WORKING_DIR/$ALL_IP --rate=7000 -oL $WORKING_DIR/masscan-output.txt.""$NC";
 
-		# Check that IP list is not empty
-		IP_COUNT=$(wc -l "$WORKING_DIR"/$ALL_IP | cut -d ' ' -f 1);
-		if [[ "$IP_COUNT" -lt 1 ]]; then
-				echo -e "$RED""[i] No IP addresses have been found. Skipping masscan scan.""$NC";
-				return;
-		fi
+				# Check that IP list is not empty
+				IP_COUNT=$(wc -l "$WORKING_DIR"/$ALL_IP | cut -d ' ' -f 1);
+				if [[ "$IP_COUNT" -lt 1 ]]; then
+						echo -e "$RED""[i] No IP addresses have been found. Skipping masscan scan.""$NC";
+						return;
+				fi
 
+				START=$(date +%s);
+				sudo masscan -p1-65535 -iL "$WORKING_DIR"/$ALL_IP --rate=7000 -oL "$WORKING_DIR"/masscan-output.txt;
+				END=$(date +%s);
+				DIFF=$(( END - START ));
+				echo -e "$GREEN""[i]$BLUE Masscan took $DIFF seconds to run.""$NC";
 
-		START=$(date +%s);
-		sudo masscan -p1-65535 -iL "$WORKING_DIR"/$ALL_IP --rate=7000 -oL "$WORKING_DIR"/masscan-output.txt;
-		END=$(date +%s);
-		DIFF=$(( END - START ));
-		echo -e "$GREEN""[i]$BLUE Masscan took $DIFF seconds to run.""$NC";
-
-		# Trim # from first and last lines of output
-		grep -v '#' "$WORKING_DIR"/masscan-output.txt > "$WORKING_DIR"/temp;
-		sudo mv "$WORKING_DIR"/temp "$WORKING_DIR"/masscan-output.txt;
+				# Trim # from first and last lines of output
+				grep -v '#' "$WORKING_DIR"/masscan-output.txt > "$WORKING_DIR"/temp;
+				sudo mv "$WORKING_DIR"/temp "$WORKING_DIR"/masscan-output.txt;
+			fi
 }
 
 function run_nmap() {
@@ -1175,6 +1181,29 @@ fi
 
 # Check tool paths are set
 check_paths;
+
+# Check for root for non-interactive or long-running scans
+if [[ $EUID -ne 0 ]]; then
+   while true; do
+		   echo -e "$ORANGE""[!] Please note: Script is not being run as root."
+		   echo -e "$ORANGE""[!] For long-running options, like long wordlists or non-interactive mode, the script may hang waiting for the root password for masscan."
+		   read -rp "Do you want to [R]e-run as root, or [S]kip masscan? " CHOICE;
+				   case $CHOICE in
+						   [rR]* )
+								   echo -e "$RED""Exiting script!""$NC";
+								   exit 1;
+								   ;;
+						   [sS]* )
+								   echo -e "$ORANGE""Skipping masscan.""$NC";
+								   SKIP_MASSCAN=1;
+								   break;
+								   ;;
+						   * )
+								   echo -e "$ORANGE""Please enter [R]e-run or [S]kip masscan.""$NC";
+								   ;;
+				   esac
+   done
+fi
 
 #### Begin main script functions
 # Create working dir, start script timer, and create interesting domains text file
