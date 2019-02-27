@@ -6,7 +6,6 @@ RED='\033[0;31m';
 GREEN='\033[0;32m';
 BLUE='\033[0;34m';
 ORANGE='\033[0;33m';
-DOMAIN=;
 
 # Wordlists
 SHORT=wordlists/subdomains-top1mil-20000.txt;
@@ -18,9 +17,20 @@ LARGE=wordlists/seclists-combined.txt;
 XL=wordlists/haddix_content_discovery_all.txt;
 XXL=wordlists/haddix-seclists-combined.txt;
 
-# User defined variables
+# User-defined CLI argument variables
+DOMAIN=;
 ENUM_WORDLIST=;
+SUBDOMAIN_BRUTE=;
 CONTENT_WORDLIST=;
+CONTENT_DISCOVERY=;
+SCREENSHOTS=;
+INFO_GATHERING=;
+BLACKLIST=blacklist.txt;
+INTERACTIVE=;
+USE_ALL=;
+USE_DISCOVERED=;
+DEFAULT_MODE=;
+INTERESTING=interesting.txt;
 
 # Tool paths
 SUBFINDER=$(command -v subfinder);
@@ -39,8 +49,6 @@ AQUATONE=~/bounty/tools/aquatone/aquatone;
 BFAC=~/bounty/tools/bfac/bfac;
 
 # Other variables
-INTERESTING=interesting.txt;
-BLACKLIST=blacklist.txt;
 ALL_IP=all_ip.txt;
 ALL_DOMAIN=all_domain.txt;
 
