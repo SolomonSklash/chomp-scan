@@ -137,7 +137,14 @@ while getopts ":hu:d:c:sSiCb:IaADX:" opt; do
 						echo "Enable information gathering"
 						;;
 				b ) # -b domain blacklist file
-						echo "Blacklist file is $OPTARG"
+						exists "$OPTARG";
+						RESULT=$?;
+						if [[ "$RESULT" -eq 1 ]]; then
+								BLACKLIST="$OPTARG";
+						else
+								echo -e "$RED""[!] Provided blacklist $OPTARG is empty or doesn't exist!""$NC";
+								exit 1;
+						fi
 						;;
 				I ) # -I enable interactive mode
 						echo "Enable interactive mode"
