@@ -1138,8 +1138,18 @@ if [[ "$SUBDOMAIN_WORDLIST" != "" ]] && [[ "$SUBDOMAIN_BRUTE" == 0 ]]; then
 		usage;
 		exit 1;
 fi
+if [[ "$SUBDOMAIN_WORDLIST" == "" ]] && [[ "$SUBDOMAIN_BRUTE" == 1 ]]; then
+		echo -e "$RED""[!] The subdomain enumeration flag was set, but no wordlist was passed via -d.""$NC";
+		usage;
+		exit 1;
+fi
 if [[ "$CONTENT_WORDLIST" != "" ]] && [[ "$CONTENT_DISCOVERY" == 0 ]]; then
 		echo -e "$RED""[!] If a content discovery wordlist is provided (-C), then the content discovery flag (-c) must be enabled.""$NC";
+		usage;
+		exit 1;
+fi
+if [[ "$CONTENT_WORDLIST" == "" ]] && [[ "$CONTENT_DISCOVERY" == 1 ]]; then
+		echo -e "$RED""[!] The content discovery flag was set, but no wordlist was passed via -c.""$NC";
 		usage;
 		exit 1;
 fi
