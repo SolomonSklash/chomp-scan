@@ -314,9 +314,9 @@ function get_interesting() {
 		mv "$WORKING_DIR"/tmp3 "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 
 		# Make sure > 0 domains are found
-		FOUND=$(wc -l "$WORKING_DIR"/interesting-domains.txt | cut -d ' ' -f 1);
+		FOUND=$(wc -l "$WORKING_DIR"/$INTERESTING_DOMAINS | cut -d ' ' -f 1);
 		if [[ $FOUND -gt 0 ]]; then
-				echo -e "$RED""[!] The following $(wc -l "$WORKING_DIR"/interesting-domains.txt | cut -d ' ' -f 1) potentially interesting subdomains have been found ($WORKING_DIR/interesting-domains.txt):""$ORANGE";
+				echo -e "$RED""[!] The following $(wc -l "$WORKING_DIR"/$INTERESTING_DOMAINS | cut -d ' ' -f 1) potentially interesting subdomains have been found ($WORKING_DIR/$INTERESTING_DOMAINS):""$ORANGE";
 				cat "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 				sleep 1;
 		else
@@ -1282,6 +1282,7 @@ if [[ "$INTERACTIVE" == 1 ]]; then
 		exit;
 fi
 
+# TODO remove/replace
 # Start scanning phases
 run_subdomain_brute;
 run_aquatone;
@@ -1292,6 +1293,7 @@ run_content_discovery;
 get_interesting;
 list_found;
 
+# TODO remove/replace
 # Calculate scan runtime
 SCAN_END=$(date +%s);
 SCAN_DIFF=$(( SCAN_END - SCAN_START ));
