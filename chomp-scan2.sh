@@ -1335,7 +1335,7 @@ fi
 # -C run content discovery
 if [[ "$CONTENT_DISCOVERY" == 1 ]]; then
 		echo -e "$BLUE""[i] Beginning content discovery with ffuf and gobuster.""$NC";
-		sleep 1;
+		sleep 0.5;
 
 		# Check if $SUBDOMAIN_WORDLIST is set, else use short as default
 		if [[ "$CONTENT_WORDLIST" != "" ]]; then
@@ -1365,8 +1365,7 @@ fi
 # get_interesting;
 # list_found;
 
-# # TODO remove/replace
-# # Calculate scan runtime
-# SCAN_END=$(date +%s);
-# SCAN_DIFF=$(( SCAN_END - SCAN_START ));
-# echo -e "$BLUE""[i] Total script run time: $SCAN_DIFF seconds.""$NC";
+# Calculate scan runtime
+SCAN_END=$(date +%s);
+SCAN_DIFF=$(( SCAN_END - SCAN_START ));
+echo -e "$BLUE""[i] Total script run time: $SCAN_DIFF seconds.""$NC";
