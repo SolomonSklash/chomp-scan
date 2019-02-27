@@ -120,6 +120,7 @@ while getopts ":hu:d:c:sSiCb:IaADX:" opt; do
 								ENUM_WORDLIST="$OPTARG";
 						else
 								echo -e "$RED""[!] Provided subdomain enumeration wordlist $OPTARG is empty or doesn't exist!""$NC";
+								usage;
 								exit 1;
 						fi
 						;;
@@ -134,6 +135,7 @@ while getopts ":hu:d:c:sSiCb:IaADX:" opt; do
 								CONTENT_WORDLIST="$OPTARG";
 						else
 								echo -e "$RED""[!] Provided content discovery wordlist $OPTARG is empty or doesn't exist!""$NC";
+								usage;
 								exit 1;
 						fi
 						;;
@@ -156,6 +158,7 @@ while getopts ":hu:d:c:sSiCb:IaADX:" opt; do
 								BLACKLIST="$OPTARG";
 						else
 								echo -e "$RED""[!] Provided blacklist $OPTARG is empty or doesn't exist!""$NC";
+								usage;
 								exit 1;
 						fi
 						;;
@@ -170,6 +173,8 @@ while getopts ":hu:d:c:sSiCb:IaADX:" opt; do
 								USE_ALL=1;
 						else
 								echo -e "$RED""[!] Using -A interesting domains is mutually exclusive to using -a all domains.""$NC";
+								usage;
+								exit 1;
 						fi
 						;;
 				A ) # -A use only interesting discovered domains
@@ -178,6 +183,8 @@ while getopts ":hu:d:c:sSiCb:IaADX:" opt; do
 								USE_DISCOVERED=1;
 						else
 								echo -e "$RED""[!] Using -a all domains is mutually exclusive to using -A interesting domains.""$NC";
+								usage;
+								exit 1;
 						fi
 						echo "Use only interesting discovered domains."
 						;;
@@ -192,6 +199,7 @@ while getopts ":hu:d:c:sSiCb:IaADX:" opt; do
 								INTERESTING="$OPTARG";
 						else
 								echo -e "$RED""[!] Provided interesting words file $OPTARG is empty or doesn't exist!""$NC";
+								usage;
 								exit 1;
 						fi
 						;;
@@ -1127,6 +1135,7 @@ done
 
 # Check that -u domain was passed
 if [[ "$DOMAIN" == "" ]]; then
+		echo -e "$RED""[!] A domain is required: -u example.com""$NC";
 		usage;
 		exit 1;
 fi
