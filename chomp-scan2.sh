@@ -497,34 +497,45 @@ function run_subdomain_brute() {
 }
 
 function run_aquatone () {
-		# Ask user to run aquatone
-		while true; do
-		  echo -e "$ORANGE";
-		  read -rp "[?] Do you want to screenshot discovered domains with aquatone? [Y/N] " ANSWER
+		# Call empty or with default as $1 for -D default non-interactive mode
+		if [[ "$1" == "default" ]]; then
+				mkdir "$WORKING_DIR"/aquatone;
+				echo -e "$GREEN""[i]$BLUE Running aquatone against all $(wc -l "$WORKING_DIR"/$ALL_DOMAIN | cut -d ' ' -f 1) unique discovered subdomains.""$NC";
+				START=$(date +%s);
+				$AQUATONE -threads 10 -chrome-path "$CHROMIUM" -ports medium -out "$WORKING_DIR"/aquatone < "$WORKING_DIR"/$ALL_DOMAIN;
+				END=$(date +%s);
+				DIFF=$(( END - START ));
+				echo -e "$GREEN""[i]$BLUE Aquatone took $DIFF seconds to run.""$NC";
+		else
+				# Ask user to run aquatone
+				while true; do
+				  echo -e "$ORANGE";
+				  read -rp "[?] Do you want to screenshot discovered domains with aquatone? [Y/N] " ANSWER
 
-		  case $ANSWER in
-		   [yY]* ) 
-				   break
-				   ;;
+				  case $ANSWER in
+				   [yY]* ) 
+						   break
+						   ;;
 
-		   [nN]* ) 
-				   echo -e "$ORANGE""[!] Skipping aquatone.""$NC";
-				   return;
-				   ;;
+				   [nN]* ) 
+						   echo -e "$ORANGE""[!] Skipping aquatone.""$NC";
+						   return;
+						   ;;
 
-		   * )     
-				   echo -e "$RED""[!] Please enter Y/y or N/n. ""$NC"
-				   ;;
-		  esac
-		done
-		mkdir "$WORKING_DIR"/aquatone;
+				   * )     
+						   echo -e "$RED""[!] Please enter Y/y or N/n. ""$NC"
+						   ;;
+				  esac
+				done
+				mkdir "$WORKING_DIR"/aquatone;
 
-		echo -e "$GREEN""[i]$BLUE Running aquatone against all $(wc -l "$WORKING_DIR"/$ALL_DOMAIN | cut -d ' ' -f 1) unique discovered subdomains.""$NC";
-		START=$(date +%s);
-		$AQUATONE -threads 10 -chrome-path "$CHROMIUM" -ports medium -out "$WORKING_DIR"/aquatone < "$WORKING_DIR"/$ALL_DOMAIN;
-		END=$(date +%s);
-		DIFF=$(( END - START ));
-		echo -e "$GREEN""[i]$BLUE Aquatone took $DIFF seconds to run.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running aquatone against all $(wc -l "$WORKING_DIR"/$ALL_DOMAIN | cut -d ' ' -f 1) unique discovered subdomains.""$NC";
+				START=$(date +%s);
+				$AQUATONE -threads 10 -chrome-path "$CHROMIUM" -ports medium -out "$WORKING_DIR"/aquatone < "$WORKING_DIR"/$ALL_DOMAIN;
+				END=$(date +%s);
+				DIFF=$(( END - START ));
+				echo -e "$GREEN""[i]$BLUE Aquatone took $DIFF seconds to run.""$NC";
+		fi
 }
 
 function run_masscan() {
@@ -1165,9 +1176,6 @@ fi
 # Check tool paths are set
 check_paths;
 
-# TODO Remove this
-exit;
-
 #### Begin main script functions
 # Create working dir, start script timer, and create interesting domains text file
 WORKING_DIR="$DOMAIN"-$(date +%T);
@@ -1177,6 +1185,42 @@ touch "$WORKING_DIR"/interesting-domains.txt;
 INTERESTING_DOMAINS=interesting-domains.txt;
 touch "$WORKING_DIR"/"$ALL_DOMAIN";
 touch "$WORKING_DIR"/"$ALL_IP";
+
+# Check for -D non-interactive default flag
+# Defaults for non-interactive:
+# Subdomain wordlist size: short
+# Content discovery wordlist size: small
+# Aquatone: yes
+# Portscan: masscan and nmap
+# Content discovery: ffuf and gobuster
+# Information gathering: all tools
+# Domains to scan: all unique discovered
+if [[ "$DEFAULT_MODE" == 1 ]]; then
+		# Run all phases with defaults
+		run_dnscan "$DOMAIN" "$SHORT";
+		run_subfinder "$DOMAIN" "$SHORT";
+		run_sublist3r "$DOMAIN";
+		run_massdns "$DOMAIN" "$SHORT";
+		run_aquatone "default";
+		run_masscan;
+		run_nmap;
+		run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
+		run_bfac "$WORKING_DIR"/"$ALL_DOMAIN";
+		run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
+		run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
+		run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
+		run_ffuf "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$ALL_DOMAIN";
+		run_gobuster "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$ALL_DOMAIN";
+		get_interesting;
+		list_found;
+
+		# Calculate scan runtime
+		SCAN_END=$(date +%s);
+		SCAN_DIFF=$(( SCAN_END - SCAN_START ));
+		echo -e "$BLUE""[i] Total script run time: $SCAN_DIFF seconds.""$NC";
+		
+		exit;
+fi
 
 # Start scanning phases
 run_subdomain_brute;
