@@ -315,6 +315,31 @@ function check_paths() {
 		fi
 }
 
+# Check for root for runs using masscan
+function check_root() {
+		if [[ $EUID -ne 0 ]]; then
+		   while true; do
+				   echo -e "$ORANGE""[!] Please note: Script is not being run as root."
+				   echo -e "$ORANGE""[!] For long-running options, like long wordlists or non-interactive mode, the script may hang waiting for the root password for masscan."
+				   read -rp "Do you want to [R]e-run as root, or [S]kip masscan? " CHOICE;
+						   case $CHOICE in
+								   [rR]* )
+										   echo -e "$RED""Exiting script!""$NC";
+										   exit 1;
+										   ;;
+								   [sS]* )
+										   echo -e "$ORANGE""Skipping masscan.""$NC";
+										   SKIP_MASSCAN=1;
+										   break;
+										   ;;
+								   * )
+										   echo -e "$ORANGE""Please enter [R]e-run or [S]kip masscan.""$NC";
+										   ;;
+						   esac
+		   done
+		fi
+}
+
 function unique() {
 		# Remove domains from blacklist
 		if [[ ! -z $BLACKLIST ]]; then 
@@ -1190,17 +1215,7 @@ if [[ "$DOMAIN" == "" ]]; then
 		exit 1;
 fi
 
-# Check that matching arguments are present, i.e. -sd and -Cc
-if [[ "$SUBDOMAIN_WORDLIST" != "" ]] && [[ "$SUBDOMAIN_BRUTE" == 0 ]]; then
-		echo -e "$RED""[!] If a subdomain bruteforce wordlist is provided (-d), then the subdomain bruteforce flag (-s) must be enabled.""$NC";
-		usage;
-		exit 1;
-fi
-if [[ "$SUBDOMAIN_WORDLIST" == "" ]] && [[ "$SUBDOMAIN_BRUTE" == 1 ]]; then
-		echo -e "$RED""[!] The subdomain enumeration flag was set, but no wordlist was passed via -d.""$NC";
-		usage;
-		exit 1;
-fi
+# Check that matching arguments are present for -Cc
 if [[ "$CONTENT_WORDLIST" != "" ]] && [[ "$CONTENT_DISCOVERY" == 0 ]]; then
 		echo -e "$RED""[!] If a content discovery wordlist is provided (-C), then the content discovery flag (-c) must be enabled.""$NC";
 		usage;
@@ -1220,29 +1235,6 @@ fi
 
 # Check tool paths are set
 check_paths;
-
-# Check for root for non-interactive or long-running scans
-if [[ $EUID -ne 0 ]]; then
-   while true; do
-		   echo -e "$ORANGE""[!] Please note: Script is not being run as root."
-		   echo -e "$ORANGE""[!] For long-running options, like long wordlists or non-interactive mode, the script may hang waiting for the root password for masscan."
-		   read -rp "Do you want to [R]e-run as root, or [S]kip masscan? " CHOICE;
-				   case $CHOICE in
-						   [rR]* )
-								   echo -e "$RED""Exiting script!""$NC";
-								   exit 1;
-								   ;;
-						   [sS]* )
-								   echo -e "$ORANGE""Skipping masscan.""$NC";
-								   SKIP_MASSCAN=1;
-								   break;
-								   ;;
-						   * )
-								   echo -e "$ORANGE""Please enter [R]e-run or [S]kip masscan.""$NC";
-								   ;;
-				   esac
-   done
-fi
 
 #### Begin main script functions
 # Create working dir, start script timer, and create interesting domains text file
@@ -1264,6 +1256,8 @@ touch "$WORKING_DIR"/"$ALL_IP";
 # Information gathering: all tools
 # Domains to scan: all unique discovered
 if [[ "$DEFAULT_MODE" == 1 ]]; then
+		# Check if we're root since we're running masscan
+		check_root;
 		# Run all phases with defaults
 		echo -e "$GREEN""Beginning non-interactive mode scan.""$NC";
 		sleep 1;
@@ -1295,6 +1289,8 @@ fi
 
 # Run in interactive mode, ignoring other parameters
 if [[ "$INTERACTIVE" == 1 ]]; then
+		# Check if we're root since we're running masscan
+		check_root;
 		echo -e "$GREEN""Beginning interactive mode scan.""$NC";
 		sleep 1;
 
