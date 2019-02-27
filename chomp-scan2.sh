@@ -89,8 +89,8 @@ function usage() {
 		echo -e "$GREEN""Usage: chomp-scan.sh [-h] [-u domain] etc....""$NC";
 }
 
+# Check that a file path exists and is not empty
 function exists() {
-		# Check that a file path exists and is not empty
 		if [[ -e "$1" ]]; then
 				if [[ -s "$1" ]]; then
 						return 1;
