@@ -124,14 +124,18 @@ while getopts ":hu:d:c:sSiCb:IaADX:" opt; do
 						SUBDOMAIN_BRUTE=1;
 						;;
 				c ) # -c content discovery wordlist
-						exists "$OPTARG";
-						RESULT=$?;
-						if [[ "$RESULT" -eq 1 ]]; then
+						if [[ "$OPTARG" == "small" ]] || [[ "$OPTARG" == "medium" ]] || [[ "$OPTARG" == "large" ]] || [[ "$OPTARG" == "xl" ]] || [[ "$OPTARG" == "xxl" ]]; then
 								CONTENT_WORDLIST="$OPTARG";
 						else
-								echo -e "$RED""[!] Provided content discovery wordlist $OPTARG is empty or doesn't exist!""$NC";
-								usage;
-								exit 1;
+								exists "$OPTARG";
+								RESULT=$?;
+								if [[ "$RESULT" -eq 1 ]]; then
+										CONTENT_WORDLIST="$OPTARG";
+								else
+										echo -e "$RED""[!] Provided content discovery wordlist $OPTARG is empty or doesn't exist!""$NC";
+										usage;
+										exit 1;
+								fi
 						fi
 						;;
 				C ) # -C enable content discovery
