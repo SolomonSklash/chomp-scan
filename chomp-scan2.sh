@@ -321,7 +321,7 @@ function unique() {
 				while read -r bad; do
 						grep -v "$bad" "$WORKING_DIR"/$ALL_DOMAIN > "$WORKING_DIR"/temp1;
 						mv "$WORKING_DIR"/temp1  "$WORKING_DIR"/$ALL_DOMAIN;
-				done < $BLACKLIST;
+				done < "$BLACKLIST";
 		fi
 
 		# Get unique list of IPs and domains, ignoring case
@@ -340,16 +340,16 @@ function list_found() {
 function get_interesting() {
 		while read -r word; do
 				grep "$word" "$WORKING_DIR"/$ALL_DOMAIN >> "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-		done < $INTERESTING;
+		done < "$INTERESTING";
 
 		# Make sure no there are duplicates
 		sort -u "$WORKING_DIR"/"$INTERESTING_DOMAINS" > "$WORKING_DIR"/tmp3;
 		mv "$WORKING_DIR"/tmp3 "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 
 		# Make sure > 0 domains are found
-		FOUND=$(wc -l "$WORKING_DIR"/$INTERESTING_DOMAINS | cut -d ' ' -f 1);
+		FOUND=$(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1);
 		if [[ $FOUND -gt 0 ]]; then
-				echo -e "$RED""[!] The following $(wc -l "$WORKING_DIR"/$INTERESTING_DOMAINS | cut -d ' ' -f 1) potentially interesting subdomains have been found ($WORKING_DIR/$INTERESTING_DOMAINS):""$ORANGE";
+				echo -e "$RED""[!] The following $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) potentially interesting subdomains have been found ($WORKING_DIR/$INTERESTING_DOMAINS):""$ORANGE";
 				cat "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 				sleep 1;
 		else
