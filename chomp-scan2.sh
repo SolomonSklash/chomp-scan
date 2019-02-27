@@ -20,7 +20,7 @@ XXL=wordlists/haddix-seclists-combined.txt;
 # User-defined CLI argument variables
 DOMAIN="";
 SUBDOMAIN_WORDLIST="";
-SUBDOMAIN_BRUTE=0;
+SUBDOMAIN_BRUTE=1; # Constant
 CONTENT_WORDLIST="";
 CONTENT_DISCOVERY=0;
 SCREENSHOTS=0;
@@ -1311,19 +1311,40 @@ if [[ "$INTERACTIVE" == 1 ]]; then
 		exit;
 fi
 
+		# run_dnscan "$DOMAIN" "$SHORT";
+		# run_subfinder "$DOMAIN" "$SHORT";
+		# run_sublist3r "$DOMAIN";
+		# run_massdns "$DOMAIN" "$SHORT";
 # Always run subdomain bruteforce tools
 if [[ "$SUBDOMAIN_BRUTE" == 1 ]]; then
-		echo -e "$BLUE""[i] Beginning subdomain enumeration with ffuf and gobuster.""$NC";
-		sleep 1;
-		echo "subdomain wordlist is $SUBDOMAIN_WORDLIST";
-		sleep 5;
+		echo -e "$BLUE""[i] Beginning subdomain enumeration dnscan, subfinder, sublist3r, and massdns+altdns.""$NC";
+		sleep 0.5;
 
 		# Check if $SUBDOMAIN_WORDLIST is set, else use short as default
 		if [[ "$SUBDOMAIN_WORDLIST" != "" ]]; then
+				run_dnscan "$DOMAIN" "$SUBDOMAIN_WORDLIST";
+				run_subfinder "$DOMAIN" "$SUBDOMAIN_WORDLIST";
+				run_sublist3r "$DOMAIN";
+				run_massdns "$DOMAIN" "$SUBDOMAIN_WORDLIST";
+		else
+				run_dnscan "$DOMAIN" "$SHORT";
+				run_subfinder "$DOMAIN" "$SHORT";
+				run_sublist3r "$DOMAIN";
+				run_massdns "$DOMAIN" "$SHORT";
+		fi
+fi
+
+# -C run content discovery
+if [[ "$CONTENT_DISCOVERY" == 1 ]]; then
+		echo -e "$BLUE""[i] Beginning content discovery with ffuf and gobuster.""$NC";
+		sleep 1;
+
+		# Check if $SUBDOMAIN_WORDLIST is set, else use short as default
+		if [[ "$CONTENT_WORDLIST" != "" ]]; then
 				if [[ "$USE_ALL" == 1 ]]; then
-						run_ffuf "$DOMAIN" "$SUBDOMAIN_WORDLIST" "$WORKING_DIR"/"$ALL_DOMAIN";
+						run_ffuf "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_DOMAIN";
 				else
-						run_ffuf "$DOMAIN" "$SUBDOMAIN_WORDLIST" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+						run_ffuf "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 				fi
 		else
 				if [[ "$USE_ALL" == 1 ]]; then
@@ -1335,7 +1356,6 @@ if [[ "$SUBDOMAIN_BRUTE" == 1 ]]; then
 				fi
 		fi
 fi
-
 # TODO remove/replace
 # Start scanning phases
 # run_subdomain_brute;
