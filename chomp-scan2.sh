@@ -107,10 +107,9 @@ while getopts ":hu:d:c:sSiCb:IaADX:" opt; do
 						exists "$OPTARG";
 						RESULT=$?;
 						if [[ "$RESULT" -eq 1 ]]; then
-								echo "$OPTARG exists!";
 								ENUM_WORDLIST="$OPTARG";
 						else
-								echo -e "$RED""[!] Provided subdomain wordlist $OPTARG is empty or doesn't exist!""$NC";
+								echo -e "$RED""[!] Provided subdomain enumeration wordlist $OPTARG is empty or doesn't exist!""$NC";
 								exit 1;
 						fi
 						;;
@@ -118,7 +117,14 @@ while getopts ":hu:d:c:sSiCb:IaADX:" opt; do
 						echo "Enable subdomain bruting, requires -d"
 						;;
 				c )
-						echo "Content discovery wordlist is $OPTARG"
+						exists "$OPTARG";
+						RESULT=$?;
+						if [[ "$RESULT" -eq 1 ]]; then
+								CONTENT_WORDLIST="$OPTARG";
+						else
+								echo -e "$RED""[!] Provided content discovery wordlist $OPTARG is empty or doesn't exist!""$NC";
+								exit 1;
+						fi
 						;;
 				C )
 						echo "Enable content discovery, requires -c"
