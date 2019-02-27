@@ -75,7 +75,7 @@ By SolomonSklash - github.com/SolomonSklash/chomp-scan
 		echo -e "$BLUE""$BANNER";
 }
 
-# TODO finish banner
+# TODO finish usage
 function usage() {
 		banner;
 		echo -e "$GREEN""Usage: chomp-scan.sh [-h] [-u domain] etc....""$NC";
@@ -1179,6 +1179,12 @@ if [[ "$CONTENT_WORDLIST" == "" ]] && [[ "$CONTENT_DISCOVERY" == 1 ]]; then
 		exit 1;
 fi
 
+# Check for mutually exclusive interactive and non-interactive modes
+if [[ "$INTERACTIVE" == 1 ]] && [[ "$DEFAULT_MODE" == 1 ]]; then
+		echo -e "$RED""[!] Both interactive mode (-I) and non-interactive mode (-D) cannot be run together. Exiting.""$NC";
+		exit 1;
+fi
+
 # Check tool paths are set
 check_paths;
 
@@ -1226,6 +1232,9 @@ touch "$WORKING_DIR"/"$ALL_IP";
 # Domains to scan: all unique discovered
 if [[ "$DEFAULT_MODE" == 1 ]]; then
 		# Run all phases with defaults
+		echo -e "$GREEN""Beginning non-interactive mode scan.""$NC";
+		sleep 1;
+
 		run_dnscan "$DOMAIN" "$SHORT";
 		run_subfinder "$DOMAIN" "$SHORT";
 		run_sublist3r "$DOMAIN";
@@ -1240,6 +1249,28 @@ if [[ "$DEFAULT_MODE" == 1 ]]; then
 		run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
 		run_ffuf "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$ALL_DOMAIN";
 		run_gobuster "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$ALL_DOMAIN";
+		get_interesting;
+		list_found;
+
+		# Calculate scan runtime
+		SCAN_END=$(date +%s);
+		SCAN_DIFF=$(( SCAN_END - SCAN_START ));
+		echo -e "$BLUE""[i] Total script run time: $SCAN_DIFF seconds.""$NC";
+		
+		exit;
+fi
+
+# Run in interactive mode, ignoring other parameters
+if [[ "$INTERACTIVE" == 1 ]]; then
+		echo -e "$GREEN""Beginning interactive mode scan.""$NC";
+		sleep 1;
+
+		run_subdomain_brute;
+		run_aquatone;
+		get_interesting;
+		run_portscan;
+		run_information_gathering;
+		run_content_discovery;
 		get_interesting;
 		list_found;
 
