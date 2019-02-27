@@ -1124,6 +1124,7 @@ while true; do
 done
 }
 
+#### Error/path/argument checking before beginning script
 # Check that -u domain was passed
 if [[ "$DOMAIN" == "" ]]; then
 		echo -e "$RED""[!] A domain is required: -u example.com""$NC";
@@ -1136,6 +1137,7 @@ check_paths;
 
 exit;
 
+#### Begin main script functions
 # Create working dir, start script timer, and create interesting domains text file
 WORKING_DIR="$DOMAIN"-$(date +%T);
 SCAN_START=$(date +%s);
