@@ -182,6 +182,7 @@ while getopts ":hu:d:c:sSiCb:IaADX:" opt; do
 						echo "Use only interesting discovered domains."
 						;;
 				D ) # -D enable default non-interactive mode
+						DEFAULT_MODE=1;
 						echo "Enable non-interactive default mode"
 						;;
 				X ) # -X interesting word list file
