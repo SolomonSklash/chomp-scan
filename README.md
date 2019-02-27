@@ -38,9 +38,9 @@ Chomp Scan supports limited canceling/skipping of tools by pressing Ctrl-c. This
 #### Information Gathering (optional) (4 different sized wordlists)
 * subjack
 * bfac
-* nikto
 * whatweb
 * wafw00f
+* nikto
 
 #### Content Discovery (optional) (4 different sized wordlists)
 * ffuf
