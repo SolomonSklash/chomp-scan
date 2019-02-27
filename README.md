@@ -8,13 +8,13 @@ A scripted pipeline of tools to simplify the bug bounty/penetration test reconna
 ![](screenshots/screenshot01.png)
 
 ### Scope
-Chomp Scan is a Bash script that chains together the (in my opinion/experience) fastest and most effective tools for doing the long and sometimes tedious process of recon. No more looking for word lists and trying to remember when you started a scan and where the output is. Chomp Scan creates a timestamped output directory based on the search domain, e.g. *example.com-21:38:15*, and puts all tool output there, split into individual sub-directories as appropriate.
+Chomp Scan is a Bash script that chains together the (in my opinion/experience) fastest and most effective tools for doing the long and sometimes tedious process of recon. No more looking for word lists and trying to remember when you started a scan and where the output is. Chomp Scan creates a timestamped output directory based on the search domain, e.g. *example.com-21:38:15*, and puts all tool output there, split into individual sub-directories as appropriate. Custom output directories are also supported via the `-o` flag.
 
-Various prompts appear asking what wordlists to use, whether to use [aquatone](https://github.com/michenriksen/aquatone) to take screenshots of discovered domains, whether to perform port scanning, and whether to begin bruteforce content discovery.
+Chomp Scan runs in multiple modes. The primary on is using command-line arguments to select which scanning phases to use, which wordlists, etc. A guided interactive mode is available, as well as a non-interactive mode useful if you do not want to deal with setting multiple arguments.
 
-A list of interesting words is included, such as *dev, test, uat, staging,* etc., and domains containing those terms are flagged. This way you can focus on the interesting domains first if you wish. This list can be customized to suit your own needs.
+A list of interesting words is included, such as *dev, test, uat, staging,* etc., and domains containing those terms are flagged. This way you can focus on the interesting domains first if you wish. This list can be customized to suit your own needs, or replaced with a different file via the `-X` flag.
 
-A blacklist file is included, to exclude certain domains from the results. However it does not prevent those domains from being resolved, only from being used for port scanning and content discovery.
+A blacklist file is included, to exclude certain domains from the results. However it does not prevent those domains from being resolved, only from being used for port scanning and content discovery. It can be passed via the `-b` flag.
 
 Chomp Scan supports limited canceling/skipping of tools by pressing Ctrl-c. This can sometimes have unintended side effects, so use with care.
 
@@ -67,18 +67,21 @@ A variety of wordlists are used, both for subdomain bruteforcing and content dis
 * interesting.txt - 42 words - A list I created of potentially interesting words appearing in domain names.
 
 ### Usage
+Chomp Scan always runs subdomain enumeration, thus a domain is required via the `-u` flag. The domain should not contain a scheme, e.g. http:// or https://. A wordlist is optional, and if one is not provided the built-in short list (20k words) is used.
+
+Other scan phases are optional. Content discovery can take an optional wordlist, otherwise it defaults to the built-in short (22k words) list.
 ```
 chomp-scan.sh -u example.com -a d short -cC large -p -o path/to/directory
 
 Usage of Chomp Scan:
         -u domain
-                 (required) Domain name to scan. This should not include a scheme, e.g. example.com
+                 (required) Domain name to scan. This should not include a scheme, e.g. https:// or http://.
         -d wordlist
-                 (optional) The wordlist to use for subdomain enumeration. Three built-in lists, short, long, and huge can be used, as well as the path to a custom wordlist.
+                 (optional) The wordlist to use for subdomain enumeration. Three built-in lists, short, long, and huge can be used, as well as the path to a custom wordlist. The default is short.
         -c
                  (optional) Enable content discovery phase. The wordlist for this option defaults to short if not provided.
         -C wordlist
-                 (optional) The wordlist to use for content discovery. Five built-in lists, small, medium, large, xl, and xxl can be used, as well as the path to a custom wordlist.
+                 (optional) The wordlist to use for content discovery. Five built-in lists, small, medium, large, xl, and xxl can be used, as well as the path to a custom wordlist. The default is small.
         -s
                  (optional) Enable screenshots using Aquatone.
         -i
@@ -172,9 +175,8 @@ The following tools are required for Chomp Scan. Note that this tool was designe
 
 Chomp Scan is still in active development, as I use it myself for bug hunting, so I intend to continue adding new features and tools as I come across them. New tool suggestions, feedback, and pull requests are all welcomed. Here is a short list of potential additions I'm considering:
 
-* A non-interactive mode, where certain defaults are selected so the scan can be run and forget
 * Adding a config file, for more granular customization of tools and parameters
-* A possible Python re-write, with a pure CLI mode (and maybe a Go re-write after that!)
+* A possible Python re-write (and maybe a Go re-write after that!)
 * The generation of an HTML report, similar to what aquatone provides
 
 ### Examples
