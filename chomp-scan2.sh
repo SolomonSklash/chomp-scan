@@ -105,14 +105,18 @@ while getopts ":hu:d:c:sSiCb:IaADX:" opt; do
 						DOMAIN=$OPTARG;
 						;;
 				d ) # -d subdomain enumeration wordlist
-						exists "$OPTARG";
-						RESULT=$?;
-						if [[ "$RESULT" -eq 1 ]]; then
+						if [[ "$OPTARG" == "short" ]] || [[ "$OPTARG" == "long" ]] || [[ "$OPTARG" == "huge" ]]; then
 								SUBDOMAIN_WORDLIST="$OPTARG";
 						else
-								echo -e "$RED""[!] Provided subdomain enumeration wordlist $OPTARG is empty or doesn't exist!""$NC";
-								usage;
-								exit 1;
+								exists "$OPTARG";
+								RESULT=$?;
+								if [[ "$RESULT" -eq 1 ]]; then
+										SUBDOMAIN_WORDLIST="$OPTARG";
+								else
+										echo -e "$RED""[!] Provided subdomain enumeration wordlist $OPTARG is empty or doesn't exist!""$NC";
+										usage;
+										exit 1;
+								fi
 						fi
 						;;
 				s ) # -s enable subdomain enumeration
