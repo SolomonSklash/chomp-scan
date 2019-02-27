@@ -6,7 +6,6 @@ RED='\033[0;31m';
 GREEN='\033[0;32m';
 BLUE='\033[0;34m';
 ORANGE='\033[0;33m';
-DOMAIN=$1;
 
 # Wordlists
 SHORT=wordlists/subdomains-top1mil-20000.txt;
@@ -17,6 +16,24 @@ MEDIUM=wordlists/raft-large-combined.txt;
 LARGE=wordlists/seclists-combined.txt;
 XL=wordlists/haddix_content_discovery_all.txt;
 XXL=wordlists/haddix-seclists-combined.txt;
+
+# User-defined CLI argument variables
+DOMAIN="";
+SUBDOMAIN_WORDLIST="";
+SUBDOMAIN_BRUTE=1; # Constant
+CONTENT_WORDLIST="";
+CONTENT_DISCOVERY=0;
+SCREENSHOTS=0;
+INFO_GATHERING=0;
+PORTSCANNING=0;
+WORKING_DIR="";
+BLACKLIST=blacklist.txt;
+INTERACTIVE=0;
+USE_ALL=0;
+USE_DISCOVERED=0;
+DEFAULT_MODE=0;
+INTERESTING=interesting.txt;
+SKIP_MASSCAN=0;
 
 # Tool paths
 SUBFINDER=$(command -v subfinder);
@@ -35,20 +52,11 @@ AQUATONE=~/bounty/tools/aquatone/aquatone;
 BFAC=~/bounty/tools/bfac/bfac;
 
 # Other variables
-INTERESTING=interesting.txt;
-BLACKLIST=blacklist.txt;
 ALL_IP=all_ip.txt;
 ALL_DOMAIN=all_domain.txt;
-WORKING_DIR="$1"-$(date +%T);
 
-# Check for domain argument
-if [ $# -eq 0 ]; then
-		    echo -e "$RED""No domain provided!\\n""$NC";
-			echo -e "$GREEN""Usage: $0 example.com""$NC";
-			exit;
-fi
-
-BANNER='
+function banner() {
+		BANNER='
 *****************************************************************************************************
 *   ______  __                                              ______                                  *
 *  /      \/  |                                            /      \                                 *
@@ -65,77 +73,300 @@ BANNER='
 *                                                                                                   *
 *****************************************************************************************************
 By SolomonSklash - github.com/SolomonSklash/chomp-scan
-';
-echo -e "$BLUE""$BANNER";
+		';
+		echo -e "$BLUE""$BANNER";
+}
+
+function usage() {
+		banner;
+		echo -e "$GREEN""chomp-scan.sh -u example.com -a d short -cC large -p -o path/to/directory\\n""$NC";
+		echo -e "$GREEN""Usage of Chomp Scan:""$NC";
+		echo -e "$BLUE""\\t-u domain \\n\\t\\t$ORANGE (required) Domain name to scan. This should not include a scheme, e.g. https:// or http://.""$NC";
+		echo -e "$BLUE""\\t-d wordlist\\n\\t\\t$ORANGE (optional) The wordlist to use for subdomain enumeration. Three built-in lists, short, long, and huge can be used, as well as the path to a custom wordlist. The default is short.""$NC";
+		echo -e "$BLUE""\\t-c \\n\\t\\t$ORANGE (optional) Enable content discovery phase. The wordlist for this option defaults to short if not provided.""$NC";
+		echo -e "$BLUE""\\t-C wordlist \\n\\t\\t$ORANGE (optional) The wordlist to use for content discovery. Five built-in lists, small, medium, large, xl, and xxl can be used, as well as the path to a custom wordlist. The default is small.""$NC";
+		echo -e "$BLUE""\\t-s \\n\\t\\t$ORANGE (optional) Enable screenshots using Aquatone.""$NC";
+		echo -e "$BLUE""\\t-i \\n\\t\\t$ORANGE (optional) Enable information gathering phase, using subjack, bfac, whatweb, wafw00f, and nikto.""$NC";
+		echo -e "$BLUE""\\t-p \\n\\t\\t$ORANGE (optional) Enable portscanning phase, using masscan (run as root) and nmap.""$NC";
+		echo -e "$BLUE""\\t-I \\n\\t\\t$ORANGE (optional) Enable interactive mode. This allows you to select certain tool options and inputs interactively. This cannot be run with -D.""$NC";
+		echo -e "$BLUE""\\t-D \\n\\t\\t$ORANGE (optional) Enable default non-interactive mode. This mode uses pre-selected defaults and requires no user interaction or options. This cannot be run with -I.""$NC";
+		echo -e "\\t\\t\\t$ORANGE    Options: Subdomain enumeration wordlist: short.""$NC";
+		echo -e "\\t\\t\\t$ORANGE             Content discovery wordlist: small.""$NC";
+		echo -e "\\t\\t\\t$ORANGE             Aquatone screenshots: yes.""$NC";
+		echo -e "\\t\\t\\t$ORANGE             Portscanning: yes.""$NC";
+		echo -e "\\t\\t\\t$ORANGE             Information gathering: yes.""$NC";
+		echo -e "\\t\\t\\t$ORANGE             Domains to scan: all unique discovered.""$NC";
+		echo -e "$BLUE""\\t-b wordlist \\n\\t\\t$ORANGE (optional) Set custom domain blacklist file.""$NC";
+		echo -e "$BLUE""\\t-X wordlist \\n\\t\\t$ORANGE (optional) Set custom interesting word list.""$NC";
+		echo -e "$BLUE""\\t-o directory \\n\\t\\t$ORANGE (optional) Set custom output directory. It must exist and be writable.""$NC";
+		echo -e "$BLUE""\\t-a \\n\\t\\t$ORANGE (optional) Use all unique discovered domains for scans, rather than interesting domains. This cannot be used with -A.""$NC";
+		echo -e "$BLUE""\\t-A \\n\\t\\t$ORANGE (optional, default) Use only interesting discovered domains for scans, rather than all discovered domains. This cannot be used with -a.""$NC";
+		echo -e "$BLUE""\\t-h \\n\\t\\t$ORANGE (optional) Display this help page.""$NC";
+}
+
+# Check that a file path exists and is not empty
+function exists() {
+		if [[ -e "$1" ]]; then
+				if [[ -s "$1" ]]; then
+						return 1;
+				else
+						return 0;
+				fi
+		else
+				return 0;
+		fi
+}
+
+# Handle CLI arguments
+while getopts ":hu:d:C:sicb:IaADX:po:" opt; do
+		case ${opt} in
+				h ) # -h help
+						usage;
+						exit;
+						;;
+				u ) # -u URL/domain
+						DOMAIN=$OPTARG;
+						;;
+				d ) # -d subdomain enumeration wordlist
+						# Set to one of the defaults, else use provided wordlist
+						case "$OPTARG" in
+								short )
+										SUBDOMAIN_WORDLIST="$SHORT";
+										break;
+										;;
+								long )
+										SUBDOMAIN_WORDLIST="$LONG";
+										break;
+										;;
+								huge )
+										SUBDOMAIN_WORDLIST="$HUGE";
+										break;
+										;;
+						esac
+
+						if [[ "$SUBDOMAIN_WORDLIST" == "" ]]; then
+								exists "$OPTARG";
+								RESULT=$?;
+								if [[ "$RESULT" -eq 1 ]]; then
+										SUBDOMAIN_WORDLIST="$OPTARG";
+								else
+										echo -e "$RED""[!] Provided subdomain enumeration wordlist $OPTARG is empty or doesn't exist.""$NC";
+										usage;
+										exit 1;
+								fi
+						fi
+						;;
+				C ) # -C content discovery wordlist
+						# Set to one of the defaults, else use provided wordlist
+						case "$OPTARG" in
+								small )
+										CONTENT_WORDLIST="$SMALL";
+										break;
+										;;
+								medium )
+										CONTENT_WORDLIST="$MEDIUM";
+										break;
+										;;
+								large )
+										CONTENT_WORDLIST="$LARGE";
+										break;
+										;;
+								xl )
+										CONTENT_WORDLIST="$XL";
+										break;
+										;;
+								xxl )
+										CONTENT_WORDLIST="$XXL";
+										break;
+										;;
+						esac
+
+						if [[ "$CONTENT_WORDLIST" == "" ]]; then
+								exists "$OPTARG";
+								RESULT=$?;
+								if [[ "$RESULT" -eq 1 ]]; then
+										CONTENT_WORDLIST="$OPTARG";
+								else
+										echo -e "$RED""[!] Provided content discovery wordlist $OPTARG is empty or doesn't exist.""$NC";
+										usage;
+										exit 1;
+								fi
+						fi
+						;;
+				c ) # -c enable content discovery
+						CONTENT_DISCOVERY=1;
+						;;
+				s ) # -s enable screenshots
+						SCREENSHOTS=1;
+						;;
+				i ) # -i enable information gathering
+						INFO_GATHERING=1;
+						;;
+				b ) # -b domain blacklist file
+						exists "$OPTARG";
+						RESULT=$?;
+						if [[ "$RESULT" -eq 1 ]]; then
+								BLACKLIST="$OPTARG";
+						else
+								echo -e "$RED""[!] Provided blacklist $OPTARG is empty or doesn't exist.""$NC";
+								usage;
+								exit 1;
+						fi
+						;;
+				I ) # -I enable interactive mode
+						INTERACTIVE=1;
+						;;
+				a ) # -a use all discovered domains
+						echo "Use all discovered domains."
+						# Check that USE_DISCOVERED is not set
+						if [[ "$USE_DISCOVERED" != 1 ]]; then
+								USE_ALL=1;
+						else
+								echo -e "$RED""[!] Using -A interesting domains is mutually exclusive to using -a all domains.""$NC";
+								usage;
+								exit 1;
+						fi
+						;;
+				A ) # -A use only interesting discovered domains
+						# Check that USE_DISCOVERED is not set
+						if [[ "$USE_ALL" != 1 ]]; then
+								USE_DISCOVERED=1;
+						else
+								echo -e "$RED""[!] Using -a all domains is mutually exclusive to using -A interesting domains.""$NC";
+								usage;
+								exit 1;
+						fi
+						echo "Use only interesting discovered domains."
+						;;
+				D ) # -D enable default non-interactive mode
+						DEFAULT_MODE=1;
+						;;
+				X ) # -X interesting word list file
+						exists "$OPTARG";
+						RESULT=$?;
+						if [[ "$RESULT" -eq 1 ]]; then
+								INTERESTING="$OPTARG";
+						else
+								echo -e "$RED""[!] Provided interesting words file $OPTARG is empty or doesn't exist.""$NC";
+								usage;
+								exit 1;
+						fi
+						;;
+				p ) # -p enable port scanning
+						PORTSCANNING=1;
+						;;
+				o ) # -o output directory
+						if [[ -w "$OPTARG" ]]; then
+								WORKING_DIR="$OPTARG";
+						else
+								echo -e "$RED""[!] Provided output directory $OPTARG is not writable or doesn't exist.""$NC";
+								usage;
+								exit 1;
+						fi
+						;;
+				\? ) # Invalid option
+						echo -e "$RED""[!] Invalid Option: -$OPTARG" 1>&2;
+						usage;
+						exit 1;
+						;;
+				: ) # Invalid option
+						echo -e "$RED""[!] Invalid Option: -$OPTARG requires an argument" 1>&2;
+						usage;
+						exit 1;
+						;;
+				* ) # Invalid option
+						echo -e "$RED""[!] Invalid Option: -$OPTARG" 1>&2;
+						usage;
+						exit 1;
+						;;
+		esac
+done
+shift $((OPTIND -1));
 
 function check_paths() {
 		# Check that all paths are set
 		if [[ "$DNSCAN" == "" ]] || [[ ! -f "$DNSCAN" ]]; then
 				echo -e "$RED""[!] The path or the file specified by the path for dnscan does not exit.";
-				exit;
+				exit 1;
 		fi
 		if [[ "$SUBFINDER" == "" ]] || [[ ! -f "$SUBFINDER" ]]; then
 				echo -e "$RED""[!] The path or the file specified by the path for subfinder does not exit.";
-				exit;
+				exit 1;
 		fi
 		if [[ "$SUBLIST3R" == "" ]] || [[ ! -f "$SUBLIST3R" ]]; then
 				echo -e "$RED""[!] The path or the file specified by the path for sublist3r does not exit.";
-				exit;
+				exit 1;
 		fi
 		if [[ "$SUBJACK" == "" ]] || [[ ! -f "$SUBJACK" ]]; then
 				echo -e "$RED""[!] The path or the file specified by the path for subjack does not exit.";
-				exit;
+				exit 1;
 		fi
 		if [[ "$ALTDNS" == "" ]] || [[ ! -f "$ALTDNS" ]]; then
 				echo -e "$RED""[!] The path or the file specified by the path for altdns does not exit.";
-				exit;
+				exit 1;
 		fi
 		if [[ "$MASSDNS_BIN" == "" ]] || [[ ! -f "$MASSDNS_BIN" ]]; then
 				echo -e "$RED""[!] The path or the file specified by the path for the massdns binary does not exit.";
-				exit;
+				exit 1;
 		fi
 		if [[ "$MASSDNS_RESOLVERS" == "" ]] || [[ ! -f "$MASSDNS_RESOLVERS" ]]; then
 				echo -e "$RED""[!] The path or the file specified by the path for massdns resolver file does not exit.";
-				exit;
+				exit 1;
 		fi
 		if [[ "$AQUATONE" == "" ]] || [[ ! -f "$AQUATONE" ]]; then
 				echo -e "$RED""[!] The path or the file specified by the path for aquatone does not exit.";
-				exit;
+				exit 1;
 		fi
 		if [[ "$FFUF" == "" ]] || [[ ! -f "$FFUF" ]]; then
 				echo -e "$RED""[!] The path or the file specified by the path for ffuf does not exit.";
-				exit;
+				exit 1;
 		fi
 		if [[ "$BFAC" == "" ]] || [[ ! -f "$BFAC" ]]; then
 				echo -e "$RED""[!] The path or the file specified by the path for bfac does not exit.";
-				exit;
+				exit 1;
 		fi
 		if [[ "$CHROMIUM" == "" ]] || [[ ! -f "$CHROMIUM" ]]; then
 				echo -e "$RED""[!] The path or the file specified by the path for chromium does not exit.";
-				exit;
+				exit 1;
 		fi
 		if [[ "$GOBUSTER" == "" ]] || [[ ! -f "$GOBUSTER" ]]; then
 				echo -e "$RED""[!] The path or the file specified by the path for gobuster does not exit.";
-				exit;
+				exit 1;
 		fi
 		if [[ "$WHATWEB" == "" ]] || [[ ! -f "$WHATWEB" ]]; then
 				echo -e "$RED""[!] The path or the file specified by the path for whatweb does not exit.";
-				exit;
+				exit 1;
 		fi
 		if [[ "$WAFW00F" == "" ]] || [[ ! -f "$WAFW00F" ]]; then
 				echo -e "$RED""[!] The path or the file specified by the path for wafw00f does not exit.";
-				exit;
+				exit 1;
 		fi
 }
 
-check_paths;
-
-SCAN_START=$(date +%s);
-mkdir "$WORKING_DIR";
-touch "$WORKING_DIR"/interesting-domains.txt;
-INTERESTING_DOMAINS=interesting-domains.txt;
-touch "$WORKING_DIR"/"$ALL_DOMAIN";
-touch "$WORKING_DIR"/"$ALL_IP";
+# Check for root for runs using masscan
+function check_root() {
+		if [[ $EUID -ne 0 ]]; then
+		   while true; do
+				   echo -e "$ORANGE""[!] Please note: Script is not being run as root."
+				   echo -e "$ORANGE""[!] Provided script options include masscan, which must run as root."
+				   read -rp "Do you want to exit and [R]e-run as root, or [S]kip masscan? " CHOICE;
+						   case $CHOICE in
+								   [rR]* )
+										   echo -e "$RED""[!] Exiting script.""$NC";
+										   exit 1;
+										   ;;
+								   [sS]* )
+										   echo -e "$ORANGE""Skipping masscan.""$NC";
+										   SKIP_MASSCAN=1;
+										   break;
+										   ;;
+								   * )
+										   echo -e "$ORANGE""Please enter [R]e-run or [S]kip masscan.""$NC";
+										   ;;
+						   esac
+		   done
+		fi
+}
 
 function unique() {
 		# Remove domains from blacklist
@@ -143,7 +374,7 @@ function unique() {
 				while read -r bad; do
 						grep -v "$bad" "$WORKING_DIR"/$ALL_DOMAIN > "$WORKING_DIR"/temp1;
 						mv "$WORKING_DIR"/temp1  "$WORKING_DIR"/$ALL_DOMAIN;
-				done < $BLACKLIST;
+				done < "$BLACKLIST";
 		fi
 
 		# Get unique list of IPs and domains, ignoring case
@@ -162,16 +393,16 @@ function list_found() {
 function get_interesting() {
 		while read -r word; do
 				grep "$word" "$WORKING_DIR"/$ALL_DOMAIN >> "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-		done < $INTERESTING;
+		done < "$INTERESTING";
 
 		# Make sure no there are duplicates
 		sort -u "$WORKING_DIR"/"$INTERESTING_DOMAINS" > "$WORKING_DIR"/tmp3;
 		mv "$WORKING_DIR"/tmp3 "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 
 		# Make sure > 0 domains are found
-		FOUND=$(wc -l "$WORKING_DIR"/interesting-domains.txt | cut -d ' ' -f 1);
+		FOUND=$(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1);
 		if [[ $FOUND -gt 0 ]]; then
-				echo -e "$RED""[!] The following $(wc -l "$WORKING_DIR"/interesting-domains.txt | cut -d ' ' -f 1) potentially interesting subdomains have been found ($WORKING_DIR/interesting-domains.txt):""$ORANGE";
+				echo -e "$RED""[!] The following $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) potentially interesting subdomains have been found ($WORKING_DIR/$INTERESTING_DOMAINS):""$ORANGE";
 				cat "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 				sleep 1;
 		else
@@ -353,58 +584,74 @@ function run_subdomain_brute() {
 }
 
 function run_aquatone () {
-		# Ask user to run aquatone
-		while true; do
-		  echo -e "$ORANGE";
-		  read -rp "[?] Do you want to screenshot discovered domains with aquatone? [Y/N] " ANSWER
+		# Call empty or with default as $1 for -D default non-interactive mode
+		if [[ "$1" == "default" ]]; then
+				mkdir "$WORKING_DIR"/aquatone;
+				echo -e "$BLUE""[i] Running aquatone against all $(wc -l "$WORKING_DIR"/$ALL_DOMAIN | cut -d ' ' -f 1) unique discovered subdomains.""$NC";
+				START=$(date +%s);
+				$AQUATONE -threads 10 -chrome-path "$CHROMIUM" -ports medium -out "$WORKING_DIR"/aquatone < "$WORKING_DIR"/$ALL_DOMAIN;
+				END=$(date +%s);
+				DIFF=$(( END - START ));
+				echo -e "$GREEN""[i]$BLUE Aquatone took $DIFF seconds to run.""$NC";
+		else
+				# Ask user to run aquatone
+				while true; do
+				  echo -e "$ORANGE";
+				  read -rp "[?] Do you want to screenshot discovered domains with aquatone? [Y/N] " ANSWER
 
-		  case $ANSWER in
-		   [yY]* ) 
-				   break
-				   ;;
+				  case $ANSWER in
+				   [yY]* ) 
+						   break
+						   ;;
 
-		   [nN]* ) 
-				   echo -e "$ORANGE""[!] Skipping aquatone.""$NC";
-				   return;
-				   ;;
+				   [nN]* ) 
+						   echo -e "$ORANGE""[!] Skipping aquatone.""$NC";
+						   return;
+						   ;;
 
-		   * )     
-				   echo -e "$RED""[!] Please enter Y/y or N/n. ""$NC"
-				   ;;
-		  esac
-		done
-		mkdir "$WORKING_DIR"/aquatone;
+				   * )     
+						   echo -e "$RED""[!] Please enter Y/y or N/n. ""$NC"
+						   ;;
+				  esac
+				done
+				mkdir "$WORKING_DIR"/aquatone;
 
-		echo -e "$GREEN""[i]$BLUE Running aquatone against all $(wc -l "$WORKING_DIR"/$ALL_DOMAIN | cut -d ' ' -f 1) unique discovered subdomains.""$NC";
-		START=$(date +%s);
-		$AQUATONE -threads 10 -chrome-path "$CHROMIUM" -ports medium -out "$WORKING_DIR"/aquatone < "$WORKING_DIR"/$ALL_DOMAIN;
-		END=$(date +%s);
-		DIFF=$(( END - START ));
-		echo -e "$GREEN""[i]$BLUE Aquatone took $DIFF seconds to run.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running aquatone against all $(wc -l "$WORKING_DIR"/$ALL_DOMAIN | cut -d ' ' -f 1) unique discovered subdomains.""$NC";
+				START=$(date +%s);
+				$AQUATONE -threads 10 -chrome-path "$CHROMIUM" -ports medium -out "$WORKING_DIR"/aquatone < "$WORKING_DIR"/$ALL_DOMAIN;
+				END=$(date +%s);
+				DIFF=$(( END - START ));
+				echo -e "$GREEN""[i]$BLUE Aquatone took $DIFF seconds to run.""$NC";
+		fi
 }
 
 function run_masscan() {
-		# Run masscan against all IPs found on all ports
-		echo -e "$GREEN""[i]$BLUE Running masscan against all $(wc -l "$WORKING_DIR"/$ALL_IP | cut -d ' ' -f 1) unique discovered IP addresses.""$NC";
-		echo -e "$GREEN""[i]$BLUE Command: masscan -p1-65535 -il $WORKING_DIR/$ALL_IP --rate=7000 -oL $WORKING_DIR/masscan-output.txt.""$NC";
+		# Check if not root and SKIP_MASSCAN is set
+		if [[ "$SKIP_MASSCAN" == 1 ]]; then
+				echo -e "$ORANGE""[!] Skipping masscan since script is not being run as root.""$NC";
+				sleep 1;
+		else
+				# Run masscan against all IPs found on all ports
+				echo -e "$GREEN""[i]$BLUE Running masscan against all $(wc -l "$WORKING_DIR"/$ALL_IP | cut -d ' ' -f 1) unique discovered IP addresses.""$NC";
+				echo -e "$GREEN""[i]$BLUE Command: masscan -p1-65535 -il $WORKING_DIR/$ALL_IP --rate=7000 -oL $WORKING_DIR/masscan-output.txt.""$NC";
 
-		# Check that IP list is not empty
-		IP_COUNT=$(wc -l "$WORKING_DIR"/$ALL_IP | cut -d ' ' -f 1);
-		if [[ "$IP_COUNT" -lt 1 ]]; then
-				echo -e "$RED""[i] No IP addresses have been found. Skipping masscan scan.""$NC";
-				return;
-		fi
+				# Check that IP list is not empty
+				IP_COUNT=$(wc -l "$WORKING_DIR"/$ALL_IP | cut -d ' ' -f 1);
+				if [[ "$IP_COUNT" -lt 1 ]]; then
+						echo -e "$RED""[i] No IP addresses have been found. Skipping masscan scan.""$NC";
+						return;
+				fi
 
+				START=$(date +%s);
+				sudo masscan -p1-65535 -iL "$WORKING_DIR"/$ALL_IP --rate=7000 -oL "$WORKING_DIR"/masscan-output.txt;
+				END=$(date +%s);
+				DIFF=$(( END - START ));
+				echo -e "$GREEN""[i]$BLUE Masscan took $DIFF seconds to run.""$NC";
 
-		START=$(date +%s);
-		sudo masscan -p1-65535 -iL "$WORKING_DIR"/$ALL_IP --rate=7000 -oL "$WORKING_DIR"/masscan-output.txt;
-		END=$(date +%s);
-		DIFF=$(( END - START ));
-		echo -e "$GREEN""[i]$BLUE Masscan took $DIFF seconds to run.""$NC";
-
-		# Trim # from first and last lines of output
-		grep -v '#' "$WORKING_DIR"/masscan-output.txt > "$WORKING_DIR"/temp;
-		sudo mv "$WORKING_DIR"/temp "$WORKING_DIR"/masscan-output.txt;
+				# Trim # from first and last lines of output
+				grep -v '#' "$WORKING_DIR"/masscan-output.txt > "$WORKING_DIR"/temp;
+				sudo mv "$WORKING_DIR"/temp "$WORKING_DIR"/masscan-output.txt;
+			fi
 }
 
 function run_nmap() {
@@ -834,7 +1081,7 @@ function run_subjack() {
 		# Call with domain as $1 and wordlist as $2
 
 		# Check for domain takeover on each found domain
-		echo -e "$GREEN""[i]$BLUE Running subjack against all $(wc -l "$WORKING_DIR"/$ALL_DOMAIN | cut -d ' ' -f 1) unique discoverd subdomains to check for subdomain takeover.""$NC";
+		echo -e "$GREEN""[i]$BLUE Running subjack against all $(wc -l "$WORKING_DIR"/$ALL_DOMAIN | cut -d ' ' -f 1) unique discovered subdomains to check for subdomain takeover.""$NC";
 		echo -e "$GREEN""[i]$ORANGE Command: subjack -d $1 -w $2 -v -t 20 -ssl -m -o $WORKING_DIR/subjack-output.txt""$NC";
 		START=$(date +%s);
 		"$SUBJACK" -d "$1" -w "$2" -v -t 20 -ssl -m -o "$WORKING_DIR"/subjack-output.txt;
@@ -850,7 +1097,7 @@ function run_information_gathering() {
 # Ask user to do information gathering on discovered domains
 while true; do
   echo -e "$GREEN""[?] Do you want to begin information gathering on [A]ll/[I]nteresting/[N]o discovered domains?";
-  echo -e "$ORANGE""[i] This will run subjack, bfac, nikto, whatweb, and wafw00f.";
+  echo -e "$ORANGE""[i] This will run subjack, bfac, whatweb, wafw00f, and nikto.";
   read -rp "[?] Please enter A/a, I/i, or N/n. " ANSWER
 
   case $ANSWER in
@@ -868,41 +1115,41 @@ while true; do
 						   [sS]* )
 								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_bfac "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
 								   break;
 								   ;;
 							[mM]* )
 								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_bfac "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
 								   break;
 								   ;;
 							[lL]* )
 								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_bfac "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
 								   break;
 								   ;;
 							[xX]* )
 								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_bfac "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
 								   break;
 								   ;;
 							[2]* )
 								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_bfac "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
 								   break;
 								   ;;
 							* )
@@ -937,41 +1184,41 @@ while true; do
 						   [sS]* )
 								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   break;
 								   ;;
 							[mM]* )
 								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_whatweb "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   break;
 								   ;;
 							[lL]* )
 								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_whatweb "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   break;
 								   ;;
 							[xX]* )
 								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   break;
 								   ;;
 							[2]* )
 								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   break;
 								   ;;
 							* )
@@ -988,14 +1235,215 @@ while true; do
 done
 }
 
-run_subdomain_brute;
-run_aquatone;
-get_interesting;
-run_portscan;
-run_information_gathering;
-run_content_discovery;
+#### Error/path/argument checking before beginning script
+
+# Check that -u domain was passed
+if [[ "$DOMAIN" == "" ]]; then
+		echo -e "$RED""[!] A domain is required: -u example.com""$NC";
+		usage;
+		exit 1;
+fi
+
+# Check for mutually exclusive interactive and non-interactive modes
+if [[ "$INTERACTIVE" == 1 ]] && [[ "$DEFAULT_MODE" == 1 ]]; then
+		echo -e "$RED""[!] Both interactive mode (-I) and non-interactive mode (-D) cannot be run together. Exiting.""$NC";
+		usage;
+		exit 1;
+fi
+
+# Check tool paths are set
+check_paths;
+
+#### Begin main script functions
+
+# Create working dir, start script timer, and create interesting domains text file
+# Check if -o output directory is already set
+if [[ "$WORKING_DIR" == "" ]]; then
+		WORKING_DIR="$DOMAIN"-$(date +%T);
+		mkdir "$WORKING_DIR";
+fi
+
+SCAN_START=$(date +%s);
+touch "$WORKING_DIR"/interesting-domains.txt;
+INTERESTING_DOMAINS=interesting-domains.txt;
+touch "$WORKING_DIR"/"$ALL_DOMAIN";
+touch "$WORKING_DIR"/"$ALL_IP";
+
+# Check for -D non-interactive default flag
+# Defaults for non-interactive:
+# Subdomain wordlist size: short
+# Content discovery wordlist size: small
+# Aquatone: yes
+# Portscan: masscan and nmap
+# Content discovery: ffuf and gobuster
+# Information gathering: all tools
+# Domains to scan: all unique discovered
+if [[ "$DEFAULT_MODE" == 1 ]]; then
+		# Check if we're root since we're running masscan
+		check_root;
+
+		# Run all phases with defaults
+		echo -e "$GREEN""Beginning non-interactive mode scan.""$NC";
+		sleep 0.5;
+
+		run_dnscan "$DOMAIN" "$SHORT";
+		run_subfinder "$DOMAIN" "$SHORT";
+		run_sublist3r "$DOMAIN";
+		run_massdns "$DOMAIN" "$SHORT";
+		run_aquatone "default";
+		run_masscan;
+		run_nmap;
+		run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
+		run_bfac "$WORKING_DIR"/"$ALL_DOMAIN";
+		run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
+		run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
+		run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
+		run_ffuf "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$ALL_DOMAIN";
+		run_gobuster "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$ALL_DOMAIN";
+		get_interesting;
+		list_found;
+
+		# Calculate scan runtime
+		SCAN_END=$(date +%s);
+		SCAN_DIFF=$(( SCAN_END - SCAN_START ));
+		echo -e "$BLUE""[i] Total script run time: $SCAN_DIFF seconds.""$NC";
+		
+		exit;
+fi
+
+# Run in interactive mode, ignoring other parameters
+if [[ "$INTERACTIVE" == 1 ]]; then
+		# Check if we're root since we're running masscan
+		check_root;
+
+		# Run phases interactively
+		echo -e "$GREEN""Beginning interactive mode scan.""$NC";
+		sleep 0.5;
+
+		run_subdomain_brute;
+		run_aquatone;
+		get_interesting;
+		run_portscan;
+		run_information_gathering;
+		run_content_discovery;
+		get_interesting;
+		list_found;
+
+		# Calculate scan runtime
+		SCAN_END=$(date +%s);
+		SCAN_DIFF=$(( SCAN_END - SCAN_START ));
+		echo -e "$BLUE""[i] Total script run time: $SCAN_DIFF seconds.""$NC";
+		
+		exit;
+fi
+
+# Preemptively check for -p portscanning
+if [[ "$PORTSCANNING" == 1 ]]; then
+		# Check if we're root since we're running masscan
+		check_root;
+fi
+
+# Always run subdomain bruteforce tools
+if [[ "$SUBDOMAIN_BRUTE" == 1 ]]; then
+		echo -e "$BLUE""[i] Beginning subdomain enumeration dnscan, subfinder, sublist3r, and massdns+altdns.""$NC";
+		sleep 0.5;
+
+		# Check if $SUBDOMAIN_WORDLIST is set, else use short as default
+		if [[ "$SUBDOMAIN_WORDLIST" != "" ]]; then
+				run_dnscan "$DOMAIN" "$SUBDOMAIN_WORDLIST";
+				run_subfinder "$DOMAIN" "$SUBDOMAIN_WORDLIST";
+				run_sublist3r "$DOMAIN";
+				run_massdns "$DOMAIN" "$SUBDOMAIN_WORDLIST";
+		else
+				run_dnscan "$DOMAIN" "$SHORT";
+				run_subfinder "$DOMAIN" "$SHORT";
+				run_sublist3r "$DOMAIN";
+				run_massdns "$DOMAIN" "$SHORT";
+		fi
+		# Get interesting domains
+		get_interesting;
+fi
+
+# -s screenshot with aquatone
+if [[ "$SCREENSHOTS" == 1 ]]; then
+		echo -e "$BLUE""[i] Taking screenshots with aquatone.""$NC";
+		sleep 0.5;
+		run_aquatone "default";
+fi
+
+# -i information gathering
+if [[ "$INFO_GATHERING" == 1 ]]; then
+		echo -e "$BLUE""[i] Beginning information gathering with subjack, bfac, whatweb, wafw00f, and nikto.""$NC";
+		sleep 0.5;
+
+		if [[ "$USE_ALL" == 1 ]]; then
+				run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
+				run_bfac "$WORKING_DIR"/"$ALL_DOMAIN";
+				run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
+				run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
+				run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
+		# Make sure there are interesting domains
+		elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) != 0 ]]; then
+				run_subjack "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+				run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+				run_whatweb "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+				run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+				run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+		else
+				run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
+				run_bfac "$WORKING_DIR"/"$ALL_DOMAIN";
+				run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
+				run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
+				run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
+		fi
+fi
+
+# -C run content discovery
+if [[ "$CONTENT_DISCOVERY" == 1 ]]; then
+		echo -e "$BLUE""[i] Beginning content discovery with ffuf and gobuster.""$NC";
+		sleep 0.5;
+
+		# Check if $SUBDOMAIN_WORDLIST is set, else use short as default
+		if [[ "$CONTENT_WORDLIST" != "" ]]; then
+				if [[ "$USE_ALL" == 1 ]]; then
+						run_ffuf "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_DOMAIN";
+						run_gobuster "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_DOMAIN";
+				# Make sure there are interesting domains
+				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) != 0 ]]; then
+						run_ffuf "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+						run_gobuster "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+				else
+						run_ffuf "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_DOMAIN";
+						run_gobuster "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_DOMAIN";
+				fi
+		else
+				if [[ "$USE_ALL" == 1 ]]; then
+						run_ffuf "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_DOMAIN";
+						run_gobuster "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_DOMAIN";
+				# Make sure there are interesting domains
+				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) != 0 ]]; then
+						run_ffuf "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+						run_gobuster "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+				else
+						run_ffuf "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_DOMAIN";
+						run_gobuster "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_DOMAIN";
+				fi
+		fi
+fi
+
+# -p portscanning
+if [[ "$PORTSCANNING" == 1 ]]; then
+		echo -e "$GREEN""Beginning portscanning with masscan (if root) and nmap.""$NC";
+		sleep 0.5;
+
+		run_masscan;
+		run_nmap;
+fi
+
 get_interesting;
 list_found;
+
+# Calculate scan runtime
 SCAN_END=$(date +%s);
 SCAN_DIFF=$(( SCAN_END - SCAN_START ));
 echo -e "$BLUE""[i] Total script run time: $SCAN_DIFF seconds.""$NC";
