@@ -176,6 +176,7 @@ The following tools are required for Chomp Scan. Note that this tool was designe
 Chomp Scan is still in active development, as I use it myself for bug hunting, so I intend to continue adding new features and tools as I come across them. New tool suggestions, feedback, and pull requests are all welcomed. Here is a short list of potential additions I'm considering:
 
 * Adding a config file, for more granular customization of tools and parameters
+* Adding testing/support for Ubuntu/Debian
 * A possible Python re-write (and maybe a Go re-write after that!)
 * The generation of an HTML report, similar to what aquatone provides
 
