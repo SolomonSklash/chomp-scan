@@ -95,7 +95,7 @@ function exists() {
 }
 
 # Handle CLI arguments
-while getopts ":hu:d:c:sSiCb:IaADX:" opt; do
+while getopts ":hu:d:c:SiCb:IaADX:" opt; do
 		case ${opt} in
 				h ) # -h help
 						usage;
@@ -120,14 +120,31 @@ while getopts ":hu:d:c:sSiCb:IaADX:" opt; do
 								fi
 						fi
 						;;
-				s ) # -s enable subdomain enumeration
-						echo "Enable subdomain bruting, requires -d"
-						SUBDOMAIN_BRUTE=1;
-						;;
 				c ) # -c content discovery wordlist
-						if [[ "$OPTARG" == "small" ]] || [[ "$OPTARG" == "medium" ]] || [[ "$OPTARG" == "large" ]] || [[ "$OPTARG" == "xl" ]] || [[ "$OPTARG" == "xxl" ]]; then
-								CONTENT_WORDLIST="$OPTARG";
-						else
+						case "$OPTARG" in
+								small )
+										CONTENT_WORDLIST="$SMALL";
+										break;
+										;;
+								medium )
+										CONTENT_WORDLIST="$MEDIUM";
+										break;
+										;;
+								large )
+										CONTENT_WORDLIST="$LARGE";
+										break;
+										;;
+								xl )
+										CONTENT_WORDLIST="$XL";
+										break;
+										;;
+								xxl )
+										CONTENT_WORDLIST="$XXL";
+										break;
+										;;
+						esac
+
+						if [[ "$CONTENT_WORDLIST" == "" ]]; then
 								exists "$OPTARG";
 								RESULT=$?;
 								if [[ "$RESULT" -eq 1 ]]; then
@@ -1281,6 +1298,31 @@ if [[ "$INTERACTIVE" == 1 ]]; then
 		echo -e "$BLUE""[i] Total script run time: $SCAN_DIFF seconds.""$NC";
 		
 		exit;
+fi
+
+# Always run subdomain bruteforce tools
+if [[ "$SUBDOMAIN_BRUTE" == 1 ]]; then
+		echo -e "$BLUE""[i] Beginning subdomain enumeration with ffuf and gobuster.""$NC";
+		sleep 1;
+		echo "subdomain wordlist is $SUBDOMAIN_WORDLIST";
+		sleep 5;
+
+		# Check if $SUBDOMAIN_WORDLIST is set, else use short as default
+		if [[ "$SUBDOMAIN_WORDLIST" != "" ]]; then
+				if [[ "$USE_ALL" == 1 ]]; then
+						run_ffuf "$DOMAIN" "$SUBDOMAIN_WORDLIST" "$WORKING_DIR"/"$ALL_DOMAIN";
+				else
+						run_ffuf "$DOMAIN" "$SUBDOMAIN_WORDLIST" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+				fi
+		else
+				if [[ "$USE_ALL" == 1 ]]; then
+						echo -e "$ORANGE""[i] No wordlist set, defaulting to small.""$NC";
+						run_ffuf "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_DOMAIN";
+				else
+						echo -e "$ORANGE""[i] No wordlist set, defaulting to small.""$NC";
+						run_ffuf "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+				fi
+		fi
 fi
 
 # TODO remove/replace
