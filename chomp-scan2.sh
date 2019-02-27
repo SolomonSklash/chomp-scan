@@ -173,18 +173,12 @@ while getopts ":hu:d:c:SiCb:IaADX:p" opt; do
 						fi
 						;;
 				C ) # -C enable content discovery
-						# TODO remove
-						echo "Enable content discovery, requires -c"
 						CONTENT_DISCOVERY=1;
 						;;
 				S ) # -S enable screenshots
-						# TODO remove
-						echo "Enable screenshots with aquatone"
 						SCREENSHOTS=1;
 						;;
 				i ) # -i enable information gathering
-						# TODO remove
-						echo "Enable information gathering"
 						INFO_GATHERING=1;
 						;;
 				b ) # -b domain blacklist file
@@ -1341,6 +1335,33 @@ if [[ "$SCREENSHOTS" == 1 ]]; then
 		echo -e "$BLUE""[i] Taking screenshots with aquatone.""$NC";
 		sleep 0.5;
 		run_aquatone "default";
+fi
+
+# -i information gathering
+if [[ "$INFO_GATHERING" == 1 ]]; then
+		echo -e "$BLUE""[i] Beginning information gathering with subjack, bfac, whatweb, wafw00f, and nikto.""$NC";
+		sleep 0.5;
+
+		if [[ "$USE_ALL" == 1 ]]; then
+				run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
+				run_bfac "$WORKING_DIR"/"$ALL_DOMAIN";
+				run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
+				run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
+				run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
+		# Make sure there are interesting domains
+		elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) != 0 ]]; then
+				run_subjack "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+				run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+				run_whatweb "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+				run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+				run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+		else
+				run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
+				run_bfac "$WORKING_DIR"/"$ALL_DOMAIN";
+				run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
+				run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
+				run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
+		fi
 fi
 
 # -C run content discovery
