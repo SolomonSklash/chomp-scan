@@ -18,10 +18,10 @@ XL=wordlists/haddix_content_discovery_all.txt;
 XXL=wordlists/haddix-seclists-combined.txt;
 
 # User-defined CLI argument variables
-DOMAIN=;
-ENUM_WORDLIST=;
+DOMAIN="";
+SUBDOMAIN_WORDLIST="";
 SUBDOMAIN_BRUTE=0;
-CONTENT_WORDLIST=;
+CONTENT_WORDLIST="";
 CONTENT_DISCOVERY=0;
 SCREENSHOTS=0;
 INFO_GATHERING=0;
@@ -108,7 +108,7 @@ while getopts ":hu:d:c:sSiCb:IaADX:" opt; do
 						exists "$OPTARG";
 						RESULT=$?;
 						if [[ "$RESULT" -eq 1 ]]; then
-								ENUM_WORDLIST="$OPTARG";
+								SUBDOMAIN_WORDLIST="$OPTARG";
 						else
 								echo -e "$RED""[!] Provided subdomain enumeration wordlist $OPTARG is empty or doesn't exist!""$NC";
 								usage;
@@ -970,7 +970,7 @@ function run_subjack() {
 		# Call with domain as $1 and wordlist as $2
 
 		# Check for domain takeover on each found domain
-		echo -e "$GREEN""[i]$BLUE Running subjack against all $(wc -l "$WORKING_DIR"/$ALL_DOMAIN | cut -d ' ' -f 1) unique discoverd subdomains to check for subdomain takeover.""$NC";
+		echo -e "$GREEN""[i]$BLUE Running subjack against all $(wc -l "$WORKING_DIR"/$ALL_DOMAIN | cut -d ' ' -f 1) unique discovered subdomains to check for subdomain takeover.""$NC";
 		echo -e "$GREEN""[i]$ORANGE Command: subjack -d $1 -w $2 -v -t 20 -ssl -m -o $WORKING_DIR/subjack-output.txt""$NC";
 		START=$(date +%s);
 		"$SUBJACK" -d "$1" -w "$2" -v -t 20 -ssl -m -o "$WORKING_DIR"/subjack-output.txt;
@@ -1132,9 +1132,22 @@ if [[ "$DOMAIN" == "" ]]; then
 		exit 1;
 fi
 
+# Check that matching arguments are present, i.e. -sd and -Cc
+if [[ "$SUBDOMAIN_WORDLIST" != "" ]] && [[ "$SUBDOMAIN_BRUTE" == 0 ]]; then
+		echo -e "$RED""[!] If a subdomain bruteforce wordlist is provided (-d), then the subdomain bruteforce flag (-s) must be enabled.""$NC";
+		usage;
+		exit 1;
+fi
+if [[ "$CONTENT_WORDLIST" != "" ]] && [[ "$CONTENT_DISCOVERY" == 0 ]]; then
+		echo -e "$RED""[!] If a content discovery wordlist is provided (-C), then the content discovery flag (-c) must be enabled.""$NC";
+		usage;
+		exit 1;
+fi
+
 # Check tool paths are set
 check_paths;
 
+# TODO Remove this
 exit;
 
 #### Begin main script functions
