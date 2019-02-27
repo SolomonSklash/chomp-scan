@@ -140,14 +140,17 @@ while getopts ":hu:d:c:sSiCb:IaADX:" opt; do
 						fi
 						;;
 				C ) # -C enable content discovery
+						# TODO remove
 						echo "Enable content discovery, requires -c"
 						CONTENT_DISCOVERY=1;
 						;;
 				S ) # -S enable screenshots
+						# TODO remove
 						echo "Enable screenshots with aquatone"
 						SCREENSHOTS=1;
 						;;
 				i ) # -i enable information gathering
+						# TODO remove
 						echo "Enable information gathering"
 						INFO_GATHERING=1;
 						;;
@@ -163,7 +166,6 @@ while getopts ":hu:d:c:sSiCb:IaADX:" opt; do
 						fi
 						;;
 				I ) # -I enable interactive mode
-						echo "Enable interactive mode"
 						INTERACTIVE=1;
 						;;
 				a ) # -a use all discovered domains
@@ -190,7 +192,6 @@ while getopts ":hu:d:c:sSiCb:IaADX:" opt; do
 						;;
 				D ) # -D enable default non-interactive mode
 						DEFAULT_MODE=1;
-						echo "Enable non-interactive default mode"
 						;;
 				X ) # -X interesting word list file
 						exists "$OPTARG";
@@ -1284,17 +1285,17 @@ fi
 
 # TODO remove/replace
 # Start scanning phases
-run_subdomain_brute;
-run_aquatone;
-get_interesting;
-run_portscan;
-run_information_gathering;
-run_content_discovery;
-get_interesting;
-list_found;
+# run_subdomain_brute;
+# run_aquatone;
+# get_interesting;
+# run_portscan;
+# run_information_gathering;
+# run_content_discovery;
+# get_interesting;
+# list_found;
 
-# TODO remove/replace
-# Calculate scan runtime
-SCAN_END=$(date +%s);
-SCAN_DIFF=$(( SCAN_END - SCAN_START ));
-echo -e "$BLUE""[i] Total script run time: $SCAN_DIFF seconds.""$NC";
+# # TODO remove/replace
+# # Calculate scan runtime
+# SCAN_END=$(date +%s);
+# SCAN_DIFF=$(( SCAN_END - SCAN_START ));
+# echo -e "$BLUE""[i] Total script run time: $SCAN_DIFF seconds.""$NC";
