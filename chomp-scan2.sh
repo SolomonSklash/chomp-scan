@@ -1412,19 +1412,6 @@ if [[ "$PORTSCANNING" == 1 ]]; then
 		run_nmap;
 fi
 
-
-
-# TODO remove/replace
-# Start scanning phases
-# run_subdomain_brute;
-# run_aquatone;
-# get_interesting;
-# run_portscan;
-# run_information_gathering;
-# run_content_discovery;
-# get_interesting;
-# list_found;
-
 get_interesting;
 list_found;
 
