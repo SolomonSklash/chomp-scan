@@ -81,9 +81,18 @@ By SolomonSklash - github.com/SolomonSklash/chomp-scan
 function usage() {
 		banner;
 		echo -e "$GREEN""Usage of Chomp Scan:""$NC";
-		echo -e "$BLUE""\t-u domain\n\t\t$ORANGE Domain name to scan. This should not include a scheme, e.g. example.com""$NC";
-		echo -e "$BLUE""\t-d wordlist\n\t\t$ORANGE The wordlist to use for subdomain enumeration. This should have one word per line.""$NC";
-		echo -e "$BLUE""\t-C \n\t\t$ORANGE Enable content discovery. The wordlist for this option defaults to short if not provided.""$NC";
+		echo -e "$BLUE""\t-u domain\n\t\t$ORANGE (required) Domain name to scan. This should not include a scheme, e.g. example.com""$NC";
+		echo -e "$BLUE""\t-d wordlist\n\t\t$ORANGE (optional) The wordlist to use for subdomain enumeration. Three built-in lists, short, long, and huge can be used, as well as the path to a custom wordlist.""$NC";
+		echo -e "$BLUE""\t-c \n\t\t$ORANGE (optional) Enable content discovery. The wordlist for this option defaults to short if not provided.""$NC";
+		echo -e "$BLUE""\t-C wordlist \n\t\t$ORANGE (optional) The wordlist to use for content discovery. Five built-in lists, small, medium, large, xl, and xxl can be used, as well as the path to a custom wordlist.""$NC";
+		echo -e "$BLUE""\t-s \n\t\t$ORANGE (optional) Enable screenshots using Aquatone.""$NC";
+
+
+
+
+
+
+		echo -e "$BLUE""\t-h \n\t\t$ORANGE (optional) Display this help page.""$NC";
 }
 
 # Check that a file path exists and is not empty
@@ -100,7 +109,7 @@ function exists() {
 }
 
 # Handle CLI arguments
-while getopts ":hu:d:C:Sicb:IaADX:po:" opt; do
+while getopts ":hu:d:C:sicb:IaADX:po:" opt; do
 		case ${opt} in
 				h ) # -h help
 						usage;
@@ -178,7 +187,7 @@ while getopts ":hu:d:C:Sicb:IaADX:po:" opt; do
 				c ) # -C enable content discovery
 						CONTENT_DISCOVERY=1;
 						;;
-				S ) # -S enable screenshots
+				s ) # -s enable screenshots
 						SCREENSHOTS=1;
 						;;
 				i ) # -i enable information gathering
@@ -1340,7 +1349,7 @@ if [[ "$SUBDOMAIN_BRUTE" == 1 ]]; then
 		get_interesting;
 fi
 
-# -S screenshot with aquatone
+# -s screenshot with aquatone
 if [[ "$SCREENSHOTS" == 1 ]]; then
 		echo -e "$BLUE""[i] Taking screenshots with aquatone.""$NC";
 		sleep 0.5;
