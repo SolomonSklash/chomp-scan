@@ -86,6 +86,7 @@ function usage() {
 		echo -e "$BLUE""\t-c \n\t\t$ORANGE (optional) Enable content discovery. The wordlist for this option defaults to short if not provided.""$NC";
 		echo -e "$BLUE""\t-C wordlist \n\t\t$ORANGE (optional) The wordlist to use for content discovery. Five built-in lists, small, medium, large, xl, and xxl can be used, as well as the path to a custom wordlist.""$NC";
 		echo -e "$BLUE""\t-s \n\t\t$ORANGE (optional) Enable screenshots using Aquatone.""$NC";
+		echo -e "$BLUE""\t-i \n\t\t$ORANGE (optional) Enable information gathering phase, using subjack, bfac, whatweb, wafw00f, and nikto.""$NC";
 
 
 
@@ -1106,41 +1107,41 @@ while true; do
 						   [sS]* )
 								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_bfac "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
 								   break;
 								   ;;
 							[mM]* )
 								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_bfac "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
 								   break;
 								   ;;
 							[lL]* )
 								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_bfac "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
 								   break;
 								   ;;
 							[xX]* )
 								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_bfac "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
 								   break;
 								   ;;
 							[2]* )
 								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_bfac "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
 								   break;
 								   ;;
 							* )
@@ -1175,41 +1176,41 @@ while true; do
 						   [sS]* )
 								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   break;
 								   ;;
 							[mM]* )
 								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_whatweb "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   break;
 								   ;;
 							[lL]* )
 								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_whatweb "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   break;
 								   ;;
 							[xX]* )
 								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   break;
 								   ;;
 							[2]* )
 								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   break;
 								   ;;
 							* )
