@@ -106,9 +106,23 @@ while getopts ":hu:d:c:SiCb:IaADX:" opt; do
 						DOMAIN=$OPTARG;
 						;;
 				d ) # -d subdomain enumeration wordlist
-						if [[ "$OPTARG" == "short" ]] || [[ "$OPTARG" == "long" ]] || [[ "$OPTARG" == "huge" ]]; then
-								SUBDOMAIN_WORDLIST="$OPTARG";
-						else
+						# set to one of the defaults, else use provided wordlist
+						case "$OPTARG" in
+								short )
+										SUBDOMAIN_WORDLIST="$SHORT";
+										break;
+										;;
+								long )
+										SUBDOMAIN_WORDLIST="$LONG";
+										break;
+										;;
+								huge )
+										SUBDOMAIN_WORDLIST="$HUGE";
+										break;
+										;;
+						esac
+
+						if [[ "$SUBDOMAIN_WORDLIST" == "" ]]; then
 								exists "$OPTARG";
 								RESULT=$?;
 								if [[ "$RESULT" -eq 1 ]]; then
@@ -121,6 +135,7 @@ while getopts ":hu:d:c:SiCb:IaADX:" opt; do
 						fi
 						;;
 				c ) # -c content discovery wordlist
+						# set to one of the defaults, else use provided wordlist
 						case "$OPTARG" in
 								small )
 										CONTENT_WORDLIST="$SMALL";
