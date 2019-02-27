@@ -128,7 +128,7 @@ while getopts ":hu:d:C:sicb:IaADX:po:" opt; do
 						DOMAIN=$OPTARG;
 						;;
 				d ) # -d subdomain enumeration wordlist
-						# set to one of the defaults, else use provided wordlist
+						# Set to one of the defaults, else use provided wordlist
 						case "$OPTARG" in
 								short )
 										SUBDOMAIN_WORDLIST="$SHORT";
@@ -157,7 +157,7 @@ while getopts ":hu:d:C:sicb:IaADX:po:" opt; do
 						fi
 						;;
 				C ) # -C content discovery wordlist
-						# set to one of the defaults, else use provided wordlist
+						# Set to one of the defaults, else use provided wordlist
 						case "$OPTARG" in
 								small )
 										CONTENT_WORDLIST="$SMALL";
@@ -1097,7 +1097,7 @@ function run_information_gathering() {
 # Ask user to do information gathering on discovered domains
 while true; do
   echo -e "$GREEN""[?] Do you want to begin information gathering on [A]ll/[I]nteresting/[N]o discovered domains?";
-  echo -e "$ORANGE""[i] This will run subjack, bfac, nikto, whatweb, and wafw00f.";
+  echo -e "$ORANGE""[i] This will run subjack, bfac, whatweb, wafw00f, and nikto.";
   read -rp "[?] Please enter A/a, I/i, or N/n. " ANSWER
 
   case $ANSWER in
@@ -1236,6 +1236,7 @@ done
 }
 
 #### Error/path/argument checking before beginning script
+
 # Check that -u domain was passed
 if [[ "$DOMAIN" == "" ]]; then
 		echo -e "$RED""[!] A domain is required: -u example.com""$NC";
@@ -1254,6 +1255,7 @@ fi
 check_paths;
 
 #### Begin main script functions
+
 # Create working dir, start script timer, and create interesting domains text file
 # Check if -o output directory is already set
 if [[ "$WORKING_DIR" == "" ]]; then
