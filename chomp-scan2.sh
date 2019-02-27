@@ -100,7 +100,7 @@ function exists() {
 }
 
 # Handle CLI arguments
-while getopts ":hu:d:c:SiCb:IaADX:po:" opt; do
+while getopts ":hu:d:C:Sicb:IaADX:po:" opt; do
 		case ${opt} in
 				h ) # -h help
 						usage;
@@ -138,7 +138,7 @@ while getopts ":hu:d:c:SiCb:IaADX:po:" opt; do
 								fi
 						fi
 						;;
-				c ) # -c content discovery wordlist
+				C ) # -C content discovery wordlist
 						# set to one of the defaults, else use provided wordlist
 						case "$OPTARG" in
 								small )
@@ -175,7 +175,7 @@ while getopts ":hu:d:c:SiCb:IaADX:po:" opt; do
 								fi
 						fi
 						;;
-				C ) # -C enable content discovery
+				c ) # -C enable content discovery
 						CONTENT_DISCOVERY=1;
 						;;
 				S ) # -S enable screenshots
