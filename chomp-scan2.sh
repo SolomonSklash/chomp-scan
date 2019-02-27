@@ -52,6 +52,7 @@ BFAC=~/bounty/tools/bfac/bfac;
 ALL_IP=all_ip.txt;
 ALL_DOMAIN=all_domain.txt;
 
+# TODO remove this?
 # Check for domain argument
 # if [ $# -eq 0 ]; then
 # 		    echo -e "$RED""No domain provided!\\n""$NC";
