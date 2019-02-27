@@ -318,8 +318,8 @@ function check_root() {
 		if [[ $EUID -ne 0 ]]; then
 		   while true; do
 				   echo -e "$ORANGE""[!] Please note: Script is not being run as root."
-				   echo -e "$ORANGE""[!] For long-running options, like long wordlists or non-interactive mode, the script may hang waiting for the root password for masscan."
-				   read -rp "Do you want to [R]e-run as root, or [S]kip masscan? " CHOICE;
+				   echo -e "$ORANGE""[!] Provided script options include masscan, which must run as root."
+				   read -rp "Do you want to exit and [R]e-run as root, or [S]kip masscan? " CHOICE;
 						   case $CHOICE in
 								   [rR]* )
 										   echo -e "$RED""Exiting script!""$NC";
@@ -1258,7 +1258,7 @@ if [[ "$DEFAULT_MODE" == 1 ]]; then
 		check_root;
 		# Run all phases with defaults
 		echo -e "$GREEN""Beginning non-interactive mode scan.""$NC";
-		sleep 1;
+		sleep 0.5;
 
 		run_dnscan "$DOMAIN" "$SHORT";
 		run_subfinder "$DOMAIN" "$SHORT";
@@ -1290,7 +1290,7 @@ if [[ "$INTERACTIVE" == 1 ]]; then
 		# Check if we're root since we're running masscan
 		check_root;
 		echo -e "$GREEN""Beginning interactive mode scan.""$NC";
-		sleep 1;
+		sleep 0.5;
 
 		run_subdomain_brute;
 		run_aquatone;
@@ -1307,6 +1307,12 @@ if [[ "$INTERACTIVE" == 1 ]]; then
 		echo -e "$BLUE""[i] Total script run time: $SCAN_DIFF seconds.""$NC";
 		
 		exit;
+fi
+
+# Preemptively check for -p portscanning
+if [[ "$PORTSCANNING" == 1 ]]; then
+		# Check if we're root since we're running masscan
+		check_root;
 fi
 
 # Always run subdomain bruteforce tools
@@ -1396,6 +1402,18 @@ if [[ "$CONTENT_DISCOVERY" == 1 ]]; then
 				fi
 		fi
 fi
+
+# -p portscanning
+if [[ "$PORTSCANNING" == 1 ]]; then
+		echo -e "$GREEN""Beginning portscanning with masscan (if root) and nmap.""$NC";
+		sleep 0.5;
+
+		run_masscan;
+		run_nmap;
+fi
+
+
+
 # TODO remove/replace
 # Start scanning phases
 # run_subdomain_brute;
@@ -1406,6 +1424,9 @@ fi
 # run_content_discovery;
 # get_interesting;
 # list_found;
+
+get_interesting;
+list_found;
 
 # Calculate scan runtime
 SCAN_END=$(date +%s);
