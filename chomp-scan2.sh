@@ -159,7 +159,14 @@ while getopts ":hu:d:c:sSiCb:IaADX:" opt; do
 						echo "Enable non-interactive default mode"
 						;;
 				X ) # -X interesting word list file
-						echo "Interesting word list is $OPTARG"
+						exists "$OPTARG";
+						RESULT=$?;
+						if [[ "$RESULT" -eq 1 ]]; then
+								INTERESTING="$OPTARG";
+						else
+								echo -e "$RED""[!] Provided interesting words file $OPTARG is empty or doesn't exist!""$NC";
+								exit 1;
+						fi
 						;;
 				\? ) # Invalid option
 						echo "Invalid Option: -$OPTARG" 1>&2;
