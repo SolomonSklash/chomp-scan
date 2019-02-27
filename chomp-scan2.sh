@@ -1346,10 +1346,8 @@ if [[ "$CONTENT_DISCOVERY" == 1 ]]; then
 				fi
 		else
 				if [[ "$USE_ALL" == 1 ]]; then
-						echo -e "$ORANGE""[i] No wordlist set, defaulting to small.""$NC";
 						run_ffuf "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_DOMAIN";
 				else
-						echo -e "$ORANGE""[i] No wordlist set, defaulting to small.""$NC";
 						run_ffuf "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 				fi
 		fi
