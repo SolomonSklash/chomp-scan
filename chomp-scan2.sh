@@ -80,29 +80,30 @@ By SolomonSklash - github.com/SolomonSklash/chomp-scan
 # TODO finish usage
 function usage() {
 		banner;
+		echo -e "$GREEN""chomp-scan.sh -u example.com -a d short -cC large -p -o path/to/directory\\n""$NC";
 		echo -e "$GREEN""Usage of Chomp Scan:""$NC";
-		# Add samle run here: chomp-scan.sh -u example.com -a -d short -c small
-		echo -e "$BLUE""\t-u domain\n\t\t$ORANGE (required) Domain name to scan. This should not include a scheme, e.g. example.com""$NC";
-		echo -e "$BLUE""\t-d wordlist\n\t\t$ORANGE (optional) The wordlist to use for subdomain enumeration. Three built-in lists, short, long, and huge can be used, as well as the path to a custom wordlist.""$NC";
-		echo -e "$BLUE""\t-c \n\t\t$ORANGE (optional) Enable content discovery phase. The wordlist for this option defaults to short if not provided.""$NC";
-		echo -e "$BLUE""\t-C wordlist \n\t\t$ORANGE (optional) The wordlist to use for content discovery. Five built-in lists, small, medium, large, xl, and xxl can be used, as well as the path to a custom wordlist.""$NC";
-		echo -e "$BLUE""\t-s \n\t\t$ORANGE (optional) Enable screenshots using Aquatone.""$NC";
-		echo -e "$BLUE""\t-i \n\t\t$ORANGE (optional) Enable information gathering phase, using subjack, bfac, whatweb, wafw00f, and nikto.""$NC";
-		echo -e "$BLUE""\t-p \n\t\t$ORANGE (optional) Enable portscanning phase, using masscan (run as root) and nmap.""$NC";
-		echo -e "$BLUE""\t-I \n\t\t$ORANGE (optional) Enable interactive mode. This allows you to select certain tool options and inputs interactively. This cannot be run with -D.""$NC";
-		echo -e "$BLUE""\t-D \n\t\t$ORANGE (optional) Enable default non-interactive mode. This mode uses pre-selected defaults and requires no user interaction or options. This cannot be run with -I.""$NC";
-		echo -e "\t\t\t$ORANGE    Options: Subdomain enumeration wordlist: short.""$NC";
-		echo -e "\t\t\t$ORANGE             Content discovery wordlist: small.""$NC";
-		echo -e "\t\t\t$ORANGE             Aquatone screenshots: yes.""$NC";
-		echo -e "\t\t\t$ORANGE             Portscanning: yes.""$NC";
-		echo -e "\t\t\t$ORANGE             Information gathering: yes.""$NC";
-		echo -e "\t\t\t$ORANGE             Domains to scan: all unique discovered.""$NC";
-		echo -e "$BLUE""\t-b wordlist \n\t\t$ORANGE (optional) Set custom domain blacklist file.""$NC";
-		echo -e "$BLUE""\t-X wordlist \n\t\t$ORANGE (optional) Set custom interesting word list.""$NC";
-		echo -e "$BLUE""\t-o directory \n\t\t$ORANGE (optional) Set custom output directory. It must exist and be writable.""$NC";
-		echo -e "$BLUE""\t-a \n\t\t$ORANGE (optional) Use all unique discovered domains for scans, rather than interesting domains. This cannot be used with -A.""$NC";
-		echo -e "$BLUE""\t-A \n\t\t$ORANGE (optional, default) Use only interesting discovered domains for scans, rather than all discovered domains. This cannot be used with -a.""$NC";
-		echo -e "$BLUE""\t-h \n\t\t$ORANGE (optional) Display this help page.""$NC";
+		# Add sample run here: chomp-scan.sh -u example.com -a -d short -c small
+		echo -e "$BLUE""\\t-u domain \\\n\\t\\t$ORANGE (required) Domain name to scan. This should not include a scheme, e.g. example.com""$NC";
+		echo -e "$BLUE""\\t-d wordlist\\n\\t\\t$ORANGE (optional) The wordlist to use for subdomain enumeration. Three built-in lists, short, long, and huge can be used, as well as the path to a custom wordlist.""$NC";
+		echo -e "$BLUE""\\t-c \\n\\t\\t$ORANGE (optional) Enable content discovery phase. The wordlist for this option defaults to short if not provided.""$NC";
+		echo -e "$BLUE""\\t-C wordlist \\n\\t\\t$ORANGE (optional) The wordlist to use for content discovery. Five built-in lists, small, medium, large, xl, and xxl can be used, as well as the path to a custom wordlist.""$NC";
+		echo -e "$BLUE""\\t-s \\n\\t\\t$ORANGE (optional) Enable screenshots using Aquatone.""$NC";
+		echo -e "$BLUE""\\t-i \\n\\t\\t$ORANGE (optional) Enable information gathering phase, using subjack, bfac, whatweb, wafw00f, and nikto.""$NC";
+		echo -e "$BLUE""\\t-p \\n\\t\\t$ORANGE (optional) Enable portscanning phase, using masscan (run as root) and nmap.""$NC";
+		echo -e "$BLUE""\\t-I \\n\\t\\t$ORANGE (optional) Enable interactive mode. This allows you to select certain tool options and inputs interactively. This cannot be run with -D.""$NC";
+		echo -e "$BLUE""\\t-D \\n\\t\\t$ORANGE (optional) Enable default non-interactive mode. This mode uses pre-selected defaults and requires no user interaction or options. This cannot be run with -I.""$NC";
+		echo -e "\\t\\t\\t$ORANGE    Options: Subdomain enumeration wordlist: short.""$NC";
+		echo -e "\\t\\t\\t$ORANGE             Content discovery wordlist: small.""$NC";
+		echo -e "\\t\\t\\t$ORANGE             Aquatone screenshots: yes.""$NC";
+		echo -e "\\t\\t\\t$ORANGE             Portscanning: yes.""$NC";
+		echo -e "\\t\\t\\t$ORANGE             Information gathering: yes.""$NC";
+		echo -e "\\t\\t\\t$ORANGE             Domains to scan: all unique discovered.""$NC";
+		echo -e "$BLUE""\\t-b wordlist \\n\\t\\t$ORANGE (optional) Set custom domain blacklist file.""$NC";
+		echo -e "$BLUE""\\t-X wordlist \\n\\t\\t$ORANGE (optional) Set custom interesting word list.""$NC";
+		echo -e "$BLUE""\\t-o directory \\n\\t\\t$ORANGE (optional) Set custom output directory. It must exist and be writable.""$NC";
+		echo -e "$BLUE""\\t-a \\n\\t\\t$ORANGE (optional) Use all unique discovered domains for scans, rather than interesting domains. This cannot be used with -A.""$NC";
+		echo -e "$BLUE""\\t-A \\n\\t\\t$ORANGE (optional, default) Use only interesting discovered domains for scans, rather than all discovered domains. This cannot be used with -a.""$NC";
+		echo -e "$BLUE""\\t-h \\n\\t\\t$ORANGE (optional) Display this help page.""$NC";
 }
 
 # Check that a file path exists and is not empty
