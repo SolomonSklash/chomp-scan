@@ -196,17 +196,17 @@ while getopts ":hu:d:c:sSiCb:IaADX:" opt; do
 						fi
 						;;
 				\? ) # Invalid option
-						echo "Invalid Option: -$OPTARG" 1>&2;
+						echo -e "$RED""[!] Invalid Option: -$OPTARG" 1>&2;
 						usage;
 						exit 1;
 						;;
 				: ) # Invalid option
-						echo "Invalid Option: -$OPTARG requires an argument" 1>&2;
+						echo -e "$RED""[!] Invalid Option: -$OPTARG requires an argument" 1>&2;
 						usage;
 						exit 1;
 						;;
 				* ) # Invalid option
-						echo "Invalid Option: -$OPTARG" 1>&2;
+						echo -e "$RED""[!] Invalid Option: -$OPTARG" 1>&2;
 						usage;
 						exit 1;
 						;;
