@@ -1,4 +1,7 @@
 # Chomp Scan
+![GitHub release](https://img.shields.io/github/release/SolomonSklash/chomp-scan.svg?style=for-the-badge)
+![GitHub](https://img.shields.io/github/license/SolomonSklash/chomp-scan.svg?style=for-the-badge)
+![GitHub issues](https://img.shields.io/github/issues/SolomonSklash/chomp-scan.svg?style=for-the-badge)
 
 A scripted pipeline of tools to simplify the bug bounty/penetration test reconnaissance phase, so you can focus on chomping bugs.
 
