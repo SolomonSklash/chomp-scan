@@ -66,6 +66,49 @@ A variety of wordlists are used, both for subdomain bruteforcing and content dis
 * altdns-words.txt - 240 words - Used for creating domain permutations for [masscan](https://github.com/robertdavidgraham/masscan) to resolve. Borrowed from [altdns](https://github.com/infosec-au/altdns/blob/master/words.txt).
 * interesting.txt - 42 words - A list I created of potentially interesting words appearing in domain names.
 
+### Usage
+```
+chomp-scan.sh -u example.com -a d short -cC large -p -o path/to/directory
+
+Usage of Chomp Scan:
+        -u domain
+                 (required) Domain name to scan. This should not include a scheme, e.g. example.com
+        -d wordlist
+                 (optional) The wordlist to use for subdomain enumeration. Three built-in lists, short, long, and huge can be used, as well as the path to a custom wordlist.
+        -c
+                 (optional) Enable content discovery phase. The wordlist for this option defaults to short if not provided.
+        -C wordlist
+                 (optional) The wordlist to use for content discovery. Five built-in lists, small, medium, large, xl, and xxl can be used, as well as the path to a custom wordlist.
+        -s
+                 (optional) Enable screenshots using Aquatone.
+        -i
+                 (optional) Enable information gathering phase, using subjack, bfac, whatweb, wafw00f, and nikto.
+        -p
+                 (optional) Enable portscanning phase, using masscan (run as root) and nmap.
+        -I
+                 (optional) Enable interactive mode. This allows you to select certain tool options and inputs interactively. This cannot be run with -D.
+        -D
+                 (optional) Enable default non-interactive mode. This mode uses pre-selected defaults and requires no user interaction or options. This cannot be run with -I.
+                            Options: Subdomain enumeration wordlist: short.
+                                     Content discovery wordlist: small.
+                                     Aquatone screenshots: yes.
+                                     Portscanning: yes.
+                                     Information gathering: yes.
+                                     Domains to scan: all unique discovered.
+        -b wordlist
+                 (optional) Set custom domain blacklist file.
+        -X wordlist
+                 (optional) Set custom interesting word list.
+        -o directory
+                 (optional) Set custom output directory. It must exist and be writable.
+        -a
+                 (optional) Use all unique discovered domains for scans, rather than interesting domains. This cannot be used with -A.
+        -A
+                 (optional, default) Use only interesting discovered domains for scans, rather than all discovered domains. This cannot be used with -a.
+        -h
+                 (optional) Display this help page.
+```
+
 ### Installation
 Clone this repo and ensure that the below dependencies are met. Having a [working installation of Go](https://linuxize.com/post/how-to-install-go-on-debian-9/) will help with several of the tools.
 
@@ -103,9 +146,6 @@ MASSDNS_RESOLVERS=~/bounty/tools/massdns/lists/resolvers.txt;
 AQUATONE=~/bounty/tools/aquatone/aquatone;
 BFAC=~/bounty/tools/bfac/bfac;
 ```
-
-### Usage
-`./chomp-scan.sh example.com`
 
 ### Dependencies
 
