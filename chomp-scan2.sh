@@ -1311,10 +1311,6 @@ if [[ "$INTERACTIVE" == 1 ]]; then
 		exit;
 fi
 
-		# run_dnscan "$DOMAIN" "$SHORT";
-		# run_subfinder "$DOMAIN" "$SHORT";
-		# run_sublist3r "$DOMAIN";
-		# run_massdns "$DOMAIN" "$SHORT";
 # Always run subdomain bruteforce tools
 if [[ "$SUBDOMAIN_BRUTE" == 1 ]]; then
 		echo -e "$BLUE""[i] Beginning subdomain enumeration dnscan, subfinder, sublist3r, and massdns+altdns.""$NC";
@@ -1332,6 +1328,8 @@ if [[ "$SUBDOMAIN_BRUTE" == 1 ]]; then
 				run_sublist3r "$DOMAIN";
 				run_massdns "$DOMAIN" "$SHORT";
 		fi
+		# Get interesting domains
+		get_interesting;
 fi
 
 # -C run content discovery
