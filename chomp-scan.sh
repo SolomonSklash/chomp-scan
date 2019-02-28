@@ -75,7 +75,7 @@ function banner() {
 *                                         $$/                                                       *
 *                                                                                                   *
 *****************************************************************************************************
-By SolomonSklash - github.com/SolomonSklash/chomp-scan
+By SolomonSklash - github.com/SolomonSklash/chomp-scan - solomonsklash@0xfeed.io
 		';
 		echo -e "$BLUE""$BANNER";
 }
