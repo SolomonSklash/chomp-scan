@@ -26,6 +26,7 @@ CONTENT_DISCOVERY=0;
 SCREENSHOTS=0;
 INFO_GATHERING=0;
 PORTSCANNING=0;
+HTTP="https"
 WORKING_DIR="";
 BLACKLIST=blacklist.txt;
 INTERACTIVE=0;
@@ -103,6 +104,7 @@ function usage() {
 		echo -e "$BLUE""\\t-o directory \\n\\t\\t$ORANGE (optional) Set custom output directory. It must exist and be writable.""$NC";
 		echo -e "$BLUE""\\t-a \\n\\t\\t$ORANGE (optional) Use all unique discovered domains for scans, rather than interesting domains. This cannot be used with -A.""$NC";
 		echo -e "$BLUE""\\t-A \\n\\t\\t$ORANGE (optional, default) Use only interesting discovered domains for scans, rather than all discovered domains. This cannot be used with -a.""$NC";
+		echo -e "$BLUE""\\t-H \\n\\t\\t$ORANGE (optional) Use HTTP for connecting to sites instead of HTTPS.""$NC";
 		echo -e "$BLUE""\\t-h \\n\\t\\t$ORANGE (optional) Display this help page.""$NC";
 }
 
@@ -120,7 +122,7 @@ function exists() {
 }
 
 # Handle CLI arguments
-while getopts ":hu:d:C:sicb:IaADX:po:" opt; do
+while getopts ":hu:d:C:sicb:IaADX:po:H" opt; do
 		case ${opt} in
 				h ) # -h help
 						usage;
@@ -265,6 +267,9 @@ while getopts ":hu:d:C:sicb:IaADX:po:" opt; do
 								usage;
 								exit 1;
 						fi
+						;;
+				H ) # -H enable HTTP for URLs
+						HTTP="http";
 						;;
 				\? ) # Invalid option
 						echo -e "$RED""[!] Invalid Option: -$OPTARG" 1>&2;
@@ -772,7 +777,7 @@ function run_gobuster() {
 				COUNT=$(wc -l "$3" | cut -d ' ' -f 1)
 				START=$(date +%s);
 				while read -r ADOMAIN; do
-						"$GOBUSTER" -u https://"$ADOMAIN" -s '200,201,202,204,307,308,401,403,405,500,501,503' -to 3s -e -k -t 20 -w "$2" -o "$WORKING_DIR"/gobuster/"$ADOMAIN".txt;
+						"$GOBUSTER" -u "$HTTP"://"$ADOMAIN" -s '200,201,202,204,307,308,401,403,405,500,501,503' -to 3s -e -k -t 20 -w "$2" -o "$WORKING_DIR"/gobuster/"$ADOMAIN".txt;
 						COUNT=$((COUNT - 1));
 						echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
 				done < "$3"
@@ -781,13 +786,13 @@ function run_gobuster() {
 				echo -e "$GREEN""[i]$BLUE Gobuster took $DIFF seconds to run.""$NC";
 		else
 				echo -e "$GREEN""[i]$BLUE Running gobuster against all $(wc -l "$3" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
-				echo -e "$GREEN""[i]$BLUE Command: gobuster -u https://$DOMAIN -s '200,201,202,204,307,308,401,403,405,500,501,503' -to 3s -e -k -t 20 -w $2 -o $WORKING_DIR/gobuster""$NC";
+				echo -e "$GREEN""[i]$BLUE Command: gobuster -u $HTTP://$DOMAIN -s '200,201,202,204,307,308,401,403,405,500,501,503' -to 3s -e -k -t 20 -w $2 -o $WORKING_DIR/gobuster""$NC";
 				# Run gobuster
 				mkdir "$WORKING_DIR"/gobuster;
 				COUNT=$(wc -l "$3" | cut -d ' ' -f 1)
 				START=$(date +%s);
 				while read -r ADOMAIN; do
-						"$GOBUSTER" -u https://"$ADOMAIN" -s '200,201,202,204,307,308,401,403,405,500,501,503' -to 3s -e -k -t 20 -w "$2" -o "$WORKING_DIR"/gobuster/"$ADOMAIN".txt;
+						"$GOBUSTER" -u "$HTTP"://"$ADOMAIN" -s '200,201,202,204,307,308,401,403,405,500,501,503' -to 3s -e -k -t 20 -w "$2" -o "$WORKING_DIR"/gobuster/"$ADOMAIN".txt;
 						COUNT=$((COUNT - 1));
 						echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
 				done < "$3"
@@ -804,13 +809,13 @@ function run_ffuf() {
 		# Call with domain as $1, wordlist size as $2, and domain list as $3
 		if [[ $3 == $WORKING_DIR/$ALL_DOMAIN ]]; then
 				echo -e "$GREEN""[i]$BLUE Running ffuf against all $(wc -l "$3" | cut -d ' ' -f 1) unique discovered domains.""$NC";
-				echo -e "$GREEN""[i]$BLUE Command: ffuf -u https://$DOMAIN/FUZZ -w $2 -fc 301,302 -k | tee $WORKING_DIR/ffuf.""$NC";
+				echo -e "$GREEN""[i]$BLUE Command: ffuf -u $HTTP://$DOMAIN/FUZZ -w $2 -fc 301,302 -k | tee $WORKING_DIR/ffuf.""$NC";
 				# Run ffuf
 				mkdir "$WORKING_DIR"/ffuf;
 				COUNT=$(wc -l "$3" | cut -d ' ' -f 1)
 				START=$(date +%s);
 				while read -r ADOMAIN; do
-						"$FFUF" -u https://"$ADOMAIN"/FUZZ -w "$2" -fc 301,302 -k -mc 200,201,202,204,401,403,500,502,503 | tee "$WORKING_DIR"/ffuf/"$ADOMAIN";
+						"$FFUF" -u "$HTTP"://"$ADOMAIN"/FUZZ -w "$2" -fc 301,302 -k -mc 200,201,202,204,401,403,500,502,503 | tee "$WORKING_DIR"/ffuf/"$ADOMAIN";
 						COUNT=$((COUNT - 1));
 						echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
 				done < "$3"
@@ -819,13 +824,13 @@ function run_ffuf() {
 				echo -e "$GREEN""[i]$BLUE ffuf took $DIFF seconds to run.""$NC";
 		else
 				echo -e "$GREEN""[i]$BLUE Running ffuf against all $(wc -l "$3" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
-				echo -e "$GREEN""[i]$BLUE Command: ffuf -u https://$DOMAIN/FUZZ -w $2 -fc 301,302 -k | tee $WORKING_DIR/ffuf.""$NC";
+				echo -e "$GREEN""[i]$BLUE Command: ffuf -u $HTTP://$DOMAIN/FUZZ -w $2 -fc 301,302 -k | tee $WORKING_DIR/ffuf.""$NC";
 				# Run ffuf
 				mkdir "$WORKING_DIR"/ffuf;
 				COUNT=$(wc -l "$3" | cut -d ' ' -f 1)
 				START=$(date +%s);
 				while read -r ADOMAIN; do
-						"$FFUF" -u https://"$ADOMAIN"/FUZZ -w "$2" -fc 301,302 -k -mc 200,201,202,204,401,403,500,502,503 | tee "$WORKING_DIR"/ffuf/"$ADOMAIN";
+						"$FFUF" -u "$HTTP"://"$ADOMAIN"/FUZZ -w "$2" -fc 301,302 -k -mc 200,201,202,204,401,403,500,502,503 | tee "$WORKING_DIR"/ffuf/"$ADOMAIN";
 						COUNT=$((COUNT - 1));
 						echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
 				done < "$3"
@@ -986,13 +991,13 @@ function run_nikto() {
 		# Call with domain list as $1
 		if [[ $1 == $WORKING_DIR/$ALL_DOMAIN ]]; then
 				echo -e "$GREEN""[i]$BLUE Running nikto against all $(wc -l "$1" | cut -d ' ' -f 1) unique discovered domains.""$NC";
-				echo -e "$GREEN""[i]$BLUE Command: nikto -h https://$DOMAIN -output $WORKING_DIR/nikto.""$NC";
+				echo -e "$GREEN""[i]$BLUE Command: nikto -h $HTTP://$DOMAIN -output $WORKING_DIR/nikto.""$NC";
 				# Run nikto
 				COUNT=$(wc -l "$1" | cut -d ' ' -f 1)
 				mkdir "$WORKING_DIR"/nikto;
 				START=$(date +%s);
 				while read -r ADOMAIN; do
-						nikto -h https://"$ADOMAIN" -output "$WORKING_DIR"/nikto/"$ADOMAIN".txt;
+						nikto -h "$HTTP"://"$ADOMAIN" -output "$WORKING_DIR"/nikto/"$ADOMAIN".txt;
 						COUNT=$((COUNT - 1));
 						echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
 				done < "$1"
@@ -1001,13 +1006,13 @@ function run_nikto() {
 				echo -e "$GREEN""[i]$BLUE ffuf took $DIFF seconds to run.""$NC";
 		else
 				echo -e "$GREEN""[i]$BLUE Running nikto against all $(wc -l "$1" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
-				echo -e "$GREEN""[i]$BLUE Command: nikto -h https://$DOMAIN -output $WORKING_DIR/nikto.""$NC";
+				echo -e "$GREEN""[i]$BLUE Command: nikto -h $HTTP://$DOMAIN -output $WORKING_DIR/nikto.""$NC";
 				# Run nikto
 				COUNT=$(wc -l "$1" | cut -d ' ' -f 1)
 				mkdir "$WORKING_DIR"/nikto;
 				START=$(date +%s);
 				while read -r ADOMAIN; do
-						nikto -h https://"$ADOMAIN" -output "$WORKING_DIR"/nikto/"$ADOMAIN".txt;
+						nikto -h "$HTTP"://"$ADOMAIN" -output "$WORKING_DIR"/nikto/"$ADOMAIN".txt;
 						COUNT=$((COUNT - 1));
 						echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
 				done < "$1"
@@ -1021,13 +1026,13 @@ function run_whatweb() {
 		# Call with domain as $1 and domain list as $2
 		if [[ $2 == $WORKING_DIR/$ALL_DOMAIN ]]; then
 				echo -e "$GREEN""[i]$BLUE Running whatweb against all $(wc -l "$2" | cut -d ' ' -f 1) unique discovered domains.""$NC";
-				echo -e "$GREEN""[i]$BLUE Command: whatweb -v -a 3 -h https://$DOMAIN | tee $WORKING_DIR/whatweb.""$NC";
+				echo -e "$GREEN""[i]$BLUE Command: whatweb -v -a 3 -h $HTTP://$DOMAIN | tee $WORKING_DIR/whatweb.""$NC";
 				# Run whatweb
 				COUNT=$(wc -l "$2" | cut -d ' ' -f 1)
 				mkdir "$WORKING_DIR"/whatweb;
 				START=$(date +%s);
 				while read -r ADOMAIN; do
-						"$WHATWEB" -v -a 3 https://"$ADOMAIN" | tee "$WORKING_DIR"/whatweb/"$ADOMAIN";
+						"$WHATWEB" -v -a 3 "$HTTP"://"$ADOMAIN" | tee "$WORKING_DIR"/whatweb/"$ADOMAIN";
 						COUNT=$((COUNT - 1));
 						echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
 				done < "$2"
@@ -1036,13 +1041,13 @@ function run_whatweb() {
 				echo -e "$GREEN""[i]$BLUE whatweb took $DIFF seconds to run.""$NC";
 		else
 				echo -e "$GREEN""[i]$BLUE Running whatweb against all $(wc -l "$2" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
-				echo -e "$GREEN""[i]$BLUE Command: whatweb -v -a 3 -h https://$DOMAIN | tee $WORKING_DIR/whatweb.""$NC";
+				echo -e "$GREEN""[i]$BLUE Command: whatweb -v -a 3 -h $HTTP://$DOMAIN | tee $WORKING_DIR/whatweb.""$NC";
 				# Run whatweb
 				COUNT=$(wc -l "$2" | cut -d ' ' -f 1)
 				mkdir "$WORKING_DIR"/whatweb;
 				START=$(date +%s);
 				while read -r ADOMAIN; do
-						"$WHATWEB" -v -a 3 https://"$ADOMAIN" | tee "$WORKING_DIR"/whatweb/"$ADOMAIN";
+						"$WHATWEB" -v -a 3 "$HTTP"://"$ADOMAIN" | tee "$WORKING_DIR"/whatweb/"$ADOMAIN";
 						COUNT=$((COUNT - 1));
 						echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
 				done < "$2"
@@ -1056,13 +1061,13 @@ function run_wafw00f() {
 		# Call with domain as $1 and domain list as $2
 		if [[ $2 == $WORKING_DIR/$ALL_DOMAIN ]]; then
 				echo -e "$GREEN""[i]$BLUE Running wafw00f against all $(wc -l "$2" | cut -d ' ' -f 1) unique discovered domains.""$NC";
-				echo -e "$GREEN""[i]$BLUE Command: wafw00f https://$1 -a | tee $WORKING_DIR/wafw00f.""$NC";
+				echo -e "$GREEN""[i]$BLUE Command: wafw00f $HTTP://$1 -a | tee $WORKING_DIR/wafw00f.""$NC";
 				# Run wafw00f
 				COUNT=$(wc -l "$2" | cut -d ' ' -f 1)
 				mkdir "$WORKING_DIR"/wafw00f;
 				START=$(date +%s);
 				while read -r ADOMAIN; do
-						"$WAFW00F" https://"$ADOMAIN" -a | tee "$WORKING_DIR"/wafw00f/"$ADOMAIN";
+						"$WAFW00F" "$HTTP"://"$ADOMAIN" -a | tee "$WORKING_DIR"/wafw00f/"$ADOMAIN";
 						COUNT=$((COUNT - 1));
 						echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
 				done < "$2"
@@ -1071,13 +1076,13 @@ function run_wafw00f() {
 				echo -e "$GREEN""[i]$BLUE whatweb took $DIFF seconds to run.""$NC";
 		else
 				echo -e "$GREEN""[i]$BLUE Running wafw00f against all $(wc -l "$2" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
-				echo -e "$GREEN""[i]$BLUE Command: wafw00f https://$1 -a | tee $WORKING_DIR/wafw00f.""$NC";
+				echo -e "$GREEN""[i]$BLUE Command: wafw00f $HTTP://$1 -a | tee $WORKING_DIR/wafw00f.""$NC";
 				# Run wafw00f
 				COUNT=$(wc -l "$2" | cut -d ' ' -f 1)
 				mkdir "$WORKING_DIR"/wafw00f;
 				START=$(date +%s);
 				while read -r ADOMAIN; do
-						"$WAFW00F" https://"$ADOMAIN" -a | tee "$WORKING_DIR"/wafw00f/"$ADOMAIN";
+						"$WAFW00F" "$HTTP"://"$ADOMAIN" -a | tee "$WORKING_DIR"/wafw00f/"$ADOMAIN";
 						COUNT=$((COUNT - 1));
 						echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
 				done < "$2"

@@ -108,6 +108,8 @@ Usage of Chomp Scan:
                  (optional) Use all unique discovered domains for scans, rather than interesting domains. This cannot be used with -A.
         -A
                  (optional, default) Use only interesting discovered domains for scans, rather than all discovered domains. This cannot be used with -a.
+		-H
+                 (optional) Use HTTP for connecting to sites instead of HTTPS.
         -h
                  (optional) Display this help page.
 ```
