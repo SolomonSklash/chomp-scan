@@ -2,3 +2,4 @@ dnspython
 colorama
 requests
 requests[socks]
+argparse
