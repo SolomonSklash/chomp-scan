@@ -21,6 +21,7 @@ internal
 logging
 login
 logs
+mfa
 openvpn
 private
 qa
