@@ -136,15 +136,12 @@ while getopts ":hu:d:C:sicb:IaADX:po:H" opt; do
 						case "$OPTARG" in
 								short )
 										SUBDOMAIN_WORDLIST="$SHORT";
-										break;
 										;;
 								long )
 										SUBDOMAIN_WORDLIST="$LONG";
-										break;
 										;;
 								huge )
 										SUBDOMAIN_WORDLIST="$HUGE";
-										break;
 										;;
 						esac
 
@@ -165,23 +162,18 @@ while getopts ":hu:d:C:sicb:IaADX:po:H" opt; do
 						case "$OPTARG" in
 								small )
 										CONTENT_WORDLIST="$SMALL";
-										break;
 										;;
 								medium )
 										CONTENT_WORDLIST="$MEDIUM";
-										break;
 										;;
 								large )
 										CONTENT_WORDLIST="$LARGE";
-										break;
 										;;
 								xl )
 										CONTENT_WORDLIST="$XL";
-										break;
 										;;
 								xxl )
 										CONTENT_WORDLIST="$XXL";
-										break;
 										;;
 						esac
 
