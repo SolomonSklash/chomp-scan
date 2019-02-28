@@ -962,7 +962,7 @@ function run_bfac() {
 				DIFF=$(( END - START ));
 				echo -e "$GREEN""[i]$BLUE ffuf took $DIFF seconds to run.""$NC";
 		else
-				echo -e "$GREEN""[i]$BLUE Running bfac against all $(wc -l "$2" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running bfac against all $(wc -l "$1" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: bfac -u $DOMAIN -xsc 404,301,302,400 -o $WORKING_DIR/bfac.""$NC";
 				# Run ffuf
 				mkdir "$WORKING_DIR"/bfac;
