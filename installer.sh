@@ -119,12 +119,12 @@ function install_wafw00f() {
 }
 
 function install_go_tools() {
-		echo -e "$GREEN""Installing Go tools from Github""$NC";
-		echo -e "$GREEN""Installing subfinder from Github""$NC";
+		echo -e "$GREEN""Installing Go tools from Github.""$NC";
+		echo -e "$GREEN""Installing subfinder from Github.""$NC";
 		# go get github.com/subfinder/subfinder;
-		echo -e "$GREEN""Installing subjack from Github""$NC";
+		echo -e "$GREEN""Installing subjack from Github.""$NC";
 		# go get github.com/haccer/subjack;
-		echo -e "$GREEN""Installing ffuf from Github""$NC";
+		echo -e "$GREEN""Installing ffuf from Github.""$NC";
 		# go get github.com/ffuf/ffuf;
 }
 
