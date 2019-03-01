@@ -38,7 +38,7 @@ function install_debian() {
 		install_nikto;
 		install_wafw00f;
 		install_go_tools;
-
+		install_go;
 }
 function install_ubuntu() {
 		echo -e "$GREEN""Installing for Ubuntu.""$NC";
@@ -126,6 +126,16 @@ function install_go_tools() {
 		# go get github.com/haccer/subjack;
 		echo -e "$GREEN""Installing ffuf from Github.""$NC";
 		# go get github.com/ffuf/ffuf;
+}
+
+function install_go() {
+		echo -e "$GREEN""Installing Go from golang.org.""$NC";
+		# git clone https://github.com/EnableSecurity/wafw00f.git "$TOOLS"/wafw00f;
+		wget https://dl.google.com/go/go1.12.linux-amd64.tar.gz;
+		sudo tar -C /usr/local -xzf go1.12.linux-amd64.tar.gz;
+		export PATH=$PATH:/usr/local/go/bin;
+		source ~/.profile;
+		rm -rf go1.12.linux-amd64.tar.gz;
 }
 
 grep 'Ubuntu' /etc/issue 1>/dev/null;
