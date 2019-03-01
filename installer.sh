@@ -7,16 +7,14 @@ GREEN='\033[0;32m';
 BLUE='\033[0;34m';
 ORANGE='\033[0;33m';
 
-# Grep /etc/issue for Ubuntu
-# Check return code of grep
-# If 0, assume Ubuntu
 UBUNTU=;
 DEBIAN=;
 KALI=;
+TOOLS="~/bounty/tools";
 
 function install_kali() {
 		echo -e "$GREEN""Installing for Kali.""$NC";
-	 	# sudo apt-get install git wget nmap masscan whatweb sublist3r gobuster chromium openssl libnet-ssleay-perl p7zip-full build-essential python-pip python3-pip;
+	 	# sudo apt-get install git wget nmap masscan whatweb sublist3r gobuster nikto chromium openssl libnet-ssleay-perl p7zip-full build-essential python-pip python3-pip;
 		install_pip;
 }
 function install_debian() {
@@ -37,6 +35,49 @@ function install_pip() {
 		# sudo pip3 install -r requirements3.txt;
 }
 
+function install_dnscan() {
+		echo -e "$GREEN""Installing dnscan from Github.""$NC";
+		# git clone https://github.com/rbsec/dnscan "$TOOLS"/dnscan;
+}
+
+function install_altdns() {
+		echo -e "$GREEN""Installing altdns from Github.""$NC";
+		# git clone https://github.com/infosec-au/altdns "$TOOLS"/altdns;
+}
+
+function install_bfac() {
+		echo -e "$GREEN""Installing bfac from Github.""$NC";
+		# git clone https://github.com/mazen160/bfac "$TOOLS"/bfac;
+}
+
+function install_massdns() {
+		echo -e "$GREEN""Installing massdns from Github.""$NC";
+		# git clone https://github.com/blechschmidt/massdns "$TOOLS"/massdns;
+		
+		# Compile massdns
+		echo -e "$GREEN""Compiling massdns from source.""$NC";
+		cd "$TOOLS"/massdns;
+		make;
+		cd -;
+}
+
+function install_aquatone() {
+		echo -e "$GREEN""Installing aquatone from Github.""$NC";
+		# wget https://github.com/michenriksen/aquatone/releases/download/v1.4.3/aquatone_linux_amd64_1.4.3.zip -O "$TOOLS"/aquatone/aquatone.zip;
+		# unzip "$TOOLS"/aquatone/aquatone.zip -d "$TOOLS"/aquatone;
+}
+
+function install_sublist3r() {
+		echo -e "$GREEN""Installing sublist3r from Github.""$NC";
+		# git clone https://github.com/aboul3la/Sublist3r "$TOOLS"/Sublist3r;
+}
+
+function install_nikto() {
+		echo -e "$GREEN""Installing nikto from Github.""$NC";
+		# git clone https://github.com/sullo/nikto "$TOOLS"/nikto;
+}
+
+
 grep 'Ubuntu' /etc/issue 1>/dev/null;
 UBUNTU="$?";
 grep 'Debian' /etc/issue 1>/dev/null;
@@ -55,6 +96,7 @@ else
 fi
 
 # Create ~/bounty/tools directory
+mkdir -pv ~/bounty/tools;
 
 # Clone repos for each distro
 
