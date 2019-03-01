@@ -145,7 +145,7 @@ else
 		exit 1;
 fi
 
-# Create ~/bounty/tools directory
+# Create install directory
 # mkdir -pv ~/bounty/tools;
 
 # Attempt to install Go
