@@ -146,7 +146,7 @@ else
 fi
 
 # Create ~/bounty/tools directory
-mkdir -pv ~/bounty/tools;
+# mkdir -pv ~/bounty/tools;
 
 # Attempt to install Go
 # Check for Bash shell
