@@ -52,6 +52,7 @@ function install_ubuntu() {
 		install_sublist3r;
 		install_gobuster;
 		install_go_tools;
+		install_go;
 }
 
 function install_pip() {
@@ -157,10 +158,3 @@ fi
 
 # Create install directory
 # mkdir -pv ~/bounty/tools;
-
-# Attempt to install Go
-# Check for Bash shell
-
-# Install go tools
-
-
