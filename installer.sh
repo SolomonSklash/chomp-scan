@@ -80,6 +80,12 @@ function install_nikto() {
 function install_gobuster() {
 		echo -e "$GREEN""Installing gobuster from Github.""$NC";
 		# git clone https://github.com/OJ/gobuster.git "$TOOLS"/gobuster;
+		mkdir -pv "$TOOLS"/gobuster;
+		wget https://github.com/OJ/gobuster/releases/download/v2.0.1/gobuster-linux-amd64.7z -O "$TOOLS"/gobuster/gobuster-linux-amd64.7z;
+		cd "$TOOLS"/gobuster;
+		7z e gobuster-linux-amd64.7z;
+		chmod +x "$TOOLS"/gobuster/gobuster;
+		cd -;
 }
 
 grep 'Ubuntu' /etc/issue 1>/dev/null;
