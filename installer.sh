@@ -37,22 +37,22 @@ function install_pip() {
 
 function install_dnscan() {
 		echo -e "$GREEN""Installing dnscan from Github.""$NC";
-		# git clone https://github.com/rbsec/dnscan "$TOOLS"/dnscan;
+		# git clone https://github.com/rbsec/dnscan.git "$TOOLS"/dnscan;
 }
 
 function install_altdns() {
 		echo -e "$GREEN""Installing altdns from Github.""$NC";
-		# git clone https://github.com/infosec-au/altdns "$TOOLS"/altdns;
+		# git clone https://github.com/infosec-au/altdns.git "$TOOLS"/altdns;
 }
 
 function install_bfac() {
 		echo -e "$GREEN""Installing bfac from Github.""$NC";
-		# git clone https://github.com/mazen160/bfac "$TOOLS"/bfac;
+		# git clone https://github.com/mazen160/bfac.git "$TOOLS"/bfac;
 }
 
 function install_massdns() {
 		echo -e "$GREEN""Installing massdns from Github.""$NC";
-		# git clone https://github.com/blechschmidt/massdns "$TOOLS"/massdns;
+		# git clone https://github.com/blechschmidt/massdns.git "$TOOLS"/massdns;
 		
 		# Compile massdns
 		echo -e "$GREEN""Compiling massdns from source.""$NC";
@@ -69,14 +69,18 @@ function install_aquatone() {
 
 function install_sublist3r() {
 		echo -e "$GREEN""Installing sublist3r from Github.""$NC";
-		# git clone https://github.com/aboul3la/Sublist3r "$TOOLS"/Sublist3r;
+		# git clone https://github.com/aboul3la/Sublist3r.git "$TOOLS"/Sublist3r;
 }
 
 function install_nikto() {
 		echo -e "$GREEN""Installing nikto from Github.""$NC";
-		# git clone https://github.com/sullo/nikto "$TOOLS"/nikto;
+		# git clone https://github.com/sullo/nikto.git "$TOOLS"/nikto;
 }
 
+function install_gobuster() {
+		echo -e "$GREEN""Installing gobuster from Github.""$NC";
+		# git clone https://github.com/OJ/gobuster.git "$TOOLS"/gobuster;
+}
 
 grep 'Ubuntu' /etc/issue 1>/dev/null;
 UBUNTU="$?";
