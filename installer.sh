@@ -14,8 +14,15 @@ TOOLS="~/bounty/tools";
 
 function install_kali() {
 		echo -e "$GREEN""Installing for Kali.""$NC";
-	 	# sudo apt-get install git wget nmap masscan whatweb sublist3r gobuster nikto chromium openssl libnet-ssleay-perl p7zip-full build-essential python-pip python3-pip;
+	 	# sudo apt-get install git wget nmap masscan whatweb sublist3r gobuster nikto wafw00f chromium openssl libnet-ssleay-perl p7zip-full build-essential python-pip python3-pip;
 		install_pip;
+		install_dnscan;
+		install_altdns;
+		install_bfac;
+		install_massdns;
+		install_aquatone;
+		install_gobuster;
+		install_go_tools;
 }
 function install_debian() {
 		echo -e "$GREEN""Installing for Debian.""$NC";
