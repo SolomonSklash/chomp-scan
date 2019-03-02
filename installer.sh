@@ -160,3 +160,4 @@ else
 		exit 1;
 fi
 
+. "$HOME"/.profile;
