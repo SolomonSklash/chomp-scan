@@ -47,6 +47,7 @@ GOBUSTER=$(command -v gobuster);
 CHROMIUM=$(command -v chromium);
 NMAP=$(command -v nmap);
 MASSCAN=$(command -v masscan);
+NIKTO=$(command -v nikto);
 SUBLIST3R=~/bounty/tools/Sublist3r/sublist3r.py;
 DNSCAN=~/bounty/tools/dnscan/dnscan.py;
 ALTDNS=~/bounty/tools/altdns/altdns.py;
@@ -289,6 +290,18 @@ done
 shift $((OPTIND -1));
 
 function check_paths() {
+		# Check for Debin/Ubuntu and set proper paths
+		grep 'Ubuntu' /etc/issue 1>/dev/null;
+		UBUNTU="$?";
+		if [[ "$UBUNTU" == 0 ]]; then 
+				CHROMIUM=$(command -v chromium-browser);
+		fi
+		grep 'Debian' /etc/issue 1>/dev/null;
+		DEBIAN="$?";
+		if [[ "$DEBIAN" == 0 ]]; then 
+				NIKTO="~/bounty/tools/nikto/program/nikto.pl";
+		fi
+
 		# Check that all paths are set
 		if [[ "$DNSCAN" == "" ]] || [[ ! -f "$DNSCAN" ]]; then
 				echo -e "$RED""[!] The path or the file specified by the path for dnscan does not exit.";
@@ -1044,7 +1057,7 @@ function run_nikto() {
 				mkdir "$WORKING_DIR"/nikto;
 				START=$(date +%s);
 				while read -r ADOMAIN; do
-						nikto -h "$HTTP"://"$ADOMAIN" -output "$WORKING_DIR"/nikto/"$ADOMAIN".txt;
+						"$NIKTO" -h "$HTTP"://"$ADOMAIN" -output "$WORKING_DIR"/nikto/"$ADOMAIN".txt;
 						COUNT=$((COUNT - 1));
 						echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
 				done < "$1"
@@ -1059,7 +1072,7 @@ function run_nikto() {
 				mkdir "$WORKING_DIR"/nikto;
 				START=$(date +%s);
 				while read -r ADOMAIN; do
-						nikto -h "$HTTP"://"$ADOMAIN" -output "$WORKING_DIR"/nikto/"$ADOMAIN".txt;
+						"$NIKTO" -h "$HTTP"://"$ADOMAIN" -output "$WORKING_DIR"/nikto/"$ADOMAIN".txt;
 						COUNT=$((COUNT - 1));
 						echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
 				done < "$1"
