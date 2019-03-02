@@ -73,6 +73,9 @@ A variety of wordlists are used, both for subdomain bruteforcing and content dis
 * altdns-words.txt - 240 words - Used for creating domain permutations for [masscan](https://github.com/robertdavidgraham/masscan) to resolve. Borrowed from [altdns](https://github.com/infosec-au/altdns/blob/master/words.txt).
 * interesting.txt - 43 words - A list I created of potentially interesting words appearing in domain names. Provide your own interesting words list with the `-X` flag.
 
+### Installation
+Clone this repo and run the installer.sh script. Make sure to `source ~/.profile` after running the installer in order to add the Go binary path to your $PATH variable. Then run Chomp Scan.
+
 ### Usage
 Chomp Scan always runs subdomain enumeration, thus a domain is required via the `-u` flag. The domain should not contain a scheme, e.g. http:// or https://. By default, HTTPS is always used. This can be changed to HTTP by passing the `-H` flag. A wordlist is optional, and if one is not provided the built-in short list (20k words) is used.
 
@@ -122,31 +125,6 @@ Usage of Chomp Scan:
         -h
                  (optional) Display this help page.
 ```
-
-### Installation
-Clone this repo and run the installer.sh script. Make sure to `source ~/.profile` after running the installer in order to add the Go binary path to your $PATH variable. Then run Chomp Scan.
-
-### Dependencies
-
-The following tools are required for Chomp Scan. Note that this tool was designed with Kali Linux in mind, so certain tools are expected to be available via package manager.
-
-* [sublist3r](https://github.com/aboul3la/Sublist3r) - Kali package
-* [masscan](https://github.com/robertdavidgraham/masscan) Kali package
-* [nmap](https://www.nmap.org) Kali package
-* [nikto](https://cirt.net/nikto2) Kali package
-* [gobuster](https://github.com/OJ/gobuster) Kali package
-* [whatweb](https://www.morningstarsecurity.com/research/whatweb) Kali package
-* [wafw00f](https://github.com/EnableSecurity/wafw00f) Kali package
-* [chromium](https://www.chromium.org/) Kali package (needed for aquatone)
-* [dnscan](https://github.com/rbsec/dnscan)- Python
-* [altdns](https://github.com/infosec-au/altdns) - Python
-* [bfac](https://github.com/mazen160/bfac) Python3
-* [dirsearch](https://github.com/maurosoria/dirsearch) Python3
-* [massdns](https://github.com/blechschmidt/massdns) - Compiled with C
-* [subfinder](https://github.com/subfinder/subfinder) - Go
-* [subjack](https://github.com/haccer/subjack) Go
-* [ffuf](https://github.com/ffuf/ffuf) Go
-* [aquatone](https://github.com/michenriksen/aquatone) Precompiled Go binary
 
 ### In The Future
 
