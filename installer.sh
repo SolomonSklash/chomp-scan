@@ -134,13 +134,13 @@ function install_go() {
 		echo -e "$GREEN""Installing Go from golang.org.""$NC";
 		wget https://dl.google.com/go/go1.12.linux-amd64.tar.gz;
 		sudo tar -C /usr/local -xzf go1.12.linux-amd64.tar.gz;
-		echo "export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin:" >> ~/.profile;
+		echo "export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin:" >> $HOME/.profile;
 		source $HOME/.profile;
 		rm -rf go1.12.linux-amd64.tar.gz;
 }
 
 # Create install directory
-mkdir -pv ~/bounty/tools;
+mkdir -pv $HOME/bounty/tools;
 
 grep 'Ubuntu' /etc/issue 1>/dev/null;
 UBUNTU="$?";
