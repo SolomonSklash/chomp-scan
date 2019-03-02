@@ -49,19 +49,19 @@ Chomp Scan supports limited canceling/skipping of tools by pressing Ctrl-c. This
 
 ### Wordlists
 
-A variety of wordlists are used, both for subdomain bruteforcing and content discovery. Daniel Miessler's [Seclists](https://github.com/danielmiessler/SecLists) are used heavily, as well as Jason Haddix's [lists](https://gist.github.com/jhaddix). Different wordlists can be used by changing relevant variables at the top of the script.
+A variety of wordlists are used, both for subdomain bruteforcing and content discovery. Daniel Miessler's [Seclists](https://github.com/danielmiessler/SecLists) are used heavily, as well as Jason Haddix's [lists](https://gist.github.com/jhaddix). Different wordlists can be used by passing in a custom wordlist or using one of the named built-in lists.
 
 #### Subdomain Bruteforcing
-* subdomains-top1mil-20000.txt - 22k words - From [Seclists](https://github.com/danielmiessler/SecLists)
-* sortedcombined-knock-dnsrecon-fierce-reconng.txt - 102k words - From [Seclists](https://github.com/danielmiessler/SecLists) 
-* huge-200k.txt - 199k words - A combination I made of various wordlists, including Seclists
+* "short" - subdomains-top1mil-20000.txt - 22k words - From [Seclists](https://github.com/danielmiessler/SecLists)
+* "long" - sortedcombined-knock-dnsrecon-fierce-reconng.txt - 102k words - From [Seclists](https://github.com/danielmiessler/SecLists) 
+* "huge" - huge-200k.txt - 199k words - A combination I made of various wordlists, including Seclists
 
 #### Content Discovery
-* big.txt - 20k words - From [Seclists](https://github.com/danielmiessler/SecLists)
-* raft-large-combined.txt - 167k words - A combination of the raft wordlists in [Seclists](https://github.com/danielmiessler/SecLists)
-* seclists-combined.txt - 215k words - A larger combination of all the Discovery/DNS lists in [Seclists](https://github.com/danielmiessler/SecLists)
-* haddix_content_discovery_all.txt - 373k words - Jason Haddix's [all](https://gist.github.com/jhaddix/b80ea67d85c13206125806f0828f4d10/) content discovery list
-* haddix-seclists-combined.txt - 486k words - A combination of the two previous lists
+*  "small" - big.txt - 20k words - From [Seclists](https://github.com/danielmiessler/SecLists)
+* "medium" - raft-large-combined.txt - 167k words - A combination of the raft wordlists in [Seclists](https://github.com/danielmiessler/SecLists)
+* "large" - seclists-combined.txt - 215k words - A larger combination of all the Discovery/DNS lists in [Seclists](https://github.com/danielmiessler/SecLists)
+* "xl" - haddix_content_discovery_all.txt - 373k words - Jason Haddix's [all](https://gist.github.com/jhaddix/b80ea67d85c13206125806f0828f4d10/) content discovery list
+* "xxl" - haddix-seclists-combined.txt - 486k words - A combination of the two previous lists
 
 #### Misc.
 * altdns-words.txt - 240 words - Used for creating domain permutations for [masscan](https://github.com/robertdavidgraham/masscan) to resolve. Borrowed from [altdns](https://github.com/infosec-au/altdns/blob/master/words.txt).
