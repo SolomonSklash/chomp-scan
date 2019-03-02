@@ -124,46 +124,7 @@ Usage of Chomp Scan:
 ```
 
 ### Installation
-Clone this repo and ensure that the below dependencies are met. Having a [working installation of Go](https://linuxize.com/post/how-to-install-go-on-debian-9/) will help with several of the tools.
-
-```
-git clone https://github.com/SolomonSklash/chomp-scan.git;
-sudo apt install sublist3r masscan nmap nikto gobuster chromium whatweb wafw00f -y;
-go get github.com/subfinder/subfinder;
-go get github.com/haccer/subjack;
-go get github.com/ffuf/ffuf;
-mkdir -pv ~/bounty/tools/aquatone;
-wget https://github.com/michenriksen/aquatone/releases/download/v1.4.3/aquatone_linux_amd64_1.4.3.zip -O ~/bounty/tools/aquatone/aquatone.zip;
-uzip ~/bounty/tools/aquatone/aquatone.zip -d ~/bounty/tools/aquatone; # Unzip aquatone
-git clone https://github.com/rbsec/dnscan.git ~/bounty/tools/dnscan;
-git clone https://github.com/infosec-au/altdns.git ~/bounty/tools/altdns; 
-git clone https://github.com/blechschmidt/massdns.git ~/bounty/tools/massdns; 
-git clone https://github.com/maurosoria/dirsearch.git ~/bounty/tools/dirsearch;
-cd ~/bounty/tools/massdns; make; # Compiling massdns, see repo for details
-git clone https://github.com/mazen160/bfac.git ~/bounty/tools/bfac;
-```
-
-Then make sure the path variables for each tool are set. Currently they default to ~/bounty/tools/[tool-repo]/[tool-file].
-```
-# Tool paths
-SUBFINDER=$(command -v subfinder);
-SUBLIST3R=$(command -v sublist3r);
-SUBJACK=$(command -v subjack);
-FFUF=$(command -v ffuf);
-WHATWEB=$(command -v whatweb);
-WAFW00F=$(command -v wafw00f);
-GOBUSTER=$(command -v gobuster);
-CHROMIUM=$(command -v chromium);
-NMAP=$(command -v nmap);
-MASSCAN=$(command -v masscan);
-DNSCAN=~/bounty/tools/dnscan/dnscan.py;
-ALTDNS=~/bounty/tools/altdns/altdns.py;
-MASSDNS_BIN=~/bounty/tools/massdns/bin/massdns;
-MASSDNS_RESOLVERS=~/bounty/tools/massdns/lists/resolvers.txt;
-AQUATONE=~/bounty/tools/aquatone/aquatone;
-BFAC=~/bounty/tools/bfac/bfac;
-DIRSEARCH=~/bounty/tools/dirsearch/dirsearch.py;
-```
+Clone this repo and run the installer.sh script. Make sure to `source ~/.profile` after running the installer in order to add the Go binary path to your $PATH variable. Then run Chomp Scan.
 
 ### Dependencies
 
