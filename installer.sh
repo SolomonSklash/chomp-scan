@@ -37,8 +37,8 @@ function install_debian() {
 		install_gobuster;
 		install_nikto;
 		install_wafw00f;
-		install_go_tools;
 		install_go;
+		install_go_tools;
 }
 function install_ubuntu() {
 		echo -e "$GREEN""Installing for Ubuntu.""$NC";
@@ -51,8 +51,8 @@ function install_ubuntu() {
 		install_aquatone;
 		install_sublist3r;
 		install_gobuster;
-		install_go_tools;
 		install_go;
+		install_go_tools;
 }
 
 function install_pip() {
@@ -138,6 +138,9 @@ function install_go() {
 		rm -rf go1.12.linux-amd64.tar.gz;
 }
 
+# Create install directory
+mkdir -pv ~/bounty/tools;
+
 grep 'Ubuntu' /etc/issue 1>/dev/null;
 UBUNTU="$?";
 grep 'Debian' /etc/issue 1>/dev/null;
@@ -155,5 +158,3 @@ else
 		exit 1;
 fi
 
-# Create install directory
-mkdir -pv ~/bounty/tools;
