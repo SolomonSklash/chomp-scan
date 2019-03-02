@@ -38,7 +38,7 @@ function install_debian() {
 		install_nikto;
 		install_wafw00f;
 		install_go;
-		install_go_tools;
+		# install_go_tools;
 }
 function install_ubuntu() {
 		echo -e "$GREEN""Installing for Ubuntu.""$NC";
@@ -52,7 +52,7 @@ function install_ubuntu() {
 		install_sublist3r;
 		install_gobuster;
 		install_go;
-		install_go_tools;
+		# install_go_tools;
 }
 
 function install_pip() {
@@ -122,6 +122,7 @@ function install_wafw00f() {
 function install_go_tools() {
 		source $HOME/.profile;
 		echo -e "$GREEN""Installing Go tools from Github.""$NC";
+		sleep 5;
 		echo -e "$GREEN""Installing subfinder from Github.""$NC";
 		go get github.com/subfinder/subfinder;
 		echo -e "$GREEN""Installing subjack from Github.""$NC";
@@ -134,13 +135,13 @@ function install_go() {
 		echo -e "$GREEN""Installing Go from golang.org.""$NC";
 		wget https://dl.google.com/go/go1.12.linux-amd64.tar.gz;
 		sudo tar -C /usr/local -xzf go1.12.linux-amd64.tar.gz;
-		echo "export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin:" >> $HOME/.profile;
-		source $HOME/.profile;
+		echo "export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin:" >> "$HOME"/.profile;
+		source "$HOME"/.profile;
 		rm -rf go1.12.linux-amd64.tar.gz;
 }
 
 # Create install directory
-mkdir -pv $HOME/bounty/tools;
+mkdir -pv "$HOME"/bounty/tools;
 
 grep 'Ubuntu' /etc/issue 1>/dev/null;
 UBUNTU="$?";
