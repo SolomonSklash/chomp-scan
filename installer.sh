@@ -38,7 +38,7 @@ function install_debian() {
 		install_nikto;
 		install_wafw00f;
 		install_go;
-		# install_go_tools;
+		install_go_tools;
 }
 function install_ubuntu() {
 		echo -e "$GREEN""Installing for Ubuntu.""$NC";
@@ -52,7 +52,7 @@ function install_ubuntu() {
 		install_sublist3r;
 		install_gobuster;
 		install_go;
-		# install_go_tools;
+		install_go_tools;
 }
 
 function install_pip() {
