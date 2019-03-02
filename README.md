@@ -45,6 +45,7 @@ Chomp Scan supports limited canceling/skipping of tools by pressing Ctrl-c. This
 #### Content Discovery (optional) (4 different sized wordlists)
 * ffuf
 * gobuster
+* dirsearch
 
 ### Wordlists
 
@@ -129,6 +130,7 @@ uzip ~/bounty/tools/aquatone/aquatone.zip -d ~/bounty/tools/aquatone; # Unzip aq
 git clone https://github.com/rbsec/dnscan.git ~/bounty/tools/dnscan;
 git clone https://github.com/infosec-au/altdns.git ~/bounty/tools/altdns; 
 git clone https://github.com/blechschmidt/massdns.git ~/bounty/tools/massdns; 
+git clone https://github.com/maurosoria/dirsearch.git ~/bounty/tools/dirsearch;
 cd ~/bounty/tools/massdns; make; # Compiling massdns, see repo for details
 git clone https://github.com/mazen160/bfac.git ~/bounty/tools/bfac;
 ```
@@ -152,6 +154,7 @@ MASSDNS_BIN=~/bounty/tools/massdns/bin/massdns;
 MASSDNS_RESOLVERS=~/bounty/tools/massdns/lists/resolvers.txt;
 AQUATONE=~/bounty/tools/aquatone/aquatone;
 BFAC=~/bounty/tools/bfac/bfac;
+DIRSEARCH=~/bounty/tools/dirsearch/dirsearch.py;
 ```
 
 ### Dependencies
@@ -169,6 +172,7 @@ The following tools are required for Chomp Scan. Note that this tool was designe
 * [dnscan](https://github.com/rbsec/dnscan)- Python
 * [altdns](https://github.com/infosec-au/altdns) - Python
 * [bfac](https://github.com/mazen160/bfac) Python3
+* [dirsearch](https://github.com/maurosoria/dirsearch) Python3
 * [massdns](https://github.com/blechschmidt/massdns) - Compiled with C
 * [subfinder](https://github.com/subfinder/subfinder) - Go
 * [subjack](https://github.com/haccer/subjack) Go

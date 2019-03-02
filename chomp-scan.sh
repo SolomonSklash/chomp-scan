@@ -53,6 +53,7 @@ MASSDNS_BIN=~/bounty/tools/massdns/bin/massdns;
 MASSDNS_RESOLVERS=~/bounty/tools/massdns/lists/resolvers.txt;
 AQUATONE=~/bounty/tools/aquatone/aquatone;
 BFAC=~/bounty/tools/bfac/bfac;
+DIRSEARCH=~/bounty/tools/dirsearch/dirsearch.py;
 
 # Other variables
 ALL_IP=all_ip.txt;
@@ -832,11 +833,50 @@ function run_ffuf() {
 		fi
 }
 
+function run_dirsearch() {
+		# Trap SIGINT so broken ffuf runs can be cancelled
+		trap cancel SIGINT;
+
+		# Call with domain as $1, wordlist size as $2, and domain list as $3
+		if [[ $3 == $WORKING_DIR/$ALL_DOMAIN ]]; then
+				echo -e "$GREEN""[i]$BLUE Running dirsearch against all $(wc -l "$3" | cut -d ' ' -f 1) unique discovered domains.""$NC";
+				echo -e "$GREEN""[i]$BLUE Command: dirsearch -u $DOMAIN -e php,aspx,asp -t 20 -x 302,400 -F --plain-text-report=$WORKING_DIR/dirsearch/$DOMAIN.txt -w$2""$NC";
+				# Run dirsearch
+				mkdir "$WORKING_DIR"/dirsearch;
+				COUNT=$(wc -l "$3" | cut -d ' ' -f 1)
+				START=$(date +%s);
+				while read -r ADOMAIN; do
+						"$DIRSEARCH" -u "$HTTP"://"$ADOMAIN" -e php,aspx,asp -t 20 -x 302,400 -F --plain-text-report="$WORKING_DIR"/dirsearch/"$ADOMAIN".txt -w "$2";
+						COUNT=$((COUNT - 1));
+						echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
+				done < "$3"
+				END=$(date +%s);
+				DIFF=$(( END - START ));
+				echo -e "$GREEN""[i]$BLUE Dirsearch took $DIFF seconds to run.""$NC";
+		else
+				echo -e "$GREEN""[i]$BLUE Running dirsearch against all $(wc -l "$3" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
+				echo -e "$GREEN""[i]$BLUE Command: dirsearch -u $DOMAIN -e php,aspx,asp -t 20 -x 302,400 -F --plain-text-report=$WORKING_DIR/dirsearch/$DOMAIN.txt -w$2""$NC";
+				# Run dirsearch
+				mkdir "$WORKING_DIR"/dirsearch;
+				COUNT=$(wc -l "$3" | cut -d ' ' -f 1)
+				START=$(date +%s);
+				while read -r ADOMAIN; do
+						"$DIRSEARCH" -u "$HTTP"://"$ADOMAIN" -e php,aspx,asp -t 20 -x 302,400 -F --plain-text-report="$WORKING_DIR"/dirsearch/"$ADOMAIN".txt -w "$2";
+						COUNT=$((COUNT - 1));
+						echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
+				done < "$3"
+				END=$(date +%s);
+				DIFF=$(( END - START ));
+				echo -e "$GREEN""[i]$BLUE Dirsearch took $DIFF seconds to run.""$NC";
+		fi
+}
+
+
 function run_content_discovery() {
 # Ask user to do directory bruteforcing on discovered domains
 while true; do
   echo -e "$GREEN""[?] Do you want to begin content bruteforcing on [A]ll/[I]nteresting/[N]o discovered domains?";
-  echo -e "$ORANGE""[i] This will run ffuf and gobuster.";
+  echo -e "$ORANGE""[i] This will run ffuf, gobuster, and dirsearch.";
   read -rp "[?] Please enter A/a, I/i, or N/n. " ANSWER
 
   case $ANSWER in
@@ -854,26 +894,31 @@ while true; do
 						   [sS]* )
 								   run_ffuf "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_gobuster "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_dirsearch "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   break;
 								   ;;
 							[mM]* )
 								   run_ffuf "$DOMAIN" "$MEDIUM" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_gobuster "$DOMAIN" "$MEDIUM" "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_dirsearch "$DOMAIN" "$MEDIUM" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   break;
 								   ;;
 							[lL]* )
 								   run_ffuf "$DOMAIN" "$LARGE" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_gobuster "$DOMAIN" "$LARGE" "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_dirsearch "$DOMAIN" "$LARGE" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   break;
 								   ;;
 							[xX]* )
 								   run_ffuf "$DOMAIN" "$XL" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_gobuster "$DOMAIN" "$XL" "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_dirsearch "$DOMAIN" "$XL" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   break;
 								   ;;
 							[2]* )
 								   run_ffuf "$DOMAIN" "$XXL" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   run_gobuster "$DOMAIN" "$XXL" "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_dirsearch "$DOMAIN" "$XXL" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   break;
 								   ;;
 							* )
@@ -908,26 +953,31 @@ while true; do
 						   [sS]* )
 								   run_ffuf "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_gobuster "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_dirsearch "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   break;
 								   ;;
 							[mM]* )
 								   run_ffuf "$DOMAIN" "$MEDIUM" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_gobuster "$DOMAIN" "$MEDIUM" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_dirsearch "$DOMAIN" "$MEDIUM" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   break;
 								   ;;
 							[lL]* )
 								   run_ffuf "$DOMAIN" "$LARGE" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_gobuster "$DOMAIN" "$LARGE" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_dirsearch "$DOMAIN" "$LARGE" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   break;
 								   ;;
 							[xX]* )
 								   run_ffuf "$DOMAIN" "$XL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_gobuster "$DOMAIN" "$XL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_dirsearch "$DOMAIN" "$XL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   break;
 								   ;;
 							[2]* )
 								   run_ffuf "$DOMAIN" "$XXL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_gobuster "$DOMAIN" "$XXL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_dirsearch "$DOMAIN" "$XXL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   break;
 								   ;;
 							* )
@@ -1282,7 +1332,7 @@ touch "$WORKING_DIR"/"$ALL_IP";
 # Content discovery wordlist size: small
 # Aquatone: yes
 # Portscan: masscan and nmap
-# Content discovery: ffuf and gobuster
+# Content discovery: ffuf, gobuster, and dirsearch
 # Information gathering: all tools
 # Domains to scan: all unique discovered
 if [[ "$DEFAULT_MODE" == 1 ]]; then
@@ -1307,6 +1357,7 @@ if [[ "$DEFAULT_MODE" == 1 ]]; then
 		run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
 		run_ffuf "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$ALL_DOMAIN";
 		run_gobuster "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$ALL_DOMAIN";
+		run_dirsearch "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$ALL_DOMAIN";
 		get_interesting;
 		list_found;
 
@@ -1407,7 +1458,7 @@ fi
 
 # -C run content discovery
 if [[ "$CONTENT_DISCOVERY" == 1 ]]; then
-		echo -e "$BLUE""[i] Beginning content discovery with ffuf and gobuster.""$NC";
+		echo -e "$BLUE""[i] Beginning content discovery with ffuf, gobuster, and dirsearch.""$NC";
 		sleep 0.5;
 
 		# Check if $SUBDOMAIN_WORDLIST is set, else use short as default
@@ -1415,25 +1466,31 @@ if [[ "$CONTENT_DISCOVERY" == 1 ]]; then
 				if [[ "$USE_ALL" == 1 ]]; then
 						run_ffuf "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_DOMAIN";
 						run_gobuster "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_DOMAIN";
+						run_dirsearch "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_DOMAIN";
 				# Make sure there are interesting domains
 				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) != 0 ]]; then
 						run_ffuf "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 						run_gobuster "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+						run_dirsearch "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 				else
 						run_ffuf "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_DOMAIN";
 						run_gobuster "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_DOMAIN";
+						run_dirsearch "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_DOMAIN";
 				fi
 		else
 				if [[ "$USE_ALL" == 1 ]]; then
 						run_ffuf "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_DOMAIN";
 						run_gobuster "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_DOMAIN";
+						run_dirsearch "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_DOMAIN";
 				# Make sure there are interesting domains
 				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) != 0 ]]; then
 						run_ffuf "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 						run_gobuster "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+						run_dirsearch "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 				else
 						run_ffuf "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_DOMAIN";
 						run_gobuster "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_DOMAIN";
+						run_dirsearch "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_DOMAIN";
 				fi
 		fi
 fi
