@@ -35,6 +35,7 @@ USE_DISCOVERED=0;
 DEFAULT_MODE=0;
 INTERESTING=interesting.txt;
 SKIP_MASSCAN=0;
+NOTICA="";
 
 # Tool paths
 SUBFINDER=$(command -v subfinder);
@@ -103,6 +104,7 @@ function usage() {
 		echo -e "$BLUE""\\t-b wordlist \\n\\t\\t$ORANGE (optional) Set custom domain blacklist file.""$NC";
 		echo -e "$BLUE""\\t-X wordlist \\n\\t\\t$ORANGE (optional) Set custom interesting word list.""$NC";
 		echo -e "$BLUE""\\t-o directory \\n\\t\\t$ORANGE (optional) Set custom output directory. It must exist and be writable.""$NC";
+		echo -e "$BLUE""\\t-n string \\n\\t\\t$ORANGE (optional) Notica URL parameter for notification when the script has completed. See notica.us for details.""$NC";
 		echo -e "$BLUE""\\t-a \\n\\t\\t$ORANGE (optional) Use all unique discovered domains for scans, rather than interesting domains. This cannot be used with -A.""$NC";
 		echo -e "$BLUE""\\t-A \\n\\t\\t$ORANGE (optional, default) Use only interesting discovered domains for scans, rather than all discovered domains. This cannot be used with -a.""$NC";
 		echo -e "$BLUE""\\t-H \\n\\t\\t$ORANGE (optional) Use HTTP for connecting to sites instead of HTTPS.""$NC";
@@ -123,7 +125,7 @@ function exists() {
 }
 
 # Handle CLI arguments
-while getopts ":hu:d:C:sicb:IaADX:po:H" opt; do
+while getopts ":hu:d:C:sicb:IaADX:po:Hn:" opt; do
 		case ${opt} in
 				h ) # -h help
 						usage;
@@ -263,6 +265,9 @@ while getopts ":hu:d:C:sicb:IaADX:po:H" opt; do
 						;;
 				H ) # -H enable HTTP for URLs
 						HTTP="http";
+						;;
+				n ) # -n Notica URL parameter
+						NOTICA="$OPTARG";
 						;;
 				\? ) # Invalid option
 						echo -e "$RED""[!] Invalid Option: -$OPTARG" 1>&2;
@@ -1292,6 +1297,16 @@ while true; do
 done
 }
 
+function run_notica() {
+		# Call Notica to signal end of script
+		echo -e "$BLUE""Sending Notica notification.""$NC";
+		curl --data "d:Chomp Scan has finished scanning $DOMAIN." "https://notica.us/?$NOTICA";
+		RESULT=$?;
+		if [[ "$RESULT" == 1 ]]; then
+				echo -e "$ORANGE""Notica notification failed. Check your URL parameter.""$NC";
+		fi
+}
+
 #### Error/path/argument checking before beginning script
 
 # Check that -u domain was passed
@@ -1510,4 +1525,5 @@ list_found;
 # Calculate scan runtime
 SCAN_END=$(date +%s);
 SCAN_DIFF=$(( SCAN_END - SCAN_START ));
+run_notica;
 echo -e "$BLUE""[i] Total script run time: $SCAN_DIFF seconds.""$NC";
