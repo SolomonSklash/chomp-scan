@@ -299,7 +299,7 @@ function check_paths() {
 		grep 'Debian' /etc/issue 1>/dev/null;
 		DEBIAN="$?";
 		if [[ "$DEBIAN" == 0 ]]; then 
-				NIKTO="$(command -v perl) $HOME/bounty/tools/nikto/program/nikto.pl ";
+				NIKTO="$HOME/bounty/tools/nikto/program/nikto.pl";
 		fi
 
 		# Check that all paths are set
