@@ -28,6 +28,7 @@ function install_debian() {
 		echo -e "$GREEN""Installing for Debian.""$NC";
 		sudo apt-get install git wget curl nmap masscan whatweb chromium openssl libnet-ssleay-perl p7zip-full build-essential python-pip python3-pip -y;
 		install_pip;
+		sudo pip install wafw00f;
 		install_dnscan;
 		install_altdns;
 		install_bfac;
