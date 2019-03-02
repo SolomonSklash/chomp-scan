@@ -39,7 +39,6 @@ NOTICA="";
 
 # Tool paths
 SUBFINDER=$(command -v subfinder);
-SUBLIST3R=$(command -v sublist3r);
 SUBJACK=$(command -v subjack);
 FFUF=$(command -v ffuf);
 WHATWEB=$(command -v whatweb);
@@ -48,6 +47,7 @@ GOBUSTER=$(command -v gobuster);
 CHROMIUM=$(command -v chromium);
 NMAP=$(command -v nmap);
 MASSCAN=$(command -v masscan);
+SUBLIST3R=~/bounty/tools/sublist3r/sublist3r.py;
 DNSCAN=~/bounty/tools/dnscan/dnscan.py;
 ALTDNS=~/bounty/tools/altdns/altdns.py;
 MASSDNS_BIN=~/bounty/tools/massdns/bin/massdns;
