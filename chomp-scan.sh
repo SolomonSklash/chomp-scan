@@ -1314,10 +1314,6 @@ function run_notica() {
 		# Call Notica to signal end of script
 		echo -e "$BLUE""Sending Notica notification.""$NC";
 		curl --data "d:Chomp Scan has finished scanning $DOMAIN." "https://notica.us/?$NOTICA";
-		RESULT=$?;
-		if [[ "$RESULT" == 1 ]]; then
-				echo -e "$ORANGE""Notica notification failed. Check your URL parameter.""$NC";
-		fi
 }
 
 #### Error/path/argument checking before beginning script
