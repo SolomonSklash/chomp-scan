@@ -1159,7 +1159,7 @@ function run_subjack() {
 		echo -e "$GREEN""[i]$BLUE Running subjack against all $(wc -l "$WORKING_DIR"/$ALL_DOMAIN | cut -d ' ' -f 1) unique discovered subdomains to check for subdomain takeover.""$NC";
 		echo -e "$GREEN""[i]$ORANGE Command: subjack -d $1 -w $2 -v -t 20 -ssl -m -o $WORKING_DIR/subjack-output.txt""$NC";
 		START=$(date +%s);
-		"$SUBJACK" -d "$1" -w "$2" -v -t 20 -ssl -m -o "$WORKING_DIR"/subjack-output.txt;
+		"$SUBJACK" -d "$1" -w "$2" -v -t 20 -ssl -m -o "$WORKING_DIR"/subjack-output.txt -c "$HOME"/go/src/github.com/haccer/subjack/fingerprints.json;
 		END=$(date +%s);
 		DIFF=$(( END - START ));
 
