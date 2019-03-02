@@ -21,6 +21,7 @@ function install_kali() {
 		install_bfac;
 		install_massdns;
 		install_aquatone;
+		install_sublist3r;
 		install_gobuster;
 		install_go_tools;
 }
