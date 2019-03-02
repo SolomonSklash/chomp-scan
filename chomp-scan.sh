@@ -1392,7 +1392,9 @@ if [[ "$DEFAULT_MODE" == 1 ]]; then
 		# Calculate scan runtime
 		SCAN_END=$(date +%s);
 		SCAN_DIFF=$(( SCAN_END - SCAN_START ));
-		run_notica;
+		if [[ "$NOTICA" != "" ]]; then
+				run_notica;
+		fi
 		echo -e "$BLUE""[i] Total script run time: $SCAN_DIFF seconds.""$NC";
 		
 		exit;
@@ -1419,7 +1421,9 @@ if [[ "$INTERACTIVE" == 1 ]]; then
 		# Calculate scan runtime
 		SCAN_END=$(date +%s);
 		SCAN_DIFF=$(( SCAN_END - SCAN_START ));
-		run_notica;
+		if [[ "$NOTICA" != "" ]]; then
+				run_notica;
+		fi
 		echo -e "$BLUE""[i] Total script run time: $SCAN_DIFF seconds.""$NC";
 		
 		exit;
@@ -1540,5 +1544,7 @@ list_found;
 # Calculate scan runtime
 SCAN_END=$(date +%s);
 SCAN_DIFF=$(( SCAN_END - SCAN_START ));
-run_notica;
+if [[ "$NOTICA" != "" ]]; then
+		run_notica;
+fi
 echo -e "$BLUE""[i] Total script run time: $SCAN_DIFF seconds.""$NC";
