@@ -69,7 +69,7 @@ A variety of wordlists are used, both for subdomain bruteforcing and content dis
 
 #### Misc.
 * altdns-words.txt - 240 words - Used for creating domain permutations for [masscan](https://github.com/robertdavidgraham/masscan) to resolve. Borrowed from [altdns](https://github.com/infosec-au/altdns/blob/master/words.txt).
-* interesting.txt - 42 words - A list I created of potentially interesting words appearing in domain names. Provide your own intersting words list with the `-X` flag.
+* interesting.txt - 42 words - A list I created of potentially interesting words appearing in domain names. Provide your own interesting words list with the `-X` flag.
 
 ### Usage
 Chomp Scan always runs subdomain enumeration, thus a domain is required via the `-u` flag. The domain should not contain a scheme, e.g. http:// or https://. A wordlist is optional, and if one is not provided the built-in short list (20k words) is used.
