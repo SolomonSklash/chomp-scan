@@ -134,7 +134,7 @@ function install_go() {
 		# git clone https://github.com/EnableSecurity/wafw00f.git "$TOOLS"/wafw00f;
 		wget https://dl.google.com/go/go1.12.linux-amd64.tar.gz;
 		sudo tar -C /usr/local -xzf go1.12.linux-amd64.tar.gz;
-		echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.profile;
+		echo 'export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin:' >> ~/.profile;
 		source ~/.profile;
 		rm -rf go1.12.linux-amd64.tar.gz;
 }
