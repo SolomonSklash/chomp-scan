@@ -290,7 +290,7 @@ done
 shift $((OPTIND -1));
 
 function check_paths() {
-		# Check for Debin/Ubuntu and set proper paths
+		# Check for Debian/Ubuntu and set proper paths
 		grep 'Ubuntu' /etc/issue 1>/dev/null;
 		UBUNTU="$?";
 		if [[ "$UBUNTU" == 0 ]]; then 
