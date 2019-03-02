@@ -71,6 +71,8 @@ A variety of wordlists are used, both for subdomain bruteforcing and content dis
 Chomp Scan always runs subdomain enumeration, thus a domain is required via the `-u` flag. The domain should not contain a scheme, e.g. http:// or https://. A wordlist is optional, and if one is not provided the built-in short list (20k words) is used.
 
 Other scan phases are optional. Content discovery can take an optional wordlist, otherwise it defaults to the built-in short (22k words) list.
+
+The final results of the scan are stored in two text files in the output directory. All unique domains that are found are stored in `all_discovered_domains`, and all unique IPs that are discovered are stored in `all_discovered_ips`.
 ```
 chomp-scan.sh -u example.com -a d short -cC large -p -o path/to/directory
 
