@@ -22,7 +22,6 @@ function install_kali() {
 		install_massdns;
 		install_aquatone;
 		install_sublist3r;
-		install_gobuster;
 		install_go_tools;
 }
 function install_debian() {
@@ -35,7 +34,6 @@ function install_debian() {
 		install_massdns;
 		install_aquatone;
 		install_sublist3r;
-		install_gobuster;
 		install_nikto;
 		install_wafw00f;
 		install_go;
@@ -51,7 +49,6 @@ function install_ubuntu() {
 		install_massdns;
 		install_aquatone;
 		install_sublist3r;
-		install_gobuster;
 		install_go;
 		install_go_tools;
 }
@@ -106,16 +103,6 @@ function install_nikto() {
 		git clone https://github.com/sullo/nikto.git "$TOOLS"/nikto;
 }
 
-function install_gobuster() {
-		echo -e "$GREEN""Installing gobuster from Github.""$NC";
-		mkdir -pv "$TOOLS"/gobuster;
-		wget https://github.com/OJ/gobuster/releases/download/v2.0.1/gobuster-linux-amd64.7z -O "$TOOLS"/gobuster/gobuster-linux-amd64.7z;
-		cd "$TOOLS"/gobuster;
-		7z e gobuster-linux-amd64.7z;
-		chmod +x "$TOOLS"/gobuster/gobuster;
-		cd -;
-}
-
 function install_wafw00f() {
 		echo -e "$GREEN""Installing wafw00f from Github.""$NC";
 		git clone https://github.com/EnableSecurity/wafw00f.git "$TOOLS"/wafw00f;
@@ -131,6 +118,8 @@ function install_go_tools() {
 		go get github.com/haccer/subjack;
 		echo -e "$GREEN""Installing ffuf from Github.""$NC";
 		go get github.com/ffuf/ffuf;
+		echo -e "$GREEN""Installing gobuster from Github.""$NC";
+		go get github.com/OJ/gobuster;
 }
 
 function install_go() {
