@@ -72,7 +72,7 @@ Chomp Scan always runs subdomain enumeration, thus a domain is required via the 
 
 Other scan phases are optional. Content discovery can take an optional wordlist, otherwise it defaults to the built-in short (22k words) list.
 
-The final results of the scan are stored in two text files in the output directory. All unique domains that are found are stored in `all_discovered_domains`, and all unique IPs that are discovered are stored in `all_discovered_ips`.
+The final results of the scan are stored in two text files in the output directory. All unique domains that are found are stored in `all_discovered_domains.txt`, and all unique IPs that are discovered are stored in `all_discovered_ips.txt`.
 ```
 chomp-scan.sh -u example.com -a d short -cC large -p -o path/to/directory
 
