@@ -160,4 +160,4 @@ else
 		exit 1;
 fi
 
-. "$HOME"/.profile;
+echo -e "$GREEN""Please run \'source ~/.profile\' to add the Go binary path to your \$PATH variable, then run Chomp Scan.""$NC";
