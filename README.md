@@ -25,29 +25,30 @@ Chomp Scan supports limited canceling/skipping of tools by pressing Ctrl-c. This
 ### Scanning Phases
 
 #### Subdomain Discovery (3 different sized wordlists)
-* dnscan
-* subfinder
-* sublist3r
-* massdns + altdns
+* [dnscan](https://github.com/rbsec/dnscan)
+* [subfinder]([https://github.com/subfinder/subfinder)
+* [sublist3r](https://github.com/aboul3la/Sublist3r)
+* [massdns](https://github.com/blechschmidt/massdns) + [altdns](https://github.com/infosec-au/altdns)
 
 #### Screenshots (optional)
-* aquatone
+* [aquatone](https://github.com/michenriksen/aquatone)
 
 #### Port Scanning (optional)
-* masscan and/or nmap
+* [masscan](https://github.com/robertdavidgraham/masscan) and/or [nmap](www.nmap.org)
 * nmap output styled with [nmap-bootstrap-xsl](https://github.com/honze-net/nmap-bootstrap-xsl/)
 
 #### Information Gathering (optional) (4 different sized wordlists)
-* subjack
-* bfac
-* whatweb
-* wafw00f
-* nikto
+* [subjack](https://github.com/haccer/subjack)
+* [bfac](https://github.com/mazen160/bfac)
+* [whatweb](https://github.com/urbanadventurer/whatweb/)
+* [wafw00f](https://github.com/EnableSecurity/wafw00f)
+* [nikto](https://github.com/sullo/nikto)
 
 #### Content Discovery (optional) (4 different sized wordlists)
-* ffuf
-* gobuster
-* dirsearch
+* [inception](https://github.com/proabiral/inception)
+* [ffuf](https://github.com/ffuf/ffuf)
+* [gobuster](https://github.com/OJ/gobuster)
+* [dirsearch](https://github.com/maurosoria/dirsearch)
 
 ### Wordlists
 
