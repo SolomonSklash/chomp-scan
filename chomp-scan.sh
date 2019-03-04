@@ -1519,12 +1519,15 @@ if [[ "$INFO_GATHERING" == 1 ]]; then
 		# Make sure there are interesting domains
 		elif [[ "$INTERESTING_COUNT" -gt 0 ]]; then
 				echo "*************************\n Interesting is greater than 0";
+				sleep 5;
 				run_subjack "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 				run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 				run_whatweb "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 				run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 				run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 		else
+				echo "*************************\n Hit the final else";
+				sleep 5;
 				run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 				run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
 				run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -1552,10 +1555,13 @@ if [[ "$CONTENT_DISCOVERY" == 1 ]]; then
 				# Make sure there are interesting domains
 				elif [[ "$INTERESTING_COUNT" -gt 0 ]]; then
 						echo "*************************\n Interesting is greater than 0";
+						sleep 5;
 						run_ffuf "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 						run_gobuster "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 						run_dirsearch "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 				else
+						echo "*************************\n Hit the final else";
+						sleep 5;
 						run_ffuf "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
 						run_gobuster "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
 						run_dirsearch "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
