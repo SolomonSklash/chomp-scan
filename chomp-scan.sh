@@ -824,7 +824,7 @@ function run_gobuster() {
 						"$GOBUSTER" -u "$HTTP"://"$ADOMAIN" -s '200,201,202,204,307,308,401,403,405,500,501,503' -to 3s -e -k -t 20 -w "$2" -o "$WORKING_DIR"/gobuster/"$ADOMAIN".txt;
 						COUNT=$((COUNT - 1));
 						echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
-				done < "$WORKING_DIR"/"$INTERESTING_DOMAINS"
+				done < "$3"
 				END=$(date +%s);
 				DIFF=$(( END - START ));
 				echo -e "$GREEN""[i]$BLUE Gobuster took $DIFF seconds to run.""$NC";
@@ -836,7 +836,7 @@ function run_ffuf() {
 		trap cancel SIGINT;
 
 		# Call with domain as $1, wordlist size as $2, and domain list as $3
-		if [[ $3 == $WORKING_DIR/$ALL_DOMAIN ]]; then
+		if [[ $3 == $WORKING_DIR/$ALL_RESOLVED ]]; then
 				echo -e "$GREEN""[i]$BLUE Running ffuf against all $(wc -l "$3" | cut -d ' ' -f 1) unique discovered domains.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: ffuf -u $HTTP://$DOMAIN/FUZZ -w $2 -fc 301,302 -k | tee $WORKING_DIR/ffuf.""$NC";
 				# Run ffuf
@@ -874,7 +874,7 @@ function run_dirsearch() {
 		trap cancel SIGINT;
 
 		# Call with domain as $1, wordlist size as $2, and domain list as $3
-		if [[ $3 == $WORKING_DIR/$ALL_DOMAIN ]]; then
+		if [[ $3 == $WORKING_DIR/$ALL_RESOLVED ]]; then
 				echo -e "$GREEN""[i]$BLUE Running dirsearch against all $(wc -l "$3" | cut -d ' ' -f 1) unique discovered domains.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: dirsearch -u $DOMAIN -e php,aspx,asp -t 20 -x 302,400 -F --plain-text-report=$WORKING_DIR/dirsearch/$DOMAIN.txt -w$2""$NC";
 				# Run dirsearch
@@ -928,33 +928,33 @@ while true; do
 				   read -rp "[i] Enter S/M/L/X/2 " CHOICE;
 				   case $CHOICE in
 						   [sS]* )
-								   run_ffuf "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_ffuf "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_gobuster "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$ALL_RESOLVED";
-								   run_dirsearch "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_dirsearch "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   break;
 								   ;;
 							[mM]* )
-								   run_ffuf "$DOMAIN" "$MEDIUM" "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_ffuf "$DOMAIN" "$MEDIUM" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_gobuster "$DOMAIN" "$MEDIUM" "$WORKING_DIR"/"$ALL_RESOLVED";
-								   run_dirsearch "$DOMAIN" "$MEDIUM" "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_dirsearch "$DOMAIN" "$MEDIUM" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   break;
 								   ;;
 							[lL]* )
-								   run_ffuf "$DOMAIN" "$LARGE" "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_ffuf "$DOMAIN" "$LARGE" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_gobuster "$DOMAIN" "$LARGE" "$WORKING_DIR"/"$ALL_RESOLVED";
-								   run_dirsearch "$DOMAIN" "$LARGE" "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_dirsearch "$DOMAIN" "$LARGE" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   break;
 								   ;;
 							[xX]* )
-								   run_ffuf "$DOMAIN" "$XL" "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_ffuf "$DOMAIN" "$XL" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_gobuster "$DOMAIN" "$XL" "$WORKING_DIR"/"$ALL_RESOLVED";
-								   run_dirsearch "$DOMAIN" "$XL" "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_dirsearch "$DOMAIN" "$XL" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   break;
 								   ;;
 							[2]* )
-								   run_ffuf "$DOMAIN" "$XXL" "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_ffuf "$DOMAIN" "$XXL" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_gobuster "$DOMAIN" "$XXL" "$WORKING_DIR"/"$ALL_RESOLVED";
-								   run_dirsearch "$DOMAIN" "$XXL" "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_dirsearch "$DOMAIN" "$XXL" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   break;
 								   ;;
 							* )
@@ -1032,7 +1032,7 @@ done
 
 function run_bfac() {
 		# Call with domain list as $1
-		if [[ $1 == $WORKING_DIR/$ALL_DOMAIN ]]; then
+		if [[ $1 == $WORKING_DIR/$ALL_RESOLVED ]]; then
 				echo -e "$GREEN""[i]$BLUE Running bfac against all $(wc -l "$1" | cut -d ' ' -f 1) unique discovered domains.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: bfac -u $DOMAIN -xsc 404,301,302,400 -o $WORKING_DIR/bfac.""$NC";
 				# Run ffuf
@@ -1067,7 +1067,7 @@ function run_bfac() {
 
 function run_nikto() {
 		# Call with domain list as $1
-		if [[ $1 == $WORKING_DIR/$ALL_DOMAIN ]]; then
+		if [[ $1 == $WORKING_DIR/$ALL_RESOLVED ]]; then
 				echo -e "$GREEN""[i]$BLUE Running nikto against all $(wc -l "$1" | cut -d ' ' -f 1) unique discovered domains.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: nikto -h $HTTP://$DOMAIN -output $WORKING_DIR/nikto.""$NC";
 				# Run nikto
@@ -1102,7 +1102,7 @@ function run_nikto() {
 
 function run_whatweb() {
 		# Call with domain as $1 and domain list as $2
-		if [[ $2 == $WORKING_DIR/$ALL_DOMAIN ]]; then
+		if [[ $2 == $WORKING_DIR/$ALL_RESOLVED ]]; then
 				echo -e "$GREEN""[i]$BLUE Running whatweb against all $(wc -l "$2" | cut -d ' ' -f 1) unique discovered domains.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: whatweb -v -a 3 -h $HTTP://$DOMAIN | tee $WORKING_DIR/whatweb.""$NC";
 				# Run whatweb
@@ -1137,7 +1137,7 @@ function run_whatweb() {
 
 function run_wafw00f() {
 		# Call with domain as $1 and domain list as $2
-		if [[ $2 == $WORKING_DIR/$ALL_DOMAIN ]]; then
+		if [[ $2 == $WORKING_DIR/$ALL_RESOLVED ]]; then
 				echo -e "$GREEN""[i]$BLUE Running wafw00f against all $(wc -l "$2" | cut -d ' ' -f 1) unique discovered domains.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: wafw00f $HTTP://$1 -a | tee $WORKING_DIR/wafw00f.""$NC";
 				# Run wafw00f
@@ -1174,7 +1174,7 @@ function run_subjack() {
 		# Call with domain as $1 and wordlist as $2
 
 		# Check for domain takeover on each found domain
-		echo -e "$GREEN""[i]$BLUE Running subjack against all $(wc -l "$WORKING_DIR"/$ALL_DOMAIN | cut -d ' ' -f 1) unique discovered subdomains to check for subdomain takeover.""$NC";
+		echo -e "$GREEN""[i]$BLUE Running subjack against all $(wc -l "$WORKING_DIR"/$ALL_RESOLVED | cut -d ' ' -f 1) unique discovered subdomains to check for subdomain takeover.""$NC";
 		echo -e "$GREEN""[i]$ORANGE Command: subjack -d $1 -w $2 -v -t 20 -ssl -m -o $WORKING_DIR/subjack-output.txt""$NC";
 		START=$(date +%s);
 		"$SUBJACK" -d "$1" -w "$2" -v -t 20 -ssl -m -o "$WORKING_DIR"/subjack-output.txt -c "$HOME"/go/src/github.com/haccer/subjack/fingerprints.json;
@@ -1206,43 +1206,43 @@ while true; do
 				   read -rp "[i] Enter S/M/L/X/2 " CHOICE;
 				   case $CHOICE in
 						   [sS]* )
-								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_bfac "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+								   run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
+								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+								   run_nikto "$WORKING_DIR"/"$ALL_RESOLVED";
 								   break;
 								   ;;
 							[mM]* )
-								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_bfac "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+								   run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
+								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+								   run_nikto "$WORKING_DIR"/"$ALL_RESOLVED";
 								   break;
 								   ;;
 							[lL]* )
-								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_bfac "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+								   run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
+								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+								   run_nikto "$WORKING_DIR"/"$ALL_RESOLVED";
 								   break;
 								   ;;
 							[xX]* )
-								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_bfac "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+								   run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
+								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+								   run_nikto "$WORKING_DIR"/"$ALL_RESOLVED";
 								   break;
 								   ;;
 							[2]* )
-								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_bfac "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+								   run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
+								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+								   run_nikto "$WORKING_DIR"/"$ALL_RESOLVED";
 								   break;
 								   ;;
 							* )
@@ -1393,14 +1393,14 @@ if [[ "$DEFAULT_MODE" == 1 ]]; then
 		run_aquatone "default";
 		run_masscan;
 		run_nmap;
-		run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
-		run_bfac "$WORKING_DIR"/"$ALL_DOMAIN";
-		run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
-		run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
-		run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
-		run_ffuf "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$ALL_DOMAIN";
-		run_gobuster "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$ALL_DOMAIN";
-		run_dirsearch "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$ALL_DOMAIN";
+		run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+		run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
+		run_nikto "$WORKING_DIR"/"$ALL_RESOLVED";
+		run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+		run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+		run_ffuf "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$ALL_RESOLVED";
+		run_gobuster "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$ALL_RESOLVED";
+		run_dirsearch "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$ALL_RESOLVED";
 		get_interesting;
 		list_found;
 
@@ -1484,11 +1484,11 @@ if [[ "$INFO_GATHERING" == 1 ]]; then
 		sleep 0.5;
 
 		if [[ "$USE_ALL" == 1 ]]; then
-				run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
-				run_bfac "$WORKING_DIR"/"$ALL_DOMAIN";
-				run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
-				run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
-				run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
+				run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+				run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
+				run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+				run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+				run_nikto "$WORKING_DIR"/"$ALL_RESOLVED";
 		# Make sure there are interesting domains
 		elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) != 0 ]]; then
 				run_subjack "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
@@ -1497,11 +1497,11 @@ if [[ "$INFO_GATHERING" == 1 ]]; then
 				run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 				run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 		else
-				run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
-				run_bfac "$WORKING_DIR"/"$ALL_DOMAIN";
-				run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
-				run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_DOMAIN";
-				run_nikto "$WORKING_DIR"/"$ALL_DOMAIN";
+				run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+				run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
+				run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+				run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+				run_nikto "$WORKING_DIR"/"$ALL_RESOLVED";
 		fi
 fi
 
@@ -1513,33 +1513,33 @@ if [[ "$CONTENT_DISCOVERY" == 1 ]]; then
 		# Check if $SUBDOMAIN_WORDLIST is set, else use short as default
 		if [[ "$CONTENT_WORDLIST" != "" ]]; then
 				if [[ "$USE_ALL" == 1 ]]; then
-						run_ffuf "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_DOMAIN";
-						run_gobuster "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_DOMAIN";
-						run_dirsearch "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_DOMAIN";
+						run_ffuf "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
+						run_gobuster "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
+						run_dirsearch "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
 				# Make sure there are interesting domains
 				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) != 0 ]]; then
 						run_ffuf "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 						run_gobuster "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 						run_dirsearch "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 				else
-						run_ffuf "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_DOMAIN";
-						run_gobuster "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_DOMAIN";
-						run_dirsearch "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_DOMAIN";
+						run_ffuf "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
+						run_gobuster "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
+						run_dirsearch "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
 				fi
 		else
 				if [[ "$USE_ALL" == 1 ]]; then
-						run_ffuf "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_DOMAIN";
-						run_gobuster "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_DOMAIN";
-						run_dirsearch "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_DOMAIN";
+						run_ffuf "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";
+						run_gobuster "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";
+						run_dirsearch "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";
 				# Make sure there are interesting domains
 				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) != 0 ]]; then
 						run_ffuf "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 						run_gobuster "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 						run_dirsearch "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 				else
-						run_ffuf "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_DOMAIN";
-						run_gobuster "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_DOMAIN";
-						run_dirsearch "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_DOMAIN";
+						run_ffuf "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";
+						run_gobuster "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";
+						run_dirsearch "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";
 				fi
 		fi
 fi
