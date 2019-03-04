@@ -574,9 +574,6 @@ function run_massdns() {
 		END=$(date +%s);
 		DIFF=$(( END - START ));
 
-		# Remove trailing periods from results
-		sed -i 's/\.$//' "$WORKING_DIR"/massdns-result.txt;
-
 		# Parse results
 		grep CNAME "$WORKING_DIR"/massdns-result.txt > "$WORKING_DIR"/massdns-CNAMEs;
 		grep -v CNAME "$WORKING_DIR"/massdns-result.txt | cut -d ' ' -f 3 >> "$WORKING_DIR"/$ALL_IP;
@@ -586,9 +583,13 @@ function run_massdns() {
 
 		# Add newly discovered domains to all domains list
 		grep -v CNAME "$WORKING_DIR"/massdns-result.txt | cut -d ' ' -f 1 >> "$WORKING_DIR"/"$ALL_DOMAIN";
+		# Remove trailing periods from results
+		sed -i 's/\.$//' "$WORKING_DIR"/"$ALL_DOMAIN";
 
 		# Add all resolved domains to resolved domain list
 		grep -v CNAME "$WORKING_DIR"/massdns-result.txt | cut -d ' ' -f 1 >> "$WORKING_DIR"/"$ALL_RESOLVED";
+		# Remove trailing periods from results
+		sed -i 's/\.$//' "$WORKING_DIR"/"$ALL_RESOLVED";
 
 		echo -e "$GREEN""[i]$BLUE Massdns took $DIFF seconds to run.""$NC";
 		echo -e "$GREEN""[!]$ORANGE Check $WORKING_DIR/massdns-CNAMEs for a list of CNAMEs found.""$NC";
