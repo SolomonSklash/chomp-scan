@@ -60,6 +60,7 @@ DIRSEARCH=~/bounty/tools/dirsearch/dirsearch.py;
 # Other variables
 ALL_IP=all_discovered_ips.txt;
 ALL_DOMAIN=all_discovered_domains.txt;
+ALL_RESOLVED=all_resolved_domains.txt;
 
 function banner() {
 		BANNER='
@@ -558,8 +559,14 @@ function run_massdns() {
 		grep CNAME "$WORKING_DIR"/massdns-result.txt > "$WORKING_DIR"/massdns-CNAMEs;
 		grep -v CNAME "$WORKING_DIR"/massdns-result.txt | cut -d ' ' -f 3 >> "$WORKING_DIR"/$ALL_IP;
 
-		# Add any new in-scope domains to main list
+		# Add any new in-scope CNAMEs to main list
 		cut -d ' ' -f 3 "$WORKING_DIR"/massdns-CNAMEs | grep "$DOMAIN.$" >> "$WORKING_DIR"/$ALL_DOMAIN;
+
+		# Add newly discovered domains to all domains list
+		grep -v CNAME "$WORKING_DIR"/massdns-results.txt | cut -d ' ' -f 1 >> $"WORKING_DIR"/"$ALL_DOMAIN";
+
+		# Add all resolved domains to resolved domain list
+		grep -v CNAME "$WORKING_DIR"/massdns-results.txt | cut -d ' ' -f 1 >> $"WORKING_DIR"/"$ALL_RESOLVED";
 
 		echo -e "$GREEN""[i]$BLUE Massdns took $DIFF seconds to run.""$NC";
 		echo -e "$GREEN""[!]$ORANGE Check $WORKING_DIR/massdns-CNAMEs for a list of CNAMEs found.""$NC";
@@ -1349,6 +1356,7 @@ touch "$WORKING_DIR"/interesting-domains.txt;
 INTERESTING_DOMAINS=interesting-domains.txt;
 touch "$WORKING_DIR"/"$ALL_DOMAIN";
 touch "$WORKING_DIR"/"$ALL_IP";
+touch "$WORKING_DIR"/"$ALL_RESOLVED";
 
 # Check for -D non-interactive default flag
 # Defaults for non-interactive:
