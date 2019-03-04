@@ -34,7 +34,7 @@ Chomp Scan supports limited canceling/skipping of tools by pressing Ctrl-c. This
 * [aquatone](https://github.com/michenriksen/aquatone)
 
 #### Port Scanning (optional)
-* [masscan](https://github.com/robertdavidgraham/masscan) and/or [nmap](www.nmap.org)
+* [masscan](https://github.com/robertdavidgraham/masscan) and/or [nmap](https://www.nmap.org)
 * nmap output styled with [nmap-bootstrap-xsl](https://github.com/honze-net/nmap-bootstrap-xsl/)
 
 #### Information Gathering (optional) (4 different sized wordlists)
