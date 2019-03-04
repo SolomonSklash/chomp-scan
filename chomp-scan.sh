@@ -1489,6 +1489,8 @@ if [[ "$SUBDOMAIN_BRUTE" == 1 ]]; then
 		fi
 fi
 
+get_interesting;
+
 # -s screenshot with aquatone
 if [[ "$SCREENSHOTS" == 1 ]]; then
 		echo -e "$BLUE""[i] Taking screenshots with aquatone.""$NC";
@@ -1521,7 +1523,7 @@ if [[ "$INFO_GATHERING" == 1 ]]; then
 		elif [[ "$INTERESTING_COUNT" -gt 0 ]]; then
 				echo "*************************\n Interesting is greater than 0";
 				echo "INTERESTING_COUNT is $INTERESTING_COUNT";
-				sleep 5;
+				exit;
 				run_subjack "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 				run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 				run_whatweb "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
@@ -1530,7 +1532,7 @@ if [[ "$INFO_GATHERING" == 1 ]]; then
 		else
 				echo "*************************\n Hit the final else";
 				echo "INTERESTING_COUNT is $INTERESTING_COUNT";
-				sleep 5;
+				exit;
 				run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 				run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
 				run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
