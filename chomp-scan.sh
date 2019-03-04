@@ -399,8 +399,8 @@ function unique() {
 		# Remove blacklisted domains from all discovered domains
 		if [[ ! -z $BLACKLIST ]]; then 
 				while read -r bad; do
-						grep -v "$bad" "$WORKING_DIR"/$ALL_DOMAIN > "$WORKING_DIR"/temp1;
-						mv "$WORKING_DIR"/temp1  "$WORKING_DIR"/$ALL_DOMAIN;
+						grep -v "$bad" "$WORKING_DIR"/$ALL_DOMAIN > "$WORKING_DIR"/temp;
+						mv "$WORKING_DIR"/temp  "$WORKING_DIR"/$ALL_DOMAIN;
 				done < "$BLACKLIST";
 		fi
 
@@ -415,8 +415,10 @@ function unique() {
 		# Get unique list of IPs and domains, ignoring case
 		sort "$WORKING_DIR"/$ALL_DOMAIN | uniq -i > "$WORKING_DIR"/temp2;
 		mv "$WORKING_DIR"/temp2 "$WORKING_DIR"/$ALL_DOMAIN;
+
 		sort -V "$WORKING_DIR"/$ALL_IP | uniq -i > "$WORKING_DIR"/temp2;
 		mv "$WORKING_DIR"/temp2 "$WORKING_DIR"/$ALL_IP;
+
 		sort "$WORKING_DIR"/$ALL_RESOLVED | uniq -i > "$WORKING_DIR"/temp3;
 		mv "$WORKING_DIR"/temp3 "$WORKING_DIR"/$ALL_RESOLVED;
 }
@@ -434,8 +436,8 @@ function get_interesting() {
 		done < "$INTERESTING";
 
 		# Make sure no there are duplicates
-		sort -u "$WORKING_DIR"/"$INTERESTING_DOMAINS" > "$WORKING_DIR"/tmp4;
-		mv "$WORKING_DIR"/tmp4 "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+		sort -u "$WORKING_DIR"/"$INTERESTING_DOMAINS" > "$WORKING_DIR"/temp4;
+		mv "$WORKING_DIR"/temp4 "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 
 		# Make sure > 0 domains are found
 		FOUND=$(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1);
@@ -1390,6 +1392,10 @@ if [[ "$DEFAULT_MODE" == 1 ]]; then
 		run_subfinder "$DOMAIN" "$SHORT";
 		run_sublist3r "$DOMAIN";
 		run_massdns "$DOMAIN" "$SHORT";
+
+		# Call unique to make sure list is up to date for content discovery
+		unique;
+
 		run_aquatone "default";
 		run_masscan;
 		run_nmap;
@@ -1425,6 +1431,10 @@ if [[ "$INTERACTIVE" == 1 ]]; then
 		sleep 0.5;
 
 		run_subdomain_brute;
+
+		# Call unique to make sure list is up to date for content discovery
+		unique;
+
 		run_aquatone;
 		get_interesting;
 		run_portscan;
@@ -1467,14 +1477,16 @@ if [[ "$SUBDOMAIN_BRUTE" == 1 ]]; then
 				run_sublist3r "$DOMAIN";
 				run_massdns "$DOMAIN" "$SHORT";
 		fi
-		# Get interesting domains
-		get_interesting;
 fi
 
 # -s screenshot with aquatone
 if [[ "$SCREENSHOTS" == 1 ]]; then
 		echo -e "$BLUE""[i] Taking screenshots with aquatone.""$NC";
 		sleep 0.5;
+
+		# Call unique to make sure list is up to date for content discovery
+		unique;
+
 		run_aquatone "default";
 fi
 
@@ -1482,6 +1494,9 @@ fi
 if [[ "$INFO_GATHERING" == 1 ]]; then
 		echo -e "$BLUE""[i] Beginning information gathering with subjack, bfac, whatweb, wafw00f, and nikto.""$NC";
 		sleep 0.5;
+
+		# Call unique to make sure list is up to date for content discovery
+		unique;
 
 		if [[ "$USE_ALL" == 1 ]]; then
 				run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -1509,6 +1524,9 @@ fi
 if [[ "$CONTENT_DISCOVERY" == 1 ]]; then
 		echo -e "$BLUE""[i] Beginning content discovery with ffuf, gobuster, and dirsearch.""$NC";
 		sleep 0.5;
+
+		# Call unique to make sure list is up to date for content discovery
+		unique;
 
 		# Check if $SUBDOMAIN_WORDLIST is set, else use short as default
 		if [[ "$CONTENT_WORDLIST" != "" ]]; then
