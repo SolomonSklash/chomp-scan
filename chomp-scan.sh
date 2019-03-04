@@ -563,10 +563,10 @@ function run_massdns() {
 		cut -d ' ' -f 3 "$WORKING_DIR"/massdns-CNAMEs | grep "$DOMAIN.$" >> "$WORKING_DIR"/$ALL_DOMAIN;
 
 		# Add newly discovered domains to all domains list
-		grep -v CNAME "$WORKING_DIR"/massdns-result.txt | cut -d ' ' -f 1 >> $"WORKING_DIR"/"$ALL_DOMAIN";
+		grep -v CNAME "$WORKING_DIR"/massdns-result.txt | cut -d ' ' -f 1 >> "$WORKING_DIR"/"$ALL_DOMAIN";
 
 		# Add all resolved domains to resolved domain list
-		grep -v CNAME "$WORKING_DIR"/massdns-result.txt | cut -d ' ' -f 1 >> $"WORKING_DIR"/"$ALL_RESOLVED";
+		grep -v CNAME "$WORKING_DIR"/massdns-result.txt | cut -d ' ' -f 1 >> "$WORKING_DIR"/"$ALL_RESOLVED";
 
 		echo -e "$GREEN""[i]$BLUE Massdns took $DIFF seconds to run.""$NC";
 		echo -e "$GREEN""[!]$ORANGE Check $WORKING_DIR/massdns-CNAMEs for a list of CNAMEs found.""$NC";
