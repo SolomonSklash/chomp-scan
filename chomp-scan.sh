@@ -830,7 +830,9 @@ function run_gobuster() {
 				while read -r ADOMAIN; do
 						"$GOBUSTER" -u "$HTTP"://"$ADOMAIN" -s '200,201,202,204,307,308,401,403,405,500,501,503' -to 3s -e -k -t 20 -w "$2" -o "$WORKING_DIR"/gobuster/"$ADOMAIN".txt;
 						COUNT=$((COUNT - 1));
-						echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
+						if [[ "$COUNT" != 0 ]]; then
+								echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
+						fi
 				done < "$3"
 				END=$(date +%s);
 				DIFF=$(( END - START ));
@@ -845,7 +847,9 @@ function run_gobuster() {
 				while read -r ADOMAIN; do
 						"$GOBUSTER" -u "$HTTP"://"$ADOMAIN" -s '200,201,202,204,307,308,401,403,405,500,501,503' -to 3s -e -k -t 20 -w "$2" -o "$WORKING_DIR"/gobuster/"$ADOMAIN".txt;
 						COUNT=$((COUNT - 1));
-						echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
+						if [[ "$COUNT" != 0 ]]; then
+								echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
+						fi
 				done < "$3"
 				END=$(date +%s);
 				DIFF=$(( END - START ));
@@ -868,7 +872,9 @@ function run_ffuf() {
 				while read -r ADOMAIN; do
 						"$FFUF" -u "$HTTP"://"$ADOMAIN"/FUZZ -w "$2" -fc 301,302 -k -mc 200,201,202,204,401,403,500,502,503 | tee "$WORKING_DIR"/ffuf/"$ADOMAIN";
 						COUNT=$((COUNT - 1));
-						echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
+						if [[ "$COUNT" != 0 ]]; then
+								echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
+						fi
 				done < "$3"
 				END=$(date +%s);
 				DIFF=$(( END - START ));
@@ -883,7 +889,9 @@ function run_ffuf() {
 				while read -r ADOMAIN; do
 						"$FFUF" -u "$HTTP"://"$ADOMAIN"/FUZZ -w "$2" -fc 301,302 -k -mc 200,201,202,204,401,403,500,502,503 | tee "$WORKING_DIR"/ffuf/"$ADOMAIN";
 						COUNT=$((COUNT - 1));
-						echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
+						if [[ "$COUNT" != 0 ]]; then
+								echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
+						fi
 				done < "$3"
 				END=$(date +%s);
 				DIFF=$(( END - START ));
@@ -906,7 +914,9 @@ function run_dirsearch() {
 				while read -r ADOMAIN; do
 						"$DIRSEARCH" -u "$HTTP"://"$ADOMAIN" -e php,aspx,asp -t 20 -x 302,400 -F --plain-text-report="$WORKING_DIR"/dirsearch/"$ADOMAIN".txt -w "$2";
 						COUNT=$((COUNT - 1));
-						echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
+						if [[ "$COUNT" != 0 ]]; then
+								echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
+						fi
 				done < "$3"
 				END=$(date +%s);
 				DIFF=$(( END - START ));
@@ -921,7 +931,9 @@ function run_dirsearch() {
 				while read -r ADOMAIN; do
 						"$DIRSEARCH" -u "$HTTP"://"$ADOMAIN" -e php,aspx,asp -t 20 -x 302,400 -F --plain-text-report="$WORKING_DIR"/dirsearch/"$ADOMAIN".txt -w "$2";
 						COUNT=$((COUNT - 1));
-						echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
+						if [[ "$COUNT" != 0 ]]; then
+								echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
+						fi
 				done < "$3"
 				END=$(date +%s);
 				DIFF=$(( END - START ));
@@ -1064,7 +1076,9 @@ function run_bfac() {
 				while read -r ADOMAIN; do
 						$BFAC -u "$ADOMAIN" -xsc 404,301,302,400 -o "$WORKING_DIR"/bfac/"$ADOMAIN";
 						COUNT=$((COUNT - 1));
-						echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
+						if [[ "$COUNT" != 0 ]]; then
+								echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
+						fi
 				done < "$1"
 				END=$(date +%s);
 				DIFF=$(( END - START ));
@@ -1079,7 +1093,9 @@ function run_bfac() {
 				while read -r ADOMAIN; do
 						$BFAC -u "$ADOMAIN" -xsc 404,301,302,400 -o "$WORKING_DIR"/bfac/"$ADOMAIN";
 						COUNT=$((COUNT - 1));
-						echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
+						if [[ "$COUNT" != 0 ]]; then
+								echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
+						fi
 				done < "$1"
 				END=$(date +%s);
 				DIFF=$(( END - START ));
@@ -1099,7 +1115,9 @@ function run_nikto() {
 				while read -r ADOMAIN; do
 						"$NIKTO" -h "$HTTP"://"$ADOMAIN" -output "$WORKING_DIR"/nikto/"$ADOMAIN".txt;
 						COUNT=$((COUNT - 1));
-						echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
+						if [[ "$COUNT" != 0 ]]; then
+								echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
+						fi
 				done < "$1"
 				END=$(date +%s);
 				DIFF=$(( END - START ));
@@ -1114,7 +1132,9 @@ function run_nikto() {
 				while read -r ADOMAIN; do
 						"$NIKTO" -h "$HTTP"://"$ADOMAIN" -output "$WORKING_DIR"/nikto/"$ADOMAIN".txt;
 						COUNT=$((COUNT - 1));
-						echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
+						if [[ "$COUNT" != 0 ]]; then
+								echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
+						fi
 				done < "$1"
 				END=$(date +%s);
 				DIFF=$(( END - START ));
@@ -1134,7 +1154,9 @@ function run_whatweb() {
 				while read -r ADOMAIN; do
 						"$WHATWEB" -v -a 3 "$HTTP"://"$ADOMAIN" | tee "$WORKING_DIR"/whatweb/"$ADOMAIN";
 						COUNT=$((COUNT - 1));
-						echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
+						if [[ "$COUNT" != 0 ]]; then
+								echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
+						fi
 				done < "$2"
 				END=$(date +%s);
 				DIFF=$(( END - START ));
@@ -1149,7 +1171,9 @@ function run_whatweb() {
 				while read -r ADOMAIN; do
 						"$WHATWEB" -v -a 3 "$HTTP"://"$ADOMAIN" | tee "$WORKING_DIR"/whatweb/"$ADOMAIN";
 						COUNT=$((COUNT - 1));
-						echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
+						if [[ "$COUNT" != 0 ]]; then
+								echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
+						fi
 				done < "$2"
 				END=$(date +%s);
 				DIFF=$(( END - START ));
@@ -1169,7 +1193,9 @@ function run_wafw00f() {
 				while read -r ADOMAIN; do
 						"$WAFW00F" "$HTTP"://"$ADOMAIN" -a | tee "$WORKING_DIR"/wafw00f/"$ADOMAIN";
 						COUNT=$((COUNT - 1));
-						echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
+						if [[ "$COUNT" != 0 ]]; then
+								echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
+						fi
 				done < "$2"
 				END=$(date +%s);
 				DIFF=$(( END - START ));
@@ -1184,7 +1210,9 @@ function run_wafw00f() {
 				while read -r ADOMAIN; do
 						"$WAFW00F" "$HTTP"://"$ADOMAIN" -a | tee "$WORKING_DIR"/wafw00f/"$ADOMAIN";
 						COUNT=$((COUNT - 1));
-						echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
+						if [[ "$COUNT" != 0 ]]; then
+								echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
+						fi
 				done < "$2"
 				END=$(date +%s);
 				DIFF=$(( END - START ));
