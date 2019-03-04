@@ -1389,7 +1389,7 @@ touch "$WORKING_DIR"/"$ALL_RESOLVED";
 # Portscan: masscan and nmap
 # Content discovery: ffuf, gobuster, and dirsearch
 # Information gathering: all tools
-# Domains to scan: all unique discovered
+# Domains to scan: all unique resolvable
 if [[ "$DEFAULT_MODE" == 1 ]]; then
 		# Check if we're root since we're running masscan
 		check_root;
@@ -1515,7 +1515,8 @@ if [[ "$INFO_GATHERING" == 1 ]]; then
 				run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 				run_nikto "$WORKING_DIR"/"$ALL_RESOLVED";
 		# Make sure there are interesting domains
-		elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) != 0 ]]; then
+		elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) -gt 0 ]]; then
+				echo "*************************\n Interesting is greater than 0";
 				run_subjack "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 				run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 				run_whatweb "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
