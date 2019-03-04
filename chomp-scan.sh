@@ -1509,6 +1509,7 @@ if [[ "$INFO_GATHERING" == 1 ]]; then
 		unique;
 
 		INTERESTING_COUNT=$(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1);
+		echo "INTERESTING_COUNT is $INTERESTING_COUNT";
 
 		if [[ "$USE_ALL" == 1 ]]; then
 				run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -1519,6 +1520,7 @@ if [[ "$INFO_GATHERING" == 1 ]]; then
 		# Make sure there are interesting domains
 		elif [[ "$INTERESTING_COUNT" -gt 0 ]]; then
 				echo "*************************\n Interesting is greater than 0";
+				echo "INTERESTING_COUNT is $INTERESTING_COUNT";
 				sleep 5;
 				run_subjack "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 				run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
@@ -1527,6 +1529,7 @@ if [[ "$INFO_GATHERING" == 1 ]]; then
 				run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 		else
 				echo "*************************\n Hit the final else";
+				echo "INTERESTING_COUNT is $INTERESTING_COUNT";
 				sleep 5;
 				run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 				run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -1545,6 +1548,7 @@ if [[ "$CONTENT_DISCOVERY" == 1 ]]; then
 		unique;
 
 		INTERESTING_COUNT=$(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1);
+		echo "INTERESTING_COUNT is $INTERESTING_COUNT";
 
 		# Check if $SUBDOMAIN_WORDLIST is set, else use short as default
 		if [[ "$CONTENT_WORDLIST" != "" ]]; then
@@ -1561,6 +1565,7 @@ if [[ "$CONTENT_DISCOVERY" == 1 ]]; then
 						run_dirsearch "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 				else
 						echo "*************************\n Hit the final else";
+						echo "INTERESTING_COUNT is $INTERESTING_COUNT";
 						sleep 5;
 						run_ffuf "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
 						run_gobuster "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
