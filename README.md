@@ -12,7 +12,7 @@ Chomp Scan is a Bash script that chains together the fastest and most effective 
 
 **New**   Chomp Scan now integrates [Notica](https://notica.us), which allows you to receive a notification when the script finishes. Simply visit Notica and get a unique URL parameter. Pass the parameter to Chomp Scan via the `-n` flag, keep the Notica page open in a browser tab on your computer or phone, and you will receive a message when Chomp Scan has finished running. No more constantly checking/forgetting to check those long running scans.
 
-Chomp Scan runs in multiple modes. The primary one is using command-line arguments to select which scanning phases to use, which wordlists, etc. A guided interactive mode is available, as well as a non-interactive mode, useful if you do not want to deal with setting multiple arguments.
+Chomp Scan runs in multiple modes. The primary one is using command-line arguments to select which scanning phases to use, which wordlists, HTTP or HTTPS,  etc. A guided interactive mode is available, as well as a non-interactive mode, useful if you do not want to deal with setting multiple arguments.
 
 A list of interesting words is included, such as *dev, test, uat, staging,* etc., and domains containing those terms are flagged. This way you can focus on the interesting domains first if you wish. This list can be customized to suit your own needs, or replaced with a different file via the `-X` flag.
 
