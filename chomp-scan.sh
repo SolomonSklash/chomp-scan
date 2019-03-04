@@ -430,12 +430,12 @@ function list_found() {
 
 function get_interesting() {
 		while read -r word; do
-				grep "$word" "$WORKING_DIR"/$ALL_DOMAIN >> "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+				grep "$word" "$WORKING_DIR"/$ALL_RESOLVED >> "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 		done < "$INTERESTING";
 
 		# Make sure no there are duplicates
-		sort -u "$WORKING_DIR"/"$INTERESTING_DOMAINS" > "$WORKING_DIR"/tmp3;
-		mv "$WORKING_DIR"/tmp3 "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+		sort -u "$WORKING_DIR"/"$INTERESTING_DOMAINS" > "$WORKING_DIR"/tmp4;
+		mv "$WORKING_DIR"/tmp4 "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 
 		# Make sure > 0 domains are found
 		FOUND=$(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1);
