@@ -798,7 +798,7 @@ function run_portscan() {
 
 function run_gobuster() {
 		# Call with domain as $1, wordlist size as $2, and domain list as $3
-		if [[ $3 == $WORKING_DIR/$ALL_DOMAIN ]]; then
+		if [[ $3 == $WORKING_DIR/$ALL_RESOLVED ]]; then # Run against all resolvable domains
 				echo -e "$GREEN""[i]$BLUE Running gobuster against all $(wc -l "$3" | cut -d ' ' -f 1) unique discovered domains.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: gobuster -u https://$DOMAIN -s '200,201,202,204,307,308,401,403,405,500,501,503' -to 3s -e -k -t 20 -w $2 -o gobuster.""$NC";
 				# Run gobuster
@@ -813,7 +813,7 @@ function run_gobuster() {
 				END=$(date +%s);
 				DIFF=$(( END - START ));
 				echo -e "$GREEN""[i]$BLUE Gobuster took $DIFF seconds to run.""$NC";
-		else
+		else # Run against all interesting domains
 				echo -e "$GREEN""[i]$BLUE Running gobuster against all $(wc -l "$3" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: gobuster -u $HTTP://$DOMAIN -s '200,201,202,204,307,308,401,403,405,500,501,503' -to 3s -e -k -t 20 -w $2 -o $WORKING_DIR/gobuster""$NC";
 				# Run gobuster
@@ -824,7 +824,7 @@ function run_gobuster() {
 						"$GOBUSTER" -u "$HTTP"://"$ADOMAIN" -s '200,201,202,204,307,308,401,403,405,500,501,503' -to 3s -e -k -t 20 -w "$2" -o "$WORKING_DIR"/gobuster/"$ADOMAIN".txt;
 						COUNT=$((COUNT - 1));
 						echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
-				done < "$3"
+				done < "$WORKING_DIR"/"$INTERESTING_DOMAINS"
 				END=$(date +%s);
 				DIFF=$(( END - START ));
 				echo -e "$GREEN""[i]$BLUE Gobuster took $DIFF seconds to run.""$NC";
@@ -917,7 +917,7 @@ while true; do
 
   case $ANSWER in
    [aA]* ) 
-		   echo -e "[i] Beginning directory bruteforcing on all discovered domains.";
+		   echo -e "[i] Beginning directory bruteforcing on all discovered resolvable domains.";
 		   while true; do
 				   echo -e "$GREEN""[?] Which wordlist do you want to use?""$NC";
 				   echo -e "$BLUE""   Small: ~20k words""$NC";
@@ -929,31 +929,31 @@ while true; do
 				   case $CHOICE in
 						   [sS]* )
 								   run_ffuf "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_gobuster "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_gobuster "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_dirsearch "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   break;
 								   ;;
 							[mM]* )
 								   run_ffuf "$DOMAIN" "$MEDIUM" "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_gobuster "$DOMAIN" "$MEDIUM" "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_gobuster "$DOMAIN" "$MEDIUM" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_dirsearch "$DOMAIN" "$MEDIUM" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   break;
 								   ;;
 							[lL]* )
 								   run_ffuf "$DOMAIN" "$LARGE" "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_gobuster "$DOMAIN" "$LARGE" "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_gobuster "$DOMAIN" "$LARGE" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_dirsearch "$DOMAIN" "$LARGE" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   break;
 								   ;;
 							[xX]* )
 								   run_ffuf "$DOMAIN" "$XL" "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_gobuster "$DOMAIN" "$XL" "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_gobuster "$DOMAIN" "$XL" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_dirsearch "$DOMAIN" "$XL" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   break;
 								   ;;
 							[2]* )
 								   run_ffuf "$DOMAIN" "$XXL" "$WORKING_DIR"/"$ALL_DOMAIN";
-								   run_gobuster "$DOMAIN" "$XXL" "$WORKING_DIR"/"$ALL_DOMAIN";
+								   run_gobuster "$DOMAIN" "$XXL" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_dirsearch "$DOMAIN" "$XXL" "$WORKING_DIR"/"$ALL_DOMAIN";
 								   break;
 								   ;;
