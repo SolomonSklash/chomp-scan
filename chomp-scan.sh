@@ -574,6 +574,9 @@ function run_massdns() {
 		END=$(date +%s);
 		DIFF=$(( END - START ));
 
+		# Remove trailing periods from results
+		sed -i 's/\.$//' "$WORKING_DIR"/massdns-result.txt;
+
 		# Parse results
 		grep CNAME "$WORKING_DIR"/massdns-result.txt > "$WORKING_DIR"/massdns-CNAMEs;
 		grep -v CNAME "$WORKING_DIR"/massdns-result.txt | cut -d ' ' -f 3 >> "$WORKING_DIR"/$ALL_IP;
