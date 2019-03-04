@@ -431,6 +431,8 @@ function list_found() {
 }
 
 function get_interesting() {
+		# Takes optional silent argument as $1
+
 		while read -r word; do
 				grep "$word" "$WORKING_DIR"/$ALL_RESOLVED >> "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 		done < "$INTERESTING";
@@ -439,15 +441,19 @@ function get_interesting() {
 		sort -u "$WORKING_DIR"/"$INTERESTING_DOMAINS" > "$WORKING_DIR"/temp4;
 		mv "$WORKING_DIR"/temp4 "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 
-		# Make sure > 0 domains are found
-		FOUND=$(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1);
-		if [[ $FOUND -gt 0 ]]; then
-				echo -e "$RED""[!] The following $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) potentially interesting subdomains have been found ($WORKING_DIR/$INTERESTING_DOMAINS):""$ORANGE";
-				cat "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-				sleep 1;
+		if [[ "$1" == "silent" ]]; then
+				return;
 		else
-				echo -e "$RED""[!] No interesting domains have been found yet.""$NC";
-				sleep 1;
+				# Make sure > 0 domains are found
+				FOUND=$(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1);
+				if [[ $FOUND -gt 0 ]]; then
+						echo -e "$RED""[!] The following $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) potentially interesting subdomains have been found ($WORKING_DIR/$INTERESTING_DOMAINS):""$ORANGE";
+						cat "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+						sleep 1;
+				else
+						echo -e "$RED""[!] No interesting domains have been found yet.""$NC";
+						sleep 1;
+				fi
 		fi
 }
 
@@ -1489,7 +1495,7 @@ if [[ "$SUBDOMAIN_BRUTE" == 1 ]]; then
 		fi
 fi
 
-get_interesting;
+get_interesting "silent";
 
 # -s screenshot with aquatone
 if [[ "$SCREENSHOTS" == 1 ]]; then
