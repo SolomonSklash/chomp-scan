@@ -26,7 +26,7 @@ Chomp Scan supports limited canceling/skipping of tools by pressing Ctrl-c. This
 
 #### Subdomain Discovery (3 different sized wordlists)
 * [dnscan](https://github.com/rbsec/dnscan)
-* [subfinder]([https://github.com/subfinder/subfinder)
+* [subfinder](https://github.com/subfinder/subfinder)
 * [sublist3r](https://github.com/aboul3la/Sublist3r)
 * [massdns](https://github.com/blechschmidt/massdns) + [altdns](https://github.com/infosec-au/altdns)
 
