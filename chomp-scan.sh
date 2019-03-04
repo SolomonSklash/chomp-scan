@@ -396,11 +396,19 @@ function check_root() {
 }
 
 function unique() {
-		# Remove domains from blacklist
+		# Remove blacklisted domains from all discovered domains
 		if [[ ! -z $BLACKLIST ]]; then 
 				while read -r bad; do
 						grep -v "$bad" "$WORKING_DIR"/$ALL_DOMAIN > "$WORKING_DIR"/temp1;
 						mv "$WORKING_DIR"/temp1  "$WORKING_DIR"/$ALL_DOMAIN;
+				done < "$BLACKLIST";
+		fi
+
+		# Remove blacklisted domains from all resolved domains
+		if [[ ! -z $BLACKLIST ]]; then 
+				while read -r bad; do
+						grep -v "$bad" "$WORKING_DIR"/$ALL_RESOLVED > "$WORKING_DIR"/temp1;
+						mv "$WORKING_DIR"/temp1  "$WORKING_DIR"/$ALL_RESOLVED;
 				done < "$BLACKLIST";
 		fi
 
@@ -409,12 +417,15 @@ function unique() {
 		mv "$WORKING_DIR"/temp2 "$WORKING_DIR"/$ALL_DOMAIN;
 		sort -V "$WORKING_DIR"/$ALL_IP | uniq -i > "$WORKING_DIR"/temp2;
 		mv "$WORKING_DIR"/temp2 "$WORKING_DIR"/$ALL_IP;
+		sort "$WORKING_DIR"/$ALL_RESOLVED | uniq -i > "$WORKING_DIR"/temp3;
+		mv "$WORKING_DIR"/temp3 "$WORKING_DIR"/$ALL_RESOLVED;
 }
 
 function list_found() {
 		unique;
 		echo -e "$GREEN""[+] Found $(wc -l "$WORKING_DIR"/$ALL_IP | cut -d ' ' -f 1) unique IPs so far.""$NC"
-		echo -e "$GREEN""[+] Found $(wc -l "$WORKING_DIR"/$ALL_DOMAIN | cut -d ' ' -f 1) unique domains so far.""$NC"
+		echo -e "$GREEN""[+] Found $(wc -l "$WORKING_DIR"/$ALL_DOMAIN | cut -d ' ' -f 1) unique discovered domains so far.""$NC"
+		echo -e "$GREEN""[+] Found $(wc -l "$WORKING_DIR"/$ALL_RESOLVED | cut -d ' ' -f 1) unique resolved domains so far.""$NC"
 }
 
 function get_interesting() {
