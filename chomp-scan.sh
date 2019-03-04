@@ -632,13 +632,23 @@ function run_subdomain_brute() {
 function run_aquatone () {
 		# Call empty or with default as $1 for -D default non-interactive mode
 		if [[ "$1" == "default" ]]; then
-				mkdir "$WORKING_DIR"/aquatone;
-				echo -e "$BLUE""[i] Running aquatone against all $(wc -l "$WORKING_DIR"/$ALL_RESOLVED | cut -d ' ' -f 1) unique discovered subdomains.""$NC";
-				START=$(date +%s);
-				$AQUATONE -threads 10 -chrome-path "$CHROMIUM" -ports medium -out "$WORKING_DIR"/aquatone < "$WORKING_DIR"/$ALL_RESOLVED;
-				END=$(date +%s);
-				DIFF=$(( END - START ));
-				echo -e "$GREEN""[i]$BLUE Aquatone took $DIFF seconds to run.""$NC";
+				if [[ "$USE_ALL" == 1 ]]; then
+						mkdir "$WORKING_DIR"/aquatone;
+						echo -e "$BLUE""[i] Running aquatone against all $(wc -l "$WORKING_DIR"/$ALL_RESOLVED | cut -d ' ' -f 1) unique discovered subdomains.""$NC";
+						START=$(date +%s);
+						$AQUATONE -threads 10 -chrome-path "$CHROMIUM" -ports medium -out "$WORKING_DIR"/aquatone < "$WORKING_DIR"/$ALL_RESOLVED;
+						END=$(date +%s);
+						DIFF=$(( END - START ));
+						echo -e "$GREEN""[i]$BLUE Aquatone took $DIFF seconds to run.""$NC";
+				else
+						mkdir "$WORKING_DIR"/aquatone;
+						echo -e "$BLUE""[i] Running aquatone against all $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) interesting discovered subdomains.""$NC";
+						START=$(date +%s);
+						$AQUATONE -threads 10 -chrome-path "$CHROMIUM" -ports medium -out "$WORKING_DIR"/aquatone < "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+						END=$(date +%s);
+						DIFF=$(( END - START ));
+						echo -e "$GREEN""[i]$BLUE Aquatone took $DIFF seconds to run.""$NC";
+				fi
 		else
 				# Ask user to run aquatone
 				while true; do
