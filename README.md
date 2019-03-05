@@ -51,6 +51,9 @@ Chomp Scan supports limited canceling/skipping of tools by pressing Ctrl-c. This
 * [gobuster](https://github.com/OJ/gobuster)
 * [dirsearch](https://github.com/maurosoria/dirsearch)
 
+### Configuration File
+Chomp Scan now features a configuration file option that provides more granular control over which tools are run and is less cumbersome than passing a large number of CLI arguments. It can be used by passing the `-L` flag. An [example config](https://github.com/SolomonSklash/chomp-scan/blob/master/config) file is included in this repo as a template.
+
 ### Wordlists
 
 A variety of wordlists are used, both for subdomain bruteforcing and content discovery. Daniel Miessler's [Seclists](https://github.com/danielmiessler/SecLists) are used heavily, as well as Jason Haddix's [lists](https://gist.github.com/jhaddix). Different wordlists can be used by passing in a custom wordlist or using one of the built-in named argument lists below.
@@ -76,7 +79,7 @@ A variety of wordlists are used, both for subdomain bruteforcing and content dis
 * interesting.txt - 43 words - A list I created of potentially interesting words appearing in domain names. Provide your own interesting words list with the `-X` flag.
 
 ### Installation
-Clone this repo and run the installer.sh script. Make sure to `source ~/.profile` after running the installer in order to add the Go binary path to your $PATH variable. Then run Chomp Scan.
+Clone this repo and run the included installer.sh script. Make sure to run `source ~/.profile` in your terminal after running the installer in order to add the Go binary path to your $PATH variable. Then run Chomp Scan.
 
 ### Usage
 Chomp Scan always runs subdomain enumeration, thus a domain is required via the `-u` flag. The domain should not contain a scheme, e.g. http:// or https://. By default, HTTPS is always used. This can be changed to HTTP by passing the `-H` flag. A wordlist is optional, and if one is not provided the built-in short list (20k words) is used.
@@ -90,6 +93,8 @@ chomp-scan.sh -u example.com -a d short -cC large -p -o path/to/directory
 Usage of Chomp Scan:
         -u domain
                  (required) Domain name to scan. This should not include a scheme, e.g. https:// or http://.
+	-L config-file
+                 (optional) The path to a config file. This can be used to provide more granular control over what tools are run.
         -d wordlist
                  (optional) The wordlist to use for subdomain enumeration. Three built-in lists, short, long, and huge can be used, as well as the path to a custom wordlist. The default is short.
         -c
