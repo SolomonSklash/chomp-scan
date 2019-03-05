@@ -36,6 +36,7 @@ DEFAULT_MODE=0;
 INTERESTING=interesting.txt;
 SKIP_MASSCAN=0;
 NOTICA="";
+CONFIG_FILE="";
 
 # Tool paths
 SUBFINDER=$(command -v subfinder);
@@ -129,8 +130,74 @@ function exists() {
 		fi
 }
 
+# Parse configuration file
+function parse_config() {
+		# Parse [general]
+
+		DOMAIN=$(grep '^DOMAIN' "$CONFIG_FILE" | cut -d '=' -f 2);
+		if [[ "$DOMAIN" == "" ]]; then
+				echo -e "$RED""[!] No domain was provided in the configuration file.""$NC";
+				exit 1;
+		fi
+		echo "DOMAIN is $DOMAIN";
+
+		if [[ $(grep '^ENABLE_HTTP' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
+				HTTP="http";
+		fi
+		echo "HTTP is $HTTP";
+
+		OUTPUT_DIR=$(grep '^OUTPUT_DIR' "$CONFIG_FILE" | cut -d '=' -f 2);
+		if [[ "$OUTPUT_DIR" != "" ]]; then
+				if [[ -w "$OUTPUT_DIR" ]]; then
+						WORKING_DIR="$OUTPUT_DIR";
+				else
+						echo -e "$RED""[!] Output directory $OUTPUT_DIR does not exist or is not writable. Please check the configuration file.""$NC";
+						exit 1;
+				fi
+		fi
+		echo "WORKING_DIR is $WORKING_DIR";
+
+		if [[ $(grep '^USE_ALL' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then	
+				USE_ALL=1;
+		fi
+		echo "USE_ALL is $USE_ALL";
+
+		if [[ $(grep '^NOTICA' "$CONFIG_FILE" | cut -d '=' -f 2) != "" ]]; then	
+				NOTICA=$(grep '^NOTICA' "$CONFIG_FILE" | cut -d '=' -f 2)
+		fi
+		echo "NOTICA is $NOTICA";
+
+		BLACKLIST_FILE=$(grep '^BLACKLIST' "$CONFIG_FILE" | cut -d '=' -f 2);
+		if [[ "$BLACKLIST_FILE" != "" ]]; then
+				if [[ -w "$BLACKLIST_FILE" ]]; then
+						BLACKLIST="$BLACKLIST_FILE";
+				else
+						echo -e "$RED""[!] Blacklist file $BLACKLIST_FILE does not exist or is not writable. Please check the configuration file.""$NC";
+						exit 1;
+				fi
+		fi
+		echo "BLACKLIST is $BLACKLIST";
+
+		INTERESTING_FILE=$(grep '^INTERESTING' "$CONFIG_FILE" | cut -d '=' -f 2);
+		if [[ "$INTERESTING_FILE" != "" ]]; then
+				if [[ -w "$INTERESTING_FILE" ]]; then
+						INTERESTING="$INTERESTING_FILE";
+				else
+						echo -e "$RED""[!] Interesting file $INTERESTING_FILE does not exist or is not writable. Please check the configuration file.""$NC";
+						exit 1;
+				fi
+		fi
+		echo "INTERESTING is $INTERESTING";
+
+
+
+
+
+		exit;
+}
+
 # Handle CLI arguments
-while getopts ":hu:d:C:sicb:IaADX:po:Hn:" opt; do
+while getopts ":hu:d:L:C:sicb:IaADX:po:Hn:" opt; do
 		case ${opt} in
 				h ) # -h help
 						usage;
@@ -138,6 +205,20 @@ while getopts ":hu:d:C:sicb:IaADX:po:Hn:" opt; do
 						;;
 				u ) # -u URL/domain
 						DOMAIN=$OPTARG;
+						;;
+				L ) # -L configuration file
+						exists "$OPTARG";
+						RESULT=$?;
+						if [[ "$RESULT" -eq 1 ]]; then
+								CONFIG_FILE="$OPTARG";
+								parse_config;
+						else
+								echo -e "$RED""[!] Provided configuration file $OPTARG is empty or doesn't exist.""$NC";
+								usage;
+								exit 1;
+						fi
+						# Exit early if config file is found
+						break;
 						;;
 				d ) # -d subdomain enumeration wordlist
 						# Set to one of the defaults, else use provided wordlist
@@ -372,6 +453,7 @@ function check_paths() {
 				exit 1;
 		fi
 }
+
 
 # Check for root for runs using masscan
 function check_root() {
