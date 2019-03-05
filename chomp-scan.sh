@@ -159,12 +159,10 @@ function parse_config() {
 				echo -e "$RED""[!] No domain was provided in the configuration file.""$NC";
 				exit 1;
 		fi
-		echo "DOMAIN is $DOMAIN";
 
 		if [[ $(grep '^ENABLE_HTTP' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
 				HTTP="http";
 		fi
-		echo "HTTP is $HTTP";
 
 		OUTPUT_DIR=$(grep '^OUTPUT_DIR' "$CONFIG_FILE" | cut -d '=' -f 2);
 		if [[ "$OUTPUT_DIR" != "" ]]; then
@@ -175,17 +173,14 @@ function parse_config() {
 						exit 1;
 				fi
 		fi
-		echo "WORKING_DIR is $WORKING_DIR";
 
 		if [[ $(grep '^USE_ALL' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then	
 				USE_ALL=1;
 		fi
-		echo "USE_ALL is $USE_ALL";
 
 		if [[ $(grep '^NOTICA' "$CONFIG_FILE" | cut -d '=' -f 2) != "" ]]; then	
 				NOTICA=$(grep '^NOTICA' "$CONFIG_FILE" | cut -d '=' -f 2)
 		fi
-		echo "NOTICA is $NOTICA";
 
 		BLACKLIST_FILE=$(grep '^BLACKLIST' "$CONFIG_FILE" | cut -d '=' -f 2);
 		if [[ "$BLACKLIST_FILE" != "" ]]; then
@@ -196,7 +191,6 @@ function parse_config() {
 						exit 1;
 				fi
 		fi
-		echo "BLACKLIST is $BLACKLIST";
 
 		INTERESTING_FILE=$(grep '^INTERESTING' "$CONFIG_FILE" | cut -d '=' -f 2);
 		if [[ "$INTERESTING_FILE" != "" ]]; then
@@ -207,34 +201,28 @@ function parse_config() {
 						exit 1;
 				fi
 		fi
-		echo "INTERESTING is $INTERESTING";
 
 		# Parse [subdomain enumeration]
 
 		if [[ $(grep '^ENABLE_DNSCAN' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
 				ENABLE_DNSCAN=1;
 		fi
-		echo "ENABLE_DNSCAN is $ENABLE_DNSCAN";
 
 		if [[ $(grep '^ENABLE_SUBFINDER' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
 				ENABLE_SUBFINDER=1;
 		fi
-		echo "ENABLE_SUBFINDER is $ENABLE_SUBFINDER";
 
 		if [[ $(grep '^ENABLE_SUBLIST3R' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
 				ENABLE_SUBLIST3R=1;
 		fi
-		echo "ENABLE_SUBLIST3R is $ENABLE_SUBLIST3R";
 
 		if [[ $(grep '^ENABLE_ALTDNS' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
 				ENABLE_ALTDNS=1;
 		fi
-		echo "ENABLE_ALTDNS is $ENABLE_ALTDNS";
 
 		if [[ $(grep '^ENABLE_MASSDNS' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
 				ENABLE_MASSDNS=1;
 		fi
-		echo "ENABLE_MASSDNS is $ENABLE_MASSDNS";
 
 		SUB_WORDLIST=$(grep '^SUBDOMAIN_WORDLIST' "$CONFIG_FILE" | cut -d '=' -f 2);
 		if [[ "$SUB_WORDLIST" != "" ]]; then
@@ -245,34 +233,28 @@ function parse_config() {
 						exit 1;
 				fi
 		fi
-		echo "SUBDOMAIN_WORDLIST is $SUBDOMAIN_WORDLIST";
 
 		# Parse [content discovery]
 
 		if [[ $(grep '^ENABLE_INCEPTION' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
 				ENABLE_INCEPTION=1;
 		fi
-		echo "ENABLE_INCEPTION is $ENABLE_INCEPTION";
 
 		if [[ $(grep '^ENABLE_WAYBACKURLS' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
 				ENABLE_WAYBACKURLS=1;
 		fi
-		echo "ENABLE_WAYBACKURLS is $ENABLE_WAYBACKURLS";
 
 		if [[ $(grep '^ENABLE_FFUF' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
 				ENABLE_FFUF=1;
 		fi
-		echo "ENABLE_FFUF is $ENABLE_FFUF";
 
 		if [[ $(grep '^ENABLE_GOBUSTER' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
 				ENABLE_GOBUSTER=1;
 		fi
-		echo "ENABLE_GOBUSTER is $ENABLE_GOBUSTER";
 
 		if [[ $(grep '^ENABLE_DIRSEARCH' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
 				ENABLE_DIRSEARCH=1;
 		fi
-		echo "ENABLE_DIRSEARCH is $ENABLE_DIRSEARCH";
 
 		CON_WORDLIST=$(grep '^CONTENT_WORDLIST' "$CONFIG_FILE" | cut -d '=' -f 2);
 		if [[ "$CON_WORDLIST" != "" ]]; then
@@ -283,53 +265,44 @@ function parse_config() {
 						exit 1;
 				fi
 		fi
-		echo "CONTENT_WORDLIST is $CONTENT_WORDLIST";
 
 		# Parse [information gathering]
 
 		if [[ $(grep '^ENABLE_SUBJACK' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
 				ENABLE_SUBJACK=1;
 		fi
-		echo "ENABLE_SUBJACK is $ENABLE_SUBJACK";
 
 		if [[ $(grep '^ENABLE_BFAC' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
 				ENABLE_BFAC=1;
 		fi
-		echo "ENABLE_BFAC is $ENABLE_BFAC";
 
 		if [[ $(grep '^ENABLE_WHATWEB' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
 				ENABLE_WHATWEB=1;
 		fi
-		echo "ENABLE_WHATWEB is $ENABLE_WHATWEB";
 
 		if [[ $(grep '^ENABLE_WAFW00F' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
 				ENABLE_WAFW00F=1;
 		fi
-		echo "ENABLE_WAFW00F is $ENABLE_WAFW00F";
 
 		if [[ $(grep '^ENABLE_NIKTO' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
 				ENABLE_NIKTO=1;
 		fi
-		echo "ENABLE_NIKTO is $ENABLE_NIKTO";
 
 		# Parse [port scanning]
 
 		if [[ $(grep '^ENABLE_MASSCAN' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
 				ENABLE_MASSCAN=1;
 		fi
-		echo "ENABLE_MASSCAN is $ENABLE_MASSCAN";
 
 		if [[ $(grep '^ENABLE_NMAP' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
 				ENABLE_NMAP=1;
 		fi
-		echo "ENABLE_NMAP is $ENABLE_NMAP";
 
 		# Parse [screenshots]
 
 		if [[ $(grep '^ENABLE_SCREENSHOTS' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
 				ENABLE_SCREENSHOTS=1;
 		fi
-		echo "ENABLE_SCREENSHOTS is $ENABLE_SCREENSHOTS";
 
 
 
