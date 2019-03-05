@@ -1943,6 +1943,14 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 
 		## Port scanning
 		# Run masscan
+		if [[ "$ENABLE_MASSCAN" -eq 1 ]]; then
+				run_masscan;
+		fi
+
+		# Run nmap
+		if [[ "$ENABLE_NMAP" -eq 1 ]]; then
+				run_nmap;
+		fi
 
 
 
