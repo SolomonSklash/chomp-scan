@@ -324,6 +324,13 @@ function parse_config() {
 		fi
 		echo "ENABLE_NMAP is $ENABLE_NMAP";
 
+		# Parse [screenshots]
+
+		if [[ $(grep '^ENABLE_SCREENSHOTS' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
+				ENABLE_SCREENSHOTS=1;
+		fi
+		echo "ENABLE_SCREENSHOTS is $ENABLE_SCREENSHOTS";
+
 
 
 
