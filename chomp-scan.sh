@@ -38,6 +38,26 @@ SKIP_MASSCAN=0;
 NOTICA="";
 CONFIG_FILE="";
 
+# Config file variables
+ENABLE_DNSCAN=0;
+ENABLE_SUBFINDER=0;
+ENABLE_SUBLIST3R=0;
+ENABLE_ALTDNS=0;
+ENABLE_MASSDNS=0;
+ENABLE_INCEPTION=0;
+ENABLE_WAYBACKURLS=0;
+ENABLE_FFUF=0;
+ENABLE_GOBUSTER=0;
+ENABLE_DIRSEARCH=0;
+ENABLE_SUBJACK=0;
+ENABLE_BFAC=0;
+ENABLE_WHATWEB=0;
+ENABLE_WAFW00F=0;
+ENABLE_NIKTO=0;
+ENABLE_MASSCAN=0;
+ENABLE_NMAP=0;
+ENABLE_SCREENSHOTS=0;
+
 # Tool paths
 SUBFINDER=$(command -v subfinder);
 SUBJACK=$(command -v subjack);
@@ -188,6 +208,46 @@ function parse_config() {
 				fi
 		fi
 		echo "INTERESTING is $INTERESTING";
+
+		# Parse [subdomain enumeration]
+
+		if [[ $(grep '^ENABLE_DNSCAN' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
+				ENABLE_DNSCAN=1;
+		fi
+		echo "ENABLE_DNSCAN is $ENABLE_DNSCAN";
+
+		if [[ $(grep '^ENABLE_SUBFINDER' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
+				ENABLE_SUBFINDER=1;
+		fi
+		echo "ENABLE_SUBFINDER is $ENABLE_SUBFINDER";
+
+		if [[ $(grep '^ENABLE_SUBLIST3R' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
+				ENABLE_SUBLIST3R=1;
+		fi
+		echo "ENABLE_SUBLIST3R is $ENABLE_SUBLIST3R";
+
+		if [[ $(grep '^ENABLE_ALTDNS' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
+				ENABLE_ALTDNS=1;
+		fi
+		echo "ENABLE_ALTDNS is $ENABLE_ALTDNS";
+
+		if [[ $(grep '^ENABLE_MASSDNS' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
+				ENABLE_MASSDNS=1;
+		fi
+		echo "ENABLE_MASSDNS is $ENABLE_MASSDNS";
+
+		SUB_WORDLIST=$(grep '^SUBDOMAIN_WORDLIST' "$CONFIG_FILE" | cut -d '=' -f 2);
+		if [[ "$SUB_WORDLIST" != "" ]]; then
+				if [[ -w "$SUB_WORDLIST" ]]; then
+						SUBDOMAIN_WORDLIST="$SUB_WORDLIST";
+				else
+						echo -e "$RED""[!] Subdomain enumeration wordlist $SUB_WORDLIST does not exist or is not writable. Please check the configuration file.""$NC";
+						exit 1;
+				fi
+		fi
+		echo "SUBDOMAIN_WORDLIST is $SUBDOMAIN_WORDLIST";
+
+
 
 
 
