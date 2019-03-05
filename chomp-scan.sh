@@ -43,7 +43,7 @@ ENABLE_DNSCAN=0;
 ENABLE_SUBFINDER=0;
 ENABLE_SUBLIST3R=0;
 ENABLE_ALTDNS=0;
-ENABLE_MASSDNS=0;
+ENABLE_MASSDNS=1; # Constant
 ENABLE_INCEPTION=0;
 ENABLE_WAYBACKURLS=0;
 ENABLE_FFUF=0;
@@ -218,10 +218,6 @@ function parse_config() {
 
 		if [[ $(grep '^ENABLE_ALTDNS' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
 				ENABLE_ALTDNS=1;
-		fi
-
-		if [[ $(grep '^ENABLE_MASSDNS' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
-				ENABLE_MASSDNS=1;
 		fi
 
 		SUB_WORDLIST=$(grep '^SUBDOMAIN_WORDLIST' "$CONFIG_FILE" | cut -d '=' -f 2);
@@ -1201,7 +1197,7 @@ function run_inception() {
 				# Run inception
 				mkdir "$WORKING_DIR"/inception;
 				START=$(date +%s);
-				"$INCEPTION" -d "$3" -v | tee "$WORKING_DIR"/inception/"$ADOMAIN";
+				"$INCEPTION" -d "$3" -v | tee "$WORKING_DIR"/inception/inception-output.txt;
 				END=$(date +%s);
 				DIFF=$(( END - START ));
 				echo -e "$GREEN""[i]$BLUE Inception took $DIFF seconds to run.""$NC";
@@ -1211,7 +1207,7 @@ function run_inception() {
 				# Run inception
 				mkdir "$WORKING_DIR"/inception;
 				START=$(date +%s);
-				"$INCEPTION" -d "$3" -v | tee "$WORKING_DIR"/inception/"$ADOMAIN";
+				"$INCEPTION" -d "$3" -v | tee "$WORKING_DIR"/inception/inception-output.txt;
 				END=$(date +%s);
 				DIFF=$(( END - START ));
 				echo -e "$GREEN""[i]$BLUE Snallygaster took $DIFF seconds to run.""$NC";
@@ -1732,6 +1728,7 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 		echo -e "$GREEN""Beginning scan with config file options.""$NC";
 		sleep 0.5;
 
+		## Subdomain enumeration
 		# Run dnscan
 		if [[ "$ENABLE_DNSCAN" -eq 1 ]]; then
 				# Check if $SUBDOMAIN_WORDLIST is set, else use short as default
@@ -1775,6 +1772,112 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 						fi
 				fi
 		fi
+
+		## Content discovery
+		# Run inception
+		if [[ "$ENABLE_INCEPTION" -eq 1 ]]; then
+				# Check if $SUBDOMAIN_WORDLIST is set, else use short as default
+				if [[ "$CONTENT_WORDLIST" != "" ]]; then
+						if [[ "$USE_ALL" == 1 ]]; then
+								run_inception "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
+						# Make sure there are interesting domains
+						elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) -gt 0 ]]; then
+								run_inception "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+						else
+								run_inception "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
+						fi
+				else
+						if [[ "$USE_ALL" == 1 ]]; then
+								run_inception "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";
+						# Make sure there are interesting domains
+						elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) != 0 ]]; then
+								run_inception "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+						else
+								run_inception "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";
+						fi
+				fi
+		fi
+
+		# Run waybackurls
+		if [[ "$ENABLE_WAYBACKURLS" -eq 1 ]]; then
+				run_waybackurls "$DOMAIN";
+		fi
+
+		# Run ffuf
+		if [[ "$ENABLE_FFUF" -eq 1 ]]; then
+				# Check if $SUBDOMAIN_WORDLIST is set, else use short as default
+				if [[ "$CONTENT_WORDLIST" != "" ]]; then
+						if [[ "$USE_ALL" == 1 ]]; then
+								run_ffuf "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
+						# Make sure there are interesting domains
+						elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) -gt 0 ]]; then
+								run_ffuf "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+						else
+								run_ffuf "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
+						fi
+				else
+						if [[ "$USE_ALL" == 1 ]]; then
+								run_ffuf "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";
+						# Make sure there are interesting domains
+						elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) != 0 ]]; then
+								run_ffuf "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+						else
+								run_ffuf "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";
+						fi
+				fi
+		fi
+
+		# Run gobuster
+		if [[ "$ENABLE_GOBUSTER" -eq 1 ]]; then
+				# Check if $SUBDOMAIN_WORDLIST is set, else use short as default
+				if [[ "$CONTENT_WORDLIST" != "" ]]; then
+						if [[ "$USE_ALL" == 1 ]]; then
+								run_gobuster "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
+						# Make sure there are interesting domains
+						elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) -gt 0 ]]; then
+								run_gobuster "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+						else
+								run_gobuster "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
+						fi
+				else
+						if [[ "$USE_ALL" == 1 ]]; then
+								run_gobuster "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";
+						# Make sure there are interesting domains
+						elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) != 0 ]]; then
+								run_gobuster "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+						else
+								run_gobuster "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";
+						fi
+				fi
+		fi
+
+		# Run dirsearch
+		if [[ "$ENABLE_DIRSEARCH" -eq 1 ]]; then
+				# Check if $SUBDOMAIN_WORDLIST is set, else use short as default
+				if [[ "$CONTENT_WORDLIST" != "" ]]; then
+						if [[ "$USE_ALL" == 1 ]]; then
+								run_dirsearch "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
+						# Make sure there are interesting domains
+						elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) -gt 0 ]]; then
+								run_dirsearch "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+						else
+								run_dirsearch "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
+						fi
+				else
+						if [[ "$USE_ALL" == 1 ]]; then
+								run_dirsearch "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";
+						# Make sure there are interesting domains
+						elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) != 0 ]]; then
+								run_dirsearch "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+						else
+								run_dirsearch "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";
+						fi
+				fi
+		fi
+
+
+
+
 
 
 
