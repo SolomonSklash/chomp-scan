@@ -150,6 +150,36 @@ function exists() {
 		fi
 }
 
+# Check for root for runs using masscan
+function check_root() {
+		if [[ $EUID -ne 0 ]]; then
+		   while true; do
+				   echo -e "$ORANGE""[!] Please note: Script is not being run as root."
+				   echo -e "$ORANGE""[!] Provided script options include masscan, which must run as root."
+				   echo -e "$ORANGE""[!] The script will hang while waiting for the sudo password."
+				   read -rp "Do you want to exit and [R]e-run as root, [S]kip masscan, or [E]nter sudo password? " CHOICE;
+						   case $CHOICE in
+								   [rR]* )
+										   echo -e "$RED""[!] Exiting script.""$NC";
+										   exit 1;
+										   ;;
+								   [sS]* )
+										   echo -e "$ORANGE""Skipping masscan.""$NC";
+										   SKIP_MASSCAN=1;
+										   break;
+										   ;;
+								   [eE]* )
+										   echo -e "$ORANGE""Script will wait for sudo password.""$NC";
+										   break;
+										   ;;
+								   * )
+										   echo -e "$ORANGE""Please enter [R]e-run, [S]kip masscan, or [E]nter sudo password.""$NC";
+										   ;;
+						   esac
+		   done
+		fi
+}
+
 # Parse configuration file
 function parse_config() {
 		# Parse [general]
@@ -293,6 +323,7 @@ function parse_config() {
 		# Parse [port scanning]
 
 		if [[ $(grep '^ENABLE_MASSCAN' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
+				check_root
 				ENABLE_MASSCAN=1;
 		fi
 
@@ -562,32 +593,6 @@ function check_paths() {
 		if [[ "$WAFW00F" == "" ]] || [[ ! -f "$WAFW00F" ]]; then
 				echo -e "$RED""[!] The path or the file specified by the path for wafw00f does not exit.";
 				exit 1;
-		fi
-}
-
-
-# Check for root for runs using masscan
-function check_root() {
-		if [[ $EUID -ne 0 ]]; then
-		   while true; do
-				   echo -e "$ORANGE""[!] Please note: Script is not being run as root."
-				   echo -e "$ORANGE""[!] Provided script options include masscan, which must run as root."
-				   read -rp "Do you want to exit and [R]e-run as root, or [S]kip masscan? " CHOICE;
-						   case $CHOICE in
-								   [rR]* )
-										   echo -e "$RED""[!] Exiting script.""$NC";
-										   exit 1;
-										   ;;
-								   [sS]* )
-										   echo -e "$ORANGE""Skipping masscan.""$NC";
-										   SKIP_MASSCAN=1;
-										   break;
-										   ;;
-								   * )
-										   echo -e "$ORANGE""Please enter [R]e-run or [S]kip masscan.""$NC";
-										   ;;
-						   esac
-		   done
 		fi
 }
 
@@ -1936,7 +1941,8 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 				fi
 		fi
 
-
+		## Port scanning
+		# Run masscan
 
 
 
