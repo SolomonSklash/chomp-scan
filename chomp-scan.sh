@@ -247,7 +247,43 @@ function parse_config() {
 		fi
 		echo "SUBDOMAIN_WORDLIST is $SUBDOMAIN_WORDLIST";
 
+		# Parse [content discovery]
 
+		if [[ $(grep '^ENABLE_INCEPTION' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
+				ENABLE_INCEPTION=1;
+		fi
+		echo "ENABLE_INCEPTION is $ENABLE_INCEPTION";
+
+		if [[ $(grep '^ENABLE_WAYBACKURLS' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
+				ENABLE_WAYBACKURLS=1;
+		fi
+		echo "ENABLE_WAYBACKURLS is $ENABLE_WAYBACKURLS";
+
+		if [[ $(grep '^ENABLE_FFUF' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
+				ENABLE_FFUF=1;
+		fi
+		echo "ENABLE_FFUF is $ENABLE_FFUF";
+
+		if [[ $(grep '^ENABLE_GOBUSTER' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
+				ENABLE_GOBUSTER=1;
+		fi
+		echo "ENABLE_GOBUSTER is $ENABLE_GOBUSTER";
+
+		if [[ $(grep '^ENABLE_DIRSEARCH' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
+				ENABLE_DIRSEARCH=1;
+		fi
+		echo "ENABLE_DIRSEARCH is $ENABLE_DIRSEARCH";
+
+		CON_WORDLIST=$(grep '^CONTENT_WORDLIST' "$CONFIG_FILE" | cut -d '=' -f 2);
+		if [[ "$CON_WORDLIST" != "" ]]; then
+				if [[ -w "$CON_WORDLIST" ]]; then
+						CONTENT_WORDLIST="$CON_WORDLIST";
+				else
+						echo -e "$RED""[!] Content discovery wordlist $CON_WORDLIST does not exist or is not writable. Please check the configuration file.""$NC";
+						exit 1;
+				fi
+		fi
+		echo "CONTENT_WORDLIST is $CONTENT_WORDLIST";
 
 
 
