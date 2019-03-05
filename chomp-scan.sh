@@ -49,6 +49,7 @@ NMAP=$(command -v nmap);
 MASSCAN=$(command -v masscan);
 NIKTO=$(command -v nikto);
 INCEPTION=$(command -v inception);
+WAYBACKURLS=$(command -v waybackurls);
 SUBLIST3R=~/bounty/tools/Sublist3r/sublist3r.py;
 DNSCAN=~/bounty/tools/dnscan/dnscan.py;
 ALTDNS=~/bounty/tools/altdns/altdns.py;
@@ -1007,12 +1008,23 @@ function run_inception() {
 		fi
 }
 
+function run_waybackurls() {
+		# Call with domain as $1
+		echo -e "$GREEN""[i]$BLUE Running waybackurls against $DOMAIN.""$NC";
+		echo -e "$GREEN""[i]$BLUE Command: waybackurls $DOMAIN | tee $WORKING_DIR/waybackurls-output.txt""$NC";
+		# Run waybackurls
+		START=$(date +%s);
+		"$WAYBACKURLS" "$DOMAIN" | tee "$WORKING_DIR"/waybackurls-output.txt;
+		END=$(date +%s);
+		DIFF=$(( END - START ));
+		echo -e "$GREEN""[i]$BLUE Waybackurls took $DIFF seconds to run.""$NC";
+}
 
 function run_content_discovery() {
 # Ask user to do directory bruteforcing on discovered domains
 while true; do
   echo -e "$GREEN""[?] Do you want to begin content bruteforcing on [A]ll/[I]nteresting/[N]o discovered domains?";
-  echo -e "$ORANGE""[i] This will run ffuf, gobuster, and dirsearch.";
+  echo -e "$ORANGE""[i] This will run inception, waybackurls, ffuf, gobuster, and dirsearch.";
   read -rp "[?] Please enter A/a, I/i, or N/n. " ANSWER
 
   case $ANSWER in
@@ -1029,6 +1041,7 @@ while true; do
 				   case $CHOICE in
 						   [sS]* )
 								   run_inception "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$ALL_RESOLVED";
+								   run_waybackurls "$DOMAIN";
 								   run_ffuf "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_gobuster "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_dirsearch "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -1036,6 +1049,7 @@ while true; do
 								   ;;
 							[mM]* )
 								   run_inception "$DOMAIN" "$MEDIUM" "$WORKING_DIR"/"$ALL_RESOLVED";
+								   run_waybackurls "$DOMAIN";
 								   run_ffuf "$DOMAIN" "$MEDIUM" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_gobuster "$DOMAIN" "$MEDIUM" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_dirsearch "$DOMAIN" "$MEDIUM" "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -1043,6 +1057,7 @@ while true; do
 								   ;;
 							[lL]* )
 								   run_inception "$DOMAIN" "$LARGE" "$WORKING_DIR"/"$ALL_RESOLVED";
+								   run_waybackurls "$DOMAIN";
 								   run_ffuf "$DOMAIN" "$LARGE" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_gobuster "$DOMAIN" "$LARGE" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_dirsearch "$DOMAIN" "$LARGE" "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -1050,6 +1065,7 @@ while true; do
 								   ;;
 							[xX]* )
 								   run_inception "$DOMAIN" "$XL" "$WORKING_DIR"/"$ALL_RESOLVED";
+								   run_waybackurls "$DOMAIN";
 								   run_ffuf "$DOMAIN" "$XL" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_gobuster "$DOMAIN" "$XL" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_dirsearch "$DOMAIN" "$XL" "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -1057,6 +1073,7 @@ while true; do
 								   ;;
 							[2]* )
 								   run_inception "$DOMAIN" "$XXL" "$WORKING_DIR"/"$ALL_RESOLVED";
+								   run_waybackurls "$DOMAIN";
 								   run_ffuf "$DOMAIN" "$XXL" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_gobuster "$DOMAIN" "$XXL" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_dirsearch "$DOMAIN" "$XXL" "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -1093,6 +1110,7 @@ while true; do
 				   case $CHOICE in
 						   [sS]* )
 								   run_inception "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_waybackurls "$DOMAIN";
 								   run_ffuf "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_gobuster "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_dirsearch "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
@@ -1100,6 +1118,7 @@ while true; do
 								   ;;
 							[mM]* )
 								   run_inception "$DOMAIN" "$MEDIUM" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_waybackurls "$DOMAIN";
 								   run_ffuf "$DOMAIN" "$MEDIUM" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_gobuster "$DOMAIN" "$MEDIUM" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_dirsearch "$DOMAIN" "$MEDIUM" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
@@ -1107,6 +1126,7 @@ while true; do
 								   ;;
 							[lL]* )
 								   run_inception "$DOMAIN" "$LARGE" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_waybackurls "$DOMAIN";
 								   run_ffuf "$DOMAIN" "$LARGE" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_gobuster "$DOMAIN" "$LARGE" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_dirsearch "$DOMAIN" "$LARGE" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
@@ -1114,6 +1134,7 @@ while true; do
 								   ;;
 							[xX]* )
 								   run_inception "$DOMAIN" "$XL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_waybackurls "$DOMAIN";
 								   run_ffuf "$DOMAIN" "$XL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_gobuster "$DOMAIN" "$XL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_dirsearch "$DOMAIN" "$XL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
@@ -1121,6 +1142,7 @@ while true; do
 								   ;;
 							[2]* )
 								   run_inception "$DOMAIN" "$XXL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_waybackurls "$DOMAIN";
 								   run_ffuf "$DOMAIN" "$XXL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_gobuster "$DOMAIN" "$XXL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_dirsearch "$DOMAIN" "$XXL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
@@ -1529,6 +1551,7 @@ if [[ "$DEFAULT_MODE" == 1 ]]; then
 		run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 		run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 		run_inception "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$ALL_RESOLVED";
+		run_waybackurls "$DOMAIN";
 		run_ffuf "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$ALL_RESOLVED";
 		run_gobuster "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$ALL_RESOLVED";
 		run_dirsearch "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -1649,7 +1672,7 @@ fi
 
 # -C run content discovery
 if [[ "$CONTENT_DISCOVERY" == 1 ]]; then
-		echo -e "$BLUE""[i] Beginning content discovery with ffuf, gobuster, and dirsearch.""$NC";
+		echo -e "$BLUE""[i] Beginning content discovery with inception, waybackurls, ffuf, gobuster, and dirsearch.""$NC";
 		sleep 0.5;
 
 		# Call unique to make sure list is up to date for content discovery
@@ -1659,6 +1682,7 @@ if [[ "$CONTENT_DISCOVERY" == 1 ]]; then
 		if [[ "$CONTENT_WORDLIST" != "" ]]; then
 				if [[ "$USE_ALL" == 1 ]]; then
 						run_inception "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
+						run_waybackurls "$DOMAIN";
 						# run_snallygaster "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
 						run_ffuf "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
 						run_gobuster "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -1666,12 +1690,14 @@ if [[ "$CONTENT_DISCOVERY" == 1 ]]; then
 				# Make sure there are interesting domains
 				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) -gt 0 ]]; then
 						run_inception "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+						run_waybackurls "$DOMAIN";
 						# run_snallygaster "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 						run_ffuf "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 						run_gobuster "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 						run_dirsearch "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 				else
 						run_inception "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
+						run_waybackurls "$DOMAIN";
 						# run_snallygaster "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
 						run_ffuf "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
 						run_gobuster "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -1680,6 +1706,7 @@ if [[ "$CONTENT_DISCOVERY" == 1 ]]; then
 		else
 				if [[ "$USE_ALL" == 1 ]]; then
 						run_inception "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";
+						run_waybackurls "$DOMAIN";
 						# run_snallygaster "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";
 						run_ffuf "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";
 						run_gobuster "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -1687,12 +1714,14 @@ if [[ "$CONTENT_DISCOVERY" == 1 ]]; then
 				# Make sure there are interesting domains
 				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) != 0 ]]; then
 						run_inception "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+						run_waybackurls "$DOMAIN";
 						# run_snallygaster "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 						run_ffuf "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 						run_gobuster "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 						run_dirsearch "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 				else
 						run_inception "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";
+						run_waybackurls "$DOMAIN";
 						# run_snallygaster "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";
 						run_ffuf "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";
 						run_gobuster "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";

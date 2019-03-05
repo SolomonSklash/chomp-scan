@@ -122,6 +122,8 @@ function install_go_tools() {
 		go get github.com/OJ/gobuster;
 		echo -e "$GREEN""Installing inception from Github.""$NC";
 		go get github.com/proabiral/inception;
+		echo -e "$GREEN""Installing waybackurls from Github.""$NC";
+		go get github.com/tomnomnom/waybackurls;
 }
 
 function install_go() {
