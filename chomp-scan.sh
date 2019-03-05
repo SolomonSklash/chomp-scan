@@ -285,6 +285,49 @@ function parse_config() {
 		fi
 		echo "CONTENT_WORDLIST is $CONTENT_WORDLIST";
 
+		# Parse [information gathering]
+
+		if [[ $(grep '^ENABLE_SUBJACK' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
+				ENABLE_SUBJACK=1;
+		fi
+		echo "ENABLE_SUBJACK is $ENABLE_SUBJACK";
+
+		if [[ $(grep '^ENABLE_BFAC' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
+				ENABLE_BFAC=1;
+		fi
+		echo "ENABLE_BFAC is $ENABLE_BFAC";
+
+		if [[ $(grep '^ENABLE_WHATWEB' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
+				ENABLE_WHATWEB=1;
+		fi
+		echo "ENABLE_WHATWEB is $ENABLE_WHATWEB";
+
+		if [[ $(grep '^ENABLE_WAFW00F' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
+				ENABLE_WAFW00F=1;
+		fi
+		echo "ENABLE_WAFW00F is $ENABLE_WAFW00F";
+
+		if [[ $(grep '^ENABLE_NIKTO' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
+				ENABLE_NIKTO=1;
+		fi
+		echo "ENABLE_NIKTO is $ENABLE_NIKTO";
+
+		# Parse [port scanning]
+
+		if [[ $(grep '^ENABLE_MASSCAN' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
+				ENABLE_MASSCAN=1;
+		fi
+		echo "ENABLE_MASSCAN is $ENABLE_MASSCAN";
+
+		if [[ $(grep '^ENABLE_NMAP' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
+				ENABLE_NMAP=1;
+		fi
+		echo "ENABLE_NMAP is $ENABLE_NMAP";
+
+
+
+
+
 
 
 
