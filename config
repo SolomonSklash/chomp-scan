@@ -1,0 +1,61 @@
+# Possible values for tools are case-sensitive YES or blank.
+# Wordlist values are either blank or a path to a file.
+
+
+[general]
+# Set domain to scan
+DOMAIN=
+# Use HTTP instead of default HTTPS
+ENABLE_HTTP=
+# Set custom output directory
+OUTPUT_DIR=
+# Use all discovered domains instead of default interesting discovered domains
+USE_ALL=
+# Set Notica URL parameter for notifications
+NOTICA=
+# Set custom domain blacklist file
+BLACKLIST=
+# Set custom interesting word list
+INTERESTING=
+
+
+[subdomain enumeration]
+# Set which tools run
+ENABLE_DNSCAN=YES
+ENABLE_SUBFINDER=YES
+ENABLE_SUBLIST3R=YES
+ENABLE_ALTDNS=YES
+ENABLE_MASSDNS=YES
+# Set wordlist
+SUBDOMAIN_WORDLIST=
+
+
+[content discovery]
+# Set which tools run
+ENABLE_INCEPTION=YES
+ENABLE_WAYBACKURLS=YES
+ENABLE_FFUF=YES
+ENABLE_GOBUSTER=YES
+ENABLE_DIRSEARCH=YES
+# Set wordlist
+CONTENT_WORDLIST=
+
+
+[information gathering]
+# Set which tools run
+ENABLE_SUBJACK=YES
+ENABLE_BFAC=YES
+ENABLE_WHATWEB=YES
+ENABLE_WAFW00F=YES
+ENABLE_NIKTO=YES
+
+
+[port scanning]
+# Set which tools run
+ENABLE_MASSCAN=YES
+ENABLE_NMAP=YES
+
+
+[screenshots]
+# Enable aquatone
+ENABLE_SCREENSHOTS=YES
