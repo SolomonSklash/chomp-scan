@@ -51,6 +51,9 @@ Chomp Scan supports limited canceling/skipping of tools by pressing Ctrl-c. This
 * [gobuster](https://github.com/OJ/gobuster)
 * [dirsearch](https://github.com/maurosoria/dirsearch)
 
+### Configuration File
+Chomp Scan now features a configuration file option that provides more granular control over which tools are run and is less cumbersome than passing a large number of CLI arguments. It can be used by passing the `-L` flag.
+
 ### Wordlists
 
 A variety of wordlists are used, both for subdomain bruteforcing and content discovery. Daniel Miessler's [Seclists](https://github.com/danielmiessler/SecLists) are used heavily, as well as Jason Haddix's [lists](https://gist.github.com/jhaddix). Different wordlists can be used by passing in a custom wordlist or using one of the built-in named argument lists below.
