@@ -46,6 +46,7 @@ Chomp Scan supports limited canceling/skipping of tools by pressing Ctrl-c. This
 
 #### Content Discovery (optional) (4 different sized wordlists)
 * [inception](https://github.com/proabiral/inception)
+* [waybackurls](https://github.com/tomnomnom/waybackurls)
 * [ffuf](https://github.com/ffuf/ffuf)
 * [gobuster](https://github.com/OJ/gobuster)
 * [dirsearch](https://github.com/maurosoria/dirsearch)
