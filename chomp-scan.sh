@@ -239,7 +239,6 @@ function parse_config() {
 				echo -e "$RED""[!] At least one subdomain enumeration tool must be enabled. Please check the configuration file.""$NC";
 				exit 1;
 		fi
-				
 
 		# Parse [content discovery]
 
@@ -1714,6 +1713,70 @@ INTERESTING_DOMAINS=interesting-domains.txt;
 touch "$WORKING_DIR"/"$ALL_DOMAIN";
 touch "$WORKING_DIR"/"$ALL_IP";
 touch "$WORKING_DIR"/"$ALL_RESOLVED";
+
+# Check for config file and run options if it exists
+if [[ "$CONFIG_FILE" != "" ]]; then
+		echo -e "$GREEN""Beginning scan with config file options.""$NC";
+		sleep 0.5;
+
+		# Run dnscan
+		if [[ "$ENABLE_DNSCAN" -eq 1 ]]; then
+				# Check if $SUBDOMAIN_WORDLIST is set, else use short as default
+				if [[ "$SUBDOMAIN_WORDLIST" != "" ]]; then
+						run_dnscan "$DOMAIN" "$SUBDOMAIN_WORDLIST";
+				else
+						run_dnscan "$DOMAIN" "$SHORT";
+				fi
+		fi
+
+		# Run subfinder
+		if [[ "$ENABLE_SUBFINDER" -eq 1 ]]; then
+				# Check if $SUBDOMAIN_WORDLIST is set, else use short as default
+				if [[ "$SUBDOMAIN_WORDLIST" != "" ]]; then
+						run_subfinder "$DOMAIN" "$SUBDOMAIN_WORDLIST";
+				else
+						run_subfinder "$DOMAIN" "$SHORT";
+				fi
+		fi
+
+		# Run sublist3r
+		if [[ "$ENABLE_SUBLIST3R" -eq 1 ]]; then
+				run_sublist3r "$DOMAIN";
+		fi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		get_interesting;
+		list_found;
+
+		# Calculate scan runtime
+		SCAN_END=$(date +%s);
+		SCAN_DIFF=$(( SCAN_END - SCAN_START ));
+		if [[ "$NOTICA" != "" ]]; then
+				run_notica;
+		fi
+		echo -e "$BLUE""[i] Total script run time: $SCAN_DIFF seconds.""$NC";
+		exit 0;
+fi
 
 # Check for -D non-interactive default flag
 # Defaults for non-interactive:
