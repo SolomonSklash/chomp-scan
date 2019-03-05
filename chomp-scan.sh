@@ -234,6 +234,13 @@ function parse_config() {
 				fi
 		fi
 
+		# Check that at least one subdomain enumeration tool is enabled
+		if [[ "$ENABLE_DNSCAN" -eq 0 ]] && [[ "$ENABLE_SUBFINDER" -eq 0 ]] && [[ "$ENABLE_SUBLIST3R" -eq 0 ]]; then
+				echo -e "$RED""[!] At least one subdomain enumeration tool must be enabled. Please check the configuration file.""$NC";
+				exit 1;
+		fi
+				
+
 		# Parse [content discovery]
 
 		if [[ $(grep '^ENABLE_INCEPTION' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
@@ -303,16 +310,6 @@ function parse_config() {
 		if [[ $(grep '^ENABLE_SCREENSHOTS' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
 				ENABLE_SCREENSHOTS=1;
 		fi
-
-
-
-
-
-
-
-
-
-		exit;
 }
 
 # Handle CLI arguments
