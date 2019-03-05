@@ -79,7 +79,7 @@ A variety of wordlists are used, both for subdomain bruteforcing and content dis
 * interesting.txt - 43 words - A list I created of potentially interesting words appearing in domain names. Provide your own interesting words list with the `-X` flag.
 
 ### Installation
-Clone this repo and run the installer.sh script. Make sure to `source ~/.profile` after running the installer in order to add the Go binary path to your $PATH variable. Then run Chomp Scan.
+Clone this repo and run the installer.sh script. Make sure to run `source ~/.profile` in your terminal after running the installer in order to add the Go binary path to your $PATH variable. Then run Chomp Scan.
 
 ### Usage
 Chomp Scan always runs subdomain enumeration, thus a domain is required via the `-u` flag. The domain should not contain a scheme, e.g. http:// or https://. By default, HTTPS is always used. This can be changed to HTTP by passing the `-H` flag. A wordlist is optional, and if one is not provided the built-in short list (20k words) is used.
