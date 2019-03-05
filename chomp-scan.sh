@@ -864,11 +864,19 @@ function run_aquatone () {
 						END=$(date +%s);
 						DIFF=$(( END - START ));
 						echo -e "$GREEN""[i]$BLUE Aquatone took $DIFF seconds to run.""$NC";
-				else
+				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) -gt 0 ]]; then
 						mkdir "$WORKING_DIR"/aquatone;
 						echo -e "$BLUE""[i] Running aquatone against all $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) interesting discovered subdomains.""$NC";
 						START=$(date +%s);
 						$AQUATONE -threads 10 -chrome-path "$CHROMIUM" -ports medium -out "$WORKING_DIR"/aquatone < "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+						END=$(date +%s);
+						DIFF=$(( END - START ));
+						echo -e "$GREEN""[i]$BLUE Aquatone took $DIFF seconds to run.""$NC";
+				else
+						mkdir "$WORKING_DIR"/aquatone;
+						echo -e "$BLUE""[i] Running aquatone against all $(wc -l "$WORKING_DIR"/$ALL_RESOLVED | cut -d ' ' -f 1) unique discovered subdomains.""$NC";
+						START=$(date +%s);
+						$AQUATONE -threads 10 -chrome-path "$CHROMIUM" -ports medium -out "$WORKING_DIR"/aquatone < "$WORKING_DIR"/$ALL_RESOLVED;
 						END=$(date +%s);
 						DIFF=$(( END - START ));
 						echo -e "$GREEN""[i]$BLUE Aquatone took $DIFF seconds to run.""$NC";
@@ -1759,8 +1767,8 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 				run_sublist3r "$DOMAIN";
 		fi
 
-		# Run altdns and/or massdns
-		if [[ "$ENABLE_MASSDNS" -eq 1 ]]; then
+		# Run masscan and/or altdns
+		if [[ "$ENABLE_MASSDNS" -eq 1 ]]; then # Masscan will always run in order to get resolved domains
 				if [[ "$ENABLE_ALTDNS" -eq 1 ]]; then
 						# Check if $SUBDOMAIN_WORDLIST is set, else use short as default
 						if [[ "$SUBDOMAIN_WORDLIST" != "" ]]; then
@@ -1776,6 +1784,12 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 								run_massdns "$DOMAIN" "$SHORT" "alone";
 						fi
 				fi
+		fi
+
+		## Screenshots
+		# Run aquatone
+		if [[ "$ENABLE_SCREENSHOTS" -eq 1 ]]; then
+				run_aquatone "default";
 		fi
 
 		## Content discovery
@@ -1951,28 +1965,6 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 		if [[ "$ENABLE_NMAP" -eq 1 ]]; then
 				run_nmap;
 		fi
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 		get_interesting;
 		list_found;
