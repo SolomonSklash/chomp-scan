@@ -93,7 +93,7 @@ chomp-scan.sh -u example.com -a d short -cC large -p -o path/to/directory
 Usage of Chomp Scan:
         -u domain
                  (required) Domain name to scan. This should not include a scheme, e.g. https:// or http://.
-		-L config-file
+	-L config-file
                  (optional) The path to a config file. This can be used to provide more granular control over what tools are run.
         -d wordlist
                  (optional) The wordlist to use for subdomain enumeration. Three built-in lists, short, long, and huge can be used, as well as the path to a custom wordlist. The default is short.
