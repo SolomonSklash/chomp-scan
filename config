@@ -3,8 +3,8 @@
 
 
 [general]
-# Set domain to scan
-DOMAIN=
+# Set domain to scan (required)
+DOMAIN=tesla.com
 # Use HTTP instead of default HTTPS
 ENABLE_HTTP=
 # Set custom output directory
