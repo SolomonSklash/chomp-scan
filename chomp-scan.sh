@@ -759,20 +759,33 @@ function run_altdns() {
 }
 
 function run_massdns() {
-		# Call with domain as $1 and wordlist as $2
+		# Call with domain as $1, wordlist as $2, and alone as $3
 
-		# Run altdns to get altered domains to resolve along with other found domains
-		run_altdns;
+		# Check if being called without altdns
+		if [[ "$3" == "alone" ]]; then
+				# Create wordlist with appended domain for massdns
+				sed "/.*/ s/$/\.$1/" $2 > "$WORKING_DIR"/massdns-appended.txt;
 
-		# Create wordlist with appended domain for massdns
-		sed "/.*/ s/$/\.$1/" $2 > "$WORKING_DIR"/massdns-appended.txt;
+				echo -e "$GREEN""[i]$BLUE Scanning $(cat "$WORKING_DIR"/$ALL_DOMAIN "$WORKING_DIR"/$ALL_IP "$WORKING_DIR"/massdns-appended.txt | sort | uniq | wc -l) current unique $1 domains with massdns (in quiet mode).""$NC";
+				echo -e "$GREEN""[i]$ORANGE Command: cat (all found domains and IPs) | $MASSDNS_BIN -r $MASSDNS_RESOLVERS -q -t A -o S -w $WORKING_DIR/massdns-result.txt.""$NC";
+				START=$(date +%s);
+				cat "$WORKING_DIR"/$ALL_DOMAIN "$WORKING_DIR"/$ALL_IP "$WORKING_DIR"/massdns-appended.txt | sort | uniq | $MASSDNS_BIN -r $MASSDNS_RESOLVERS -q -t A -o S -w "$WORKING_DIR"/massdns-result.txt;
+				END=$(date +%s);
+				DIFF=$(( END - START ));
+		else
+				# Run altdns to get altered domains to resolve along with other discovered domains
+				run_altdns;
 
-		echo -e "$GREEN""[i]$BLUE Scanning $(cat "$WORKING_DIR"/$ALL_DOMAIN "$WORKING_DIR"/$ALL_IP "$WORKING_DIR"/altdns-output.txt "$WORKING_DIR"/massdns-appended.txt | sort | uniq | wc -l) current unique $1 domains and IPs, altdns generated domains, and domain-appended wordlist with massdns (in quiet mode).""$NC";
-		echo -e "$GREEN""[i]$ORANGE Command: cat (all found domains and IPs) | $MASSDNS_BIN -r $MASSDNS_RESOLVERS -q -t A -o S -w $WORKING_DIR/massdns-result.txt.""$NC";
-		START=$(date +%s);
-		cat "$WORKING_DIR"/$ALL_DOMAIN "$WORKING_DIR"/$ALL_IP "$WORKING_DIR"/altdns-output.txt "$WORKING_DIR"/massdns-appended.txt | sort | uniq | $MASSDNS_BIN -r $MASSDNS_RESOLVERS -q -t A -o S -w "$WORKING_DIR"/massdns-result.txt;
-		END=$(date +%s);
-		DIFF=$(( END - START ));
+				# Create wordlist with appended domain for massdns
+				sed "/.*/ s/$/\.$1/" $2 > "$WORKING_DIR"/massdns-appended.txt;
+
+				echo -e "$GREEN""[i]$BLUE Scanning $(cat "$WORKING_DIR"/$ALL_DOMAIN "$WORKING_DIR"/$ALL_IP "$WORKING_DIR"/altdns-output.txt "$WORKING_DIR"/massdns-appended.txt | sort | uniq | wc -l) current unique $1 domains and IPs, altdns generated domains, and domain-appended wordlist with massdns (in quiet mode).""$NC";
+				echo -e "$GREEN""[i]$ORANGE Command: cat (all found domains and IPs) | $MASSDNS_BIN -r $MASSDNS_RESOLVERS -q -t A -o S -w $WORKING_DIR/massdns-result.txt.""$NC";
+				START=$(date +%s);
+				cat "$WORKING_DIR"/$ALL_DOMAIN "$WORKING_DIR"/$ALL_IP "$WORKING_DIR"/altdns-output.txt "$WORKING_DIR"/massdns-appended.txt | sort | uniq | $MASSDNS_BIN -r $MASSDNS_RESOLVERS -q -t A -o S -w "$WORKING_DIR"/massdns-result.txt;
+				END=$(date +%s);
+				DIFF=$(( END - START ));
+		fi
 
 		# Parse results
 		grep CNAME "$WORKING_DIR"/massdns-result.txt > "$WORKING_DIR"/massdns-CNAMEs;
@@ -1744,7 +1757,24 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 				run_sublist3r "$DOMAIN";
 		fi
 
-
+		# Run altdns and/or massdns
+		if [[ "$ENABLE_MASSDNS" -eq 1 ]]; then
+				if [[ "$ENABLE_ALTDNS" -eq 1 ]]; then
+						# Check if $SUBDOMAIN_WORDLIST is set, else use short as default
+						if [[ "$SUBDOMAIN_WORDLIST" != "" ]]; then
+								run_massdns "$DOMAIN" "$SUBDOMAIN_WORDLIST";
+						else
+								run_massdns "$DOMAIN" "$SHORT";
+						fi
+				else
+						# Check if $SUBDOMAIN_WORDLIST is set, else use short as default
+						if [[ "$SUBDOMAIN_WORDLIST" != "" ]]; then
+								run_massdns "$DOMAIN" "$SUBDOMAIN_WORDLIST" "alone";
+						else
+								run_massdns "$DOMAIN" "$SHORT" "alone";
+						fi
+				fi
+		fi
 
 
 
