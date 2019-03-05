@@ -52,7 +52,7 @@ Chomp Scan supports limited canceling/skipping of tools by pressing Ctrl-c. This
 * [dirsearch](https://github.com/maurosoria/dirsearch)
 
 ### Configuration File
-Chomp Scan now features a configuration file option that provides more granular control over which tools are run and is less cumbersome than passing a large number of CLI arguments. It can be used by passing the `-L` flag. An [example config](https://github.com/SolomonSklash/chomp-scan/blob/master/config) file is included in this repo as an example/template.
+Chomp Scan now features a configuration file option that provides more granular control over which tools are run and is less cumbersome than passing a large number of CLI arguments. It can be used by passing the `-L` flag. An [example config](https://github.com/SolomonSklash/chomp-scan/blob/master/config) file is included in this repo as a template.
 
 ### Wordlists
 
