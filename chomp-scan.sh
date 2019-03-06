@@ -1238,7 +1238,7 @@ function run_inception() {
 				DIFF=$(( END - START ));
 				echo -e "$GREEN""[i]$BLUE Inception took $DIFF seconds to run.""$NC";
 		else
-				echo -e "$GREEN""[i]$BLUE Running inception against all $(wc -l "$3" | cut -d ' ' -f 1) unique discovered domains.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running inception against all $(wc -l "$3" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: inception -d interesting_domains.txt -v | tee $WORKING_DIR/inception""$NC";
 				# Run inception
 				mkdir "$WORKING_DIR"/inception;
@@ -1563,13 +1563,22 @@ function run_wafw00f() {
 function run_subjack() {
 		# Call with domain as $1 and wordlist as $2
 
-		# Check for domain takeover on each found domain
-		echo -e "$GREEN""[i]$BLUE Running subjack against all $(wc -l "$WORKING_DIR"/$ALL_RESOLVED | cut -d ' ' -f 1) unique discovered subdomains to check for subdomain takeover.""$NC";
-		echo -e "$GREEN""[i]$ORANGE Command: subjack -d $1 -w $2 -v -t 20 -ssl -m -o $WORKING_DIR/subjack-output.txt""$NC";
-		START=$(date +%s);
-		"$SUBJACK" -d "$1" -w "$2" -v -t 20 -ssl -m -o "$WORKING_DIR"/subjack-output.txt -c "$HOME"/go/src/github.com/haccer/subjack/fingerprints.json;
-		END=$(date +%s);
-		DIFF=$(( END - START ));
+		# Call with domain as $1 and domain list as $2
+		if [[ $2 == $WORKING_DIR/$ALL_RESOLVED ]]; then
+				echo -e "$GREEN""[i]$BLUE Running subjack against all $(wc -l "$WORKING_DIR"/$ALL_RESOLVED | cut -d ' ' -f 1) unique discovered subdomains to check for subdomain takeover.""$NC";
+				echo -e "$GREEN""[i]$ORANGE Command: subjack -d $1 -w $2 -v -t 20 -ssl -m -o $WORKING_DIR/subjack-output.txt""$NC";
+				START=$(date +%s);
+				"$SUBJACK" -d "$1" -w "$2" -v -t 20 -ssl -m -o "$WORKING_DIR"/subjack-output.txt -c "$HOME"/go/src/github.com/haccer/subjack/fingerprints.json;
+				END=$(date +%s);
+				DIFF=$(( END - START ));
+		else
+				echo -e "$GREEN""[i]$BLUE Running subjack against all $(wc -l "$WORKING_DIR"/$ALL_RESOLVED | cut -d ' ' -f 1) discovered interesting subdomains to check for subdomain takeover.""$NC";
+				echo -e "$GREEN""[i]$ORANGE Command: subjack -d $1 -w $2 -v -t 20 -ssl -m -o $WORKING_DIR/subjack-output.txt""$NC";
+				START=$(date +%s);
+				"$SUBJACK" -d "$1" -w "$2" -v -t 20 -ssl -m -o "$WORKING_DIR"/subjack-output.txt -c "$HOME"/go/src/github.com/haccer/subjack/fingerprints.json;
+				END=$(date +%s);
+				DIFF=$(( END - START ));
+		fi
 
 		echo -e "$GREEN""[i]$BLUE Subjack took $DIFF seconds to run.""$NC";
 		echo -e "$GREEN""[i]$ORANGE Full Subjack results are at $WORKING_DIR/subjack-output.txt.""$NC";
