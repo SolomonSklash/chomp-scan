@@ -121,7 +121,7 @@ function install_corstest() {
 
 function install_s3scanner() {
 		echo -e "$GREEN""Installing S3Scanner from Github.""$NC";
-		git clone https://github.com/sa7mon/S3Scanner.git "$TOOLS"/CORStest;
+		git clone https://github.com/sa7mon/S3Scanner.git "$TOOLS"/S3Scanner;
 }
 
 function install_go_tools() {
