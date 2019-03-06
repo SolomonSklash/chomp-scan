@@ -1561,8 +1561,6 @@ function run_wafw00f() {
 }
 
 function run_subjack() {
-		# Call with domain as $1 and wordlist as $2
-
 		# Call with domain as $1 and domain list as $2
 		if [[ $2 == $WORKING_DIR/$ALL_RESOLVED ]]; then
 				echo -e "$GREEN""[i]$BLUE Running subjack against all $(wc -l "$WORKING_DIR"/$ALL_RESOLVED | cut -d ' ' -f 1) unique discovered subdomains to check for subdomain takeover.""$NC";
