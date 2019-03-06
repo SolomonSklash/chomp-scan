@@ -40,6 +40,7 @@ Chomp Scan supports limited canceling/skipping of tools by pressing Ctrl-c. This
 #### Information Gathering (optional) (4 different sized wordlists)
 * [subjack](https://github.com/haccer/subjack)
 * [CORStest](https://github.com/RUB-NDS/CORStest)
+* [S3Scanner](https://github.com/sa7mon/S3Scanner)
 * [bfac](https://github.com/mazen160/bfac)
 * [whatweb](https://github.com/urbanadventurer/whatweb/)
 * [wafw00f](https://github.com/EnableSecurity/wafw00f)
@@ -105,7 +106,7 @@ Usage of Chomp Scan:
         -s
                  (optional) Enable screenshots using Aquatone.
         -i
-                 (optional) Enable information gathering phase, using subjack, CORStest, bfac, whatweb, wafw00f, and nikto.
+                 (optional) Enable information gathering phase, using subjack, CORStest, S3Scanner, bfac, whatweb, wafw00f, and nikto.
         -p
                  (optional) Enable portscanning phase, using masscan (run as root) and nmap.
         -I

@@ -23,6 +23,7 @@ function install_kali() {
 		install_aquatone;
 		install_sublist3r;
 		install_corstest;
+		install_s3scanner;
 		install_go_tools;
 }
 function install_debian() {
@@ -37,6 +38,7 @@ function install_debian() {
 		install_aquatone;
 		install_sublist3r;
 		install_corstest;
+		install_s3scanner;
 		install_nikto;
 		install_go;
 		install_go_tools;
@@ -52,6 +54,7 @@ function install_ubuntu() {
 		install_aquatone;
 		install_sublist3r;
 		install_corstest;
+		install_s3scanner;
 		install_go;
 		install_go_tools;
 }
@@ -116,6 +119,11 @@ function install_corstest() {
 		git clone https://github.com/RUB-NDS/CORStest.git "$TOOLS"/CORStest;
 }
 
+function install_s3scanner() {
+		echo -e "$GREEN""Installing S3Scanner from Github.""$NC";
+		git clone https://github.com/sa7mon/S3Scanner.git "$TOOLS"/CORStest;
+}
+
 function install_go_tools() {
 		source $HOME/.profile;
 		echo -e "$GREEN""Installing Go tools from Github.""$NC";
@@ -164,3 +172,5 @@ else
 fi
 
 echo -e "$GREEN""Please run 'source ~/.profile' to add the Go binary path to your \$PATH variable, then run Chomp Scan.""$NC";
+echo -e "$ORANGE""Note: In order to use S3Scanner, you must configure your personal AWS credentials in the aws CLI tool.""$NC";
+echo -e "$ORANGE""See https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html for details.""$NC";
