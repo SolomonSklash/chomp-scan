@@ -59,6 +59,7 @@ AQUATONE=~/bounty/tools/aquatone/aquatone;
 BFAC=~/bounty/tools/bfac/bfac;
 DIRSEARCH=~/bounty/tools/dirsearch/dirsearch.py;
 SNALLY=~/bounty/tools/snallygaster/snallygaster;
+CORSTEST=~/bounty/tools/CORStest/corstest.py;
 
 # Other variables
 ALL_IP=all_discovered_ips.txt;
@@ -307,20 +308,56 @@ function check_paths() {
 		fi
 
 		# Check that all paths are set
-		if [[ "$DNSCAN" == "" ]] || [[ ! -f "$DNSCAN" ]]; then
-				echo -e "$RED""[!] The path or the file specified by the path for dnscan does not exit.";
-				exit 1;
-		fi
 		if [[ "$SUBFINDER" == "" ]] || [[ ! -f "$SUBFINDER" ]]; then
 				echo -e "$RED""[!] The path or the file specified by the path for subfinder does not exit.";
+				exit 1;
+		fi
+		if [[ "$SUBJACK" == "" ]] || [[ ! -f "$SUBJACK" ]]; then
+				echo -e "$RED""[!] The path or the file specified by the path for subjack does not exit.";
+				exit 1;
+		fi
+		if [[ "$FFUF" == "" ]] || [[ ! -f "$FFUF" ]]; then
+				echo -e "$RED""[!] The path or the file specified by the path for ffuf does not exit.";
+				exit 1;
+		fi
+		if [[ "$WHATWEB" == "" ]] || [[ ! -f "$WHATWEB" ]]; then
+				echo -e "$RED""[!] The path or the file specified by the path for whatweb does not exit.";
+				exit 1;
+		fi
+		if [[ "$WAFW00F" == "" ]] || [[ ! -f "$WAFW00F" ]]; then
+				echo -e "$RED""[!] The path or the file specified by the path for wafw00f does not exit.";
+				exit 1;
+		fi
+		if [[ "$GOBUSTER" == "" ]] || [[ ! -f "$GOBUSTER" ]]; then
+				echo -e "$RED""[!] The path or the file specified by the path for gobuster does not exit.";
+				exit 1;
+		fi
+		if [[ "$CHROMIUM" == "" ]] || [[ ! -f "$CHROMIUM" ]]; then
+				echo -e "$RED""[!] The path or the file specified by the path for chromium does not exit.";
+				exit 1;
+		fi
+		if [[ "$NMAP" == "" ]] || [[ ! -f "$NMAP" ]]; then
+				echo -e "$RED""[!] The path or the file specified by the path for nmap does not exit.";
+				exit 1;
+		fi
+		if [[ "$MASSCAN" == "" ]] || [[ ! -f "$MASSCAN" ]]; then
+				echo -e "$RED""[!] The path or the file specified by the path for masscan does not exit.";
+				exit 1;
+		fi
+		if [[ "$INCEPTION" == "" ]] || [[ ! -f "$INCEPTION" ]]; then
+				echo -e "$RED""[!] The path or the file specified by the path for inception does not exit.";
+				exit 1;
+		fi
+		if [[ "$WAYBACKURLS" == "" ]] || [[ ! -f "$WAYBACKURLS" ]]; then
+				echo -e "$RED""[!] The path or the file specified by the path for waybackurls does not exit.";
 				exit 1;
 		fi
 		if [[ "$SUBLIST3R" == "" ]] || [[ ! -f "$SUBLIST3R" ]]; then
 				echo -e "$RED""[!] The path or the file specified by the path for sublist3r does not exit.";
 				exit 1;
 		fi
-		if [[ "$SUBJACK" == "" ]] || [[ ! -f "$SUBJACK" ]]; then
-				echo -e "$RED""[!] The path or the file specified by the path for subjack does not exit.";
+		if [[ "$DNSCAN" == "" ]] || [[ ! -f "$DNSCAN" ]]; then
+				echo -e "$RED""[!] The path or the file specified by the path for dnscan does not exit.";
 				exit 1;
 		fi
 		if [[ "$ALTDNS" == "" ]] || [[ ! -f "$ALTDNS" ]]; then
@@ -339,36 +376,16 @@ function check_paths() {
 				echo -e "$RED""[!] The path or the file specified by the path for aquatone does not exit.";
 				exit 1;
 		fi
-		if [[ "$FFUF" == "" ]] || [[ ! -f "$FFUF" ]]; then
-				echo -e "$RED""[!] The path or the file specified by the path for ffuf does not exit.";
-				exit 1;
-		fi
 		if [[ "$BFAC" == "" ]] || [[ ! -f "$BFAC" ]]; then
 				echo -e "$RED""[!] The path or the file specified by the path for bfac does not exit.";
 				exit 1;
 		fi
-		if [[ "$CHROMIUM" == "" ]] || [[ ! -f "$CHROMIUM" ]]; then
-				echo -e "$RED""[!] The path or the file specified by the path for chromium does not exit.";
+		if [[ "$DIRSEARCH" == "" ]] || [[ ! -f "$DIRSEARCH" ]]; then
+				echo -e "$RED""[!] The path or the file specified by the path for dirsearch does not exit.";
 				exit 1;
 		fi
-		if [[ "$NMAP" == "" ]] || [[ ! -f "$NMAP" ]]; then
-				echo -e "$RED""[!] The path or the file specified by the path for nmap does not exit.";
-				exit 1;
-		fi
-		if [[ "$MASSCAN" == "" ]] || [[ ! -f "$MASSCAN" ]]; then
-				echo -e "$RED""[!] The path or the file specified by the path for masscan does not exit.";
-				exit 1;
-		fi
-		if [[ "$GOBUSTER" == "" ]] || [[ ! -f "$GOBUSTER" ]]; then
-				echo -e "$RED""[!] The path or the file specified by the path for gobuster does not exit.";
-				exit 1;
-		fi
-		if [[ "$WHATWEB" == "" ]] || [[ ! -f "$WHATWEB" ]]; then
-				echo -e "$RED""[!] The path or the file specified by the path for whatweb does not exit.";
-				exit 1;
-		fi
-		if [[ "$WAFW00F" == "" ]] || [[ ! -f "$WAFW00F" ]]; then
-				echo -e "$RED""[!] The path or the file specified by the path for wafw00f does not exit.";
+		if [[ "$CORSTEST" == "" ]] || [[ ! -f "$CORSTEST" ]]; then
+				echo -e "$RED""[!] The path or the file specified by the path for CORStest does not exit.";
 				exit 1;
 		fi
 }
