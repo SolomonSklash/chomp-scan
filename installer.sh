@@ -22,6 +22,7 @@ function install_kali() {
 		install_massdns;
 		install_aquatone;
 		install_sublist3r;
+		install_corstest;
 		install_go_tools;
 }
 function install_debian() {
@@ -35,6 +36,7 @@ function install_debian() {
 		install_massdns;
 		install_aquatone;
 		install_sublist3r;
+		install_corstest;
 		install_nikto;
 		install_go;
 		install_go_tools;
@@ -49,6 +51,7 @@ function install_ubuntu() {
 		install_massdns;
 		install_aquatone;
 		install_sublist3r;
+		install_corstest;
 		install_go;
 		install_go_tools;
 }
@@ -106,6 +109,11 @@ function install_nikto() {
 function install_dirsearch() {
 		echo -e "$GREEN""Installing dirsearch from Github.""$NC";
 		git clone https://github.com/maurosoria/dirsearch.git "$TOOLS"/wafw00f;
+}
+
+function install_corstest() {
+		echo -e "$GREEN""Installing CORStest from Github.""$NC";
+		git clone https://github.com/RUB-NDS/CORStest.git "$TOOLS"/CORStest;
 }
 
 function install_go_tools() {

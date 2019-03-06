@@ -50,6 +50,7 @@ ENABLE_FFUF=0;
 ENABLE_GOBUSTER=0;
 ENABLE_DIRSEARCH=0;
 ENABLE_SUBJACK=0;
+ENABLE_CORSTEST=0;
 ENABLE_BFAC=0;
 ENABLE_WHATWEB=0;
 ENABLE_WAFW00F=0;
@@ -119,7 +120,7 @@ function usage() {
 		echo -e "$BLUE""\\t-c \\n\\t\\t$ORANGE (optional) Enable content discovery phase. The wordlist for this option defaults to short if not provided.""$NC";
 		echo -e "$BLUE""\\t-C wordlist \\n\\t\\t$ORANGE (optional) The wordlist to use for content discovery. Five built-in lists, small, medium, large, xl, and xxl can be used, as well as the path to a custom wordlist. The default is small.""$NC";
 		echo -e "$BLUE""\\t-s \\n\\t\\t$ORANGE (optional) Enable screenshots using Aquatone.""$NC";
-		echo -e "$BLUE""\\t-i \\n\\t\\t$ORANGE (optional) Enable information gathering phase, using subjack, bfac, whatweb, wafw00f, and nikto.""$NC";
+		echo -e "$BLUE""\\t-i \\n\\t\\t$ORANGE (optional) Enable information gathering phase, using subjack, CORStest, bfac, whatweb, wafw00f, and nikto.""$NC";
 		echo -e "$BLUE""\\t-p \\n\\t\\t$ORANGE (optional) Enable portscanning phase, using masscan (run as root) and nmap.""$NC";
 		echo -e "$BLUE""\\t-I \\n\\t\\t$ORANGE (optional) Enable interactive mode. This allows you to select certain tool options and inputs interactively. This cannot be run with -D.""$NC";
 		echo -e "$BLUE""\\t-D \\n\\t\\t$ORANGE (optional) Enable default non-interactive mode. This mode uses pre-selected defaults and requires no user interaction or options. This cannot be run with -I.""$NC";
@@ -304,6 +305,10 @@ function parse_config() {
 
 		if [[ $(grep '^ENABLE_SUBJACK' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
 				ENABLE_SUBJACK=1;
+		fi
+
+		if [[ $(grep '^ENABLE_CORSTEST' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
+				ENABLE_CORSTEST=1;
 		fi
 
 		if [[ $(grep '^ENABLE_BFAC' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
@@ -1583,7 +1588,7 @@ function run_corstest() {
 				DIFF=$(( END - START ));
 				echo -e "$GREEN""[i]$BLUE CORStest took $DIFF seconds to run.""$NC";
 		else
-				echo -e "$GREEN""[i]$BLUE Running CORStest against all $(wc -l "$2" | cut -d ' ' -f 1) unique discovered domains.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running CORStest against all $(wc -l "$2" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: corstest.py $2 -v -p 64 | tee $WORKING_DIR/CORStest-output.txt.""$NC";
 				# Run CORStest
 				START=$(date +%s);
@@ -1599,7 +1604,7 @@ function run_information_gathering() {
 # Ask user to do information gathering on discovered domains
 while true; do
   echo -e "$GREEN""[?] Do you want to begin information gathering on [A]ll/[I]nteresting/[N]o discovered domains?";
-  echo -e "$ORANGE""[i] This will run subjack, bfac, whatweb, wafw00f, and nikto.";
+  echo -e "$ORANGE""[i] This will run subjack, CORStest, bfac, whatweb, wafw00f, and nikto.";
   read -rp "[?] Please enter A/a, I/i, or N/n. " ANSWER
 
   case $ANSWER in
@@ -1616,6 +1621,7 @@ while true; do
 				   case $CHOICE in
 						   [sS]* )
 								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+								   run_corstest "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -1624,6 +1630,7 @@ while true; do
 								   ;;
 							[mM]* )
 								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+								   run_corstest "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -1632,6 +1639,7 @@ while true; do
 								   ;;
 							[lL]* )
 								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+								   run_corstest "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -1640,6 +1648,7 @@ while true; do
 								   ;;
 							[xX]* )
 								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+								   run_corstest "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -1648,6 +1657,7 @@ while true; do
 								   ;;
 							[2]* )
 								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+								   run_corstest "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -1685,6 +1695,7 @@ while true; do
 				   case $CHOICE in
 						   [sS]* )
 								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_corstest "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
@@ -1693,6 +1704,7 @@ while true; do
 								   ;;
 							[mM]* )
 								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_corstest "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_whatweb "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
@@ -1701,6 +1713,7 @@ while true; do
 								   ;;
 							[lL]* )
 								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_corstest "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_whatweb "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
@@ -1709,6 +1722,7 @@ while true; do
 								   ;;
 							[xX]* )
 								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_corstest "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
@@ -1717,6 +1731,7 @@ while true; do
 								   ;;
 							[2]* )
 								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_corstest "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
@@ -1949,6 +1964,18 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 				fi
 		fi
 
+		# Run CORStest
+		if [[ "$ENABLE_CORSTEST" -eq 1 ]]; then
+				if [[ "$USE_ALL" == 1 ]]; then
+						run_corstest "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+				# Make sure there are interesting domains
+				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) -gt 0 ]]; then
+						run_corstest "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+				else
+						run_corstest "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+				fi
+		fi
+
 		# Run bfac
 		if [[ "$ENABLE_BFAC" -eq 1 ]]; then
 				if [[ "$USE_ALL" == 1 ]]; then
@@ -2050,6 +2077,7 @@ if [[ "$DEFAULT_MODE" == 1 ]]; then
 		run_masscan;
 		run_nmap;
 		run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+		run_corstest "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 		run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
 		run_nikto "$WORKING_DIR"/"$ALL_RESOLVED";
 		run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -2146,7 +2174,7 @@ fi
 
 # -i information gathering
 if [[ "$INFO_GATHERING" == 1 ]]; then
-		echo -e "$BLUE""[i] Beginning information gathering with subjack, bfac, whatweb, wafw00f, and nikto.""$NC";
+		echo -e "$BLUE""[i] Beginning information gathering with subjack, CORStest, bfac, whatweb, wafw00f, and nikto.""$NC";
 		sleep 0.5;
 
 		# Call unique to make sure list is up to date for content discovery
@@ -2154,6 +2182,7 @@ if [[ "$INFO_GATHERING" == 1 ]]; then
 
 		if [[ "$USE_ALL" == 1 ]]; then
 				run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+				run_corstest "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 				run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
 				run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 				run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -2161,12 +2190,14 @@ if [[ "$INFO_GATHERING" == 1 ]]; then
 		# Make sure there are interesting domains
 		elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) -gt 0 ]]; then
 				run_subjack "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+				run_corstest "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 				run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 				run_whatweb "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 				run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 				run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 		else
 				run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+				run_corstest "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 				run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
 				run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 				run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -2249,6 +2280,7 @@ list_found;
 # Calculate scan runtime
 SCAN_END=$(date +%s);
 SCAN_DIFF=$(( SCAN_END - SCAN_START ));
+
 if [[ "$NOTICA" != "" ]]; then
 		run_notica;
 fi
