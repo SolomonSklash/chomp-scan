@@ -1571,6 +1571,30 @@ function run_subjack() {
 		sleep 1;
 }
 
+function run_corstest() {
+		# Call with domain as $1 and domain list as $2
+		if [[ $2 == $WORKING_DIR/$ALL_RESOLVED ]]; then
+				echo -e "$GREEN""[i]$BLUE Running CORStest against all $(wc -l "$2" | cut -d ' ' -f 1) unique discovered domains.""$NC";
+				echo -e "$GREEN""[i]$BLUE Command: corstest.py $2 -v -p 64 | tee $WORKING_DIR/CORStest-output.txt.""$NC";
+				# Run CORStest
+				START=$(date +%s);
+				"$CORSTEST" "$2" -v -p 64 | tee "$WORKING_DIR"/CORStest-output.txt;
+				END=$(date +%s);
+				DIFF=$(( END - START ));
+				echo -e "$GREEN""[i]$BLUE CORStest took $DIFF seconds to run.""$NC";
+		else
+				echo -e "$GREEN""[i]$BLUE Running CORStest against all $(wc -l "$2" | cut -d ' ' -f 1) unique discovered domains.""$NC";
+				echo -e "$GREEN""[i]$BLUE Command: corstest.py $2 -v -p 64 | tee $WORKING_DIR/CORStest-output.txt.""$NC";
+				# Run CORStest
+				START=$(date +%s);
+				"$CORSTEST" "$2" -v -p 64 | tee "$WORKING_DIR"/CORStest-output.txt;
+				END=$(date +%s);
+				DIFF=$(( END - START ));
+				echo -e "$GREEN""[i]$BLUE CORStest took $DIFF seconds to run.""$NC";
+		fi
+}
+
+
 function run_information_gathering() {
 # Ask user to do information gathering on discovered domains
 while true; do
