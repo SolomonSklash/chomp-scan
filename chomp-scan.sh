@@ -1892,6 +1892,8 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 				fi
 		fi
 
+		get_interesting "silent";
+
 		## Screenshots
 		# Run aquatone
 		if [[ "$ENABLE_SCREENSHOTS" -eq 1 ]]; then
