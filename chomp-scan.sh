@@ -36,6 +36,27 @@ DEFAULT_MODE=0;
 INTERESTING=interesting.txt;
 SKIP_MASSCAN=0;
 NOTICA="";
+CONFIG_FILE="";
+
+# Config file variables
+ENABLE_DNSCAN=0;
+ENABLE_SUBFINDER=0;
+ENABLE_SUBLIST3R=0;
+ENABLE_ALTDNS=0;
+ENABLE_MASSDNS=1; # Constant
+ENABLE_INCEPTION=0;
+ENABLE_WAYBACKURLS=0;
+ENABLE_FFUF=0;
+ENABLE_GOBUSTER=0;
+ENABLE_DIRSEARCH=0;
+ENABLE_SUBJACK=0;
+ENABLE_BFAC=0;
+ENABLE_WHATWEB=0;
+ENABLE_WAFW00F=0;
+ENABLE_NIKTO=0;
+ENABLE_MASSCAN=0;
+ENABLE_NMAP=0;
+ENABLE_SCREENSHOTS=0;
 
 # Tool paths
 SUBFINDER=$(command -v subfinder);
@@ -93,6 +114,7 @@ function usage() {
 		echo -e "$GREEN""chomp-scan.sh -u example.com -a d short -cC large -p -o path/to/directory\\n""$NC";
 		echo -e "$GREEN""Usage of Chomp Scan:""$NC";
 		echo -e "$BLUE""\\t-u domain \\n\\t\\t$ORANGE (required) Domain name to scan. This should not include a scheme, e.g. https:// or http://.""$NC";
+		echo -e "$BLUE""\\t-L config-file \\n\\t\\t$ORANGE (optional) The path to a config file. This can be used to provide more granular control over what tools are run.""$NC";
 		echo -e "$BLUE""\\t-d wordlist\\n\\t\\t$ORANGE (optional) The wordlist to use for subdomain enumeration. Three built-in lists, short, long, and huge can be used, as well as the path to a custom wordlist. The default is short.""$NC";
 		echo -e "$BLUE""\\t-c \\n\\t\\t$ORANGE (optional) Enable content discovery phase. The wordlist for this option defaults to short if not provided.""$NC";
 		echo -e "$BLUE""\\t-C wordlist \\n\\t\\t$ORANGE (optional) The wordlist to use for content discovery. Five built-in lists, small, medium, large, xl, and xxl can be used, as well as the path to a custom wordlist. The default is small.""$NC";
@@ -130,8 +152,196 @@ function exists() {
 		fi
 }
 
+# Check for root for runs using masscan
+function check_root() {
+		if [[ $EUID -ne 0 ]]; then
+		   while true; do
+				   echo -e "$ORANGE""[!] Please note: Script is not being run as root."
+				   echo -e "$ORANGE""[!] Provided script options include masscan, which must run as root."
+				   echo -e "$ORANGE""[!] The script will hang while waiting for the sudo password."
+				   read -rp "Do you want to exit and [R]e-run as root, [S]kip masscan, or [E]nter sudo password? " CHOICE;
+						   case $CHOICE in
+								   [rR]* )
+										   echo -e "$RED""[!] Exiting script.""$NC";
+										   exit 1;
+										   ;;
+								   [sS]* )
+										   echo -e "$ORANGE""Skipping masscan.""$NC";
+										   SKIP_MASSCAN=1;
+										   break;
+										   ;;
+								   [eE]* )
+										   echo -e "$ORANGE""Script will wait for sudo password.""$NC";
+										   break;
+										   ;;
+								   * )
+										   echo -e "$ORANGE""Please enter [R]e-run, [S]kip masscan, or [E]nter sudo password.""$NC";
+										   ;;
+						   esac
+		   done
+		fi
+}
+
+# Parse configuration file
+function parse_config() {
+		# Parse [general]
+
+		DOMAIN=$(grep '^DOMAIN' "$CONFIG_FILE" | cut -d '=' -f 2);
+		if [[ "$DOMAIN" == "" ]]; then
+				echo -e "$RED""[!] No domain was provided in the configuration file.""$NC";
+				exit 1;
+		fi
+
+		if [[ $(grep '^ENABLE_HTTP' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
+				HTTP="http";
+		fi
+
+		OUTPUT_DIR=$(grep '^OUTPUT_DIR' "$CONFIG_FILE" | cut -d '=' -f 2);
+		if [[ "$OUTPUT_DIR" != "" ]]; then
+				if [[ -w "$OUTPUT_DIR" ]]; then
+						WORKING_DIR="$OUTPUT_DIR";
+				else
+						echo -e "$RED""[!] Output directory $OUTPUT_DIR does not exist or is not writable. Please check the configuration file.""$NC";
+						exit 1;
+				fi
+		fi
+
+		if [[ $(grep '^USE_ALL' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then	
+				USE_ALL=1;
+		fi
+
+		if [[ $(grep '^NOTICA' "$CONFIG_FILE" | cut -d '=' -f 2) != "" ]]; then	
+				NOTICA=$(grep '^NOTICA' "$CONFIG_FILE" | cut -d '=' -f 2)
+		fi
+
+		BLACKLIST_FILE=$(grep '^BLACKLIST' "$CONFIG_FILE" | cut -d '=' -f 2);
+		if [[ "$BLACKLIST_FILE" != "" ]]; then
+				if [[ -w "$BLACKLIST_FILE" ]]; then
+						BLACKLIST="$BLACKLIST_FILE";
+				else
+						echo -e "$RED""[!] Blacklist file $BLACKLIST_FILE does not exist or is not writable. Please check the configuration file.""$NC";
+						exit 1;
+				fi
+		fi
+
+		INTERESTING_FILE=$(grep '^INTERESTING' "$CONFIG_FILE" | cut -d '=' -f 2);
+		if [[ "$INTERESTING_FILE" != "" ]]; then
+				if [[ -w "$INTERESTING_FILE" ]]; then
+						INTERESTING="$INTERESTING_FILE";
+				else
+						echo -e "$RED""[!] Interesting file $INTERESTING_FILE does not exist or is not writable. Please check the configuration file.""$NC";
+						exit 1;
+				fi
+		fi
+
+		# Parse [subdomain enumeration]
+
+		if [[ $(grep '^ENABLE_DNSCAN' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
+				ENABLE_DNSCAN=1;
+		fi
+
+		if [[ $(grep '^ENABLE_SUBFINDER' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
+				ENABLE_SUBFINDER=1;
+		fi
+
+		if [[ $(grep '^ENABLE_SUBLIST3R' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
+				ENABLE_SUBLIST3R=1;
+		fi
+
+		if [[ $(grep '^ENABLE_ALTDNS' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
+				ENABLE_ALTDNS=1;
+		fi
+
+		SUB_WORDLIST=$(grep '^SUBDOMAIN_WORDLIST' "$CONFIG_FILE" | cut -d '=' -f 2);
+		if [[ "$SUB_WORDLIST" != "" ]]; then
+				if [[ -w "$SUB_WORDLIST" ]]; then
+						SUBDOMAIN_WORDLIST="$SUB_WORDLIST";
+				else
+						echo -e "$RED""[!] Subdomain enumeration wordlist $SUB_WORDLIST does not exist or is not writable. Please check the configuration file.""$NC";
+						exit 1;
+				fi
+		fi
+
+		# Check that at least one subdomain enumeration tool is enabled
+		if [[ "$ENABLE_DNSCAN" -eq 0 ]] && [[ "$ENABLE_SUBFINDER" -eq 0 ]] && [[ "$ENABLE_SUBLIST3R" -eq 0 ]]; then
+				echo -e "$RED""[!] At least one subdomain enumeration tool must be enabled. Please check the configuration file.""$NC";
+				exit 1;
+		fi
+
+		# Parse [content discovery]
+
+		if [[ $(grep '^ENABLE_INCEPTION' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
+				ENABLE_INCEPTION=1;
+		fi
+
+		if [[ $(grep '^ENABLE_WAYBACKURLS' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
+				ENABLE_WAYBACKURLS=1;
+		fi
+
+		if [[ $(grep '^ENABLE_FFUF' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
+				ENABLE_FFUF=1;
+		fi
+
+		if [[ $(grep '^ENABLE_GOBUSTER' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
+				ENABLE_GOBUSTER=1;
+		fi
+
+		if [[ $(grep '^ENABLE_DIRSEARCH' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
+				ENABLE_DIRSEARCH=1;
+		fi
+
+		CON_WORDLIST=$(grep '^CONTENT_WORDLIST' "$CONFIG_FILE" | cut -d '=' -f 2);
+		if [[ "$CON_WORDLIST" != "" ]]; then
+				if [[ -w "$CON_WORDLIST" ]]; then
+						CONTENT_WORDLIST="$CON_WORDLIST";
+				else
+						echo -e "$RED""[!] Content discovery wordlist $CON_WORDLIST does not exist or is not writable. Please check the configuration file.""$NC";
+						exit 1;
+				fi
+		fi
+
+		# Parse [information gathering]
+
+		if [[ $(grep '^ENABLE_SUBJACK' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
+				ENABLE_SUBJACK=1;
+		fi
+
+		if [[ $(grep '^ENABLE_BFAC' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
+				ENABLE_BFAC=1;
+		fi
+
+		if [[ $(grep '^ENABLE_WHATWEB' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
+				ENABLE_WHATWEB=1;
+		fi
+
+		if [[ $(grep '^ENABLE_WAFW00F' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
+				ENABLE_WAFW00F=1;
+		fi
+
+		if [[ $(grep '^ENABLE_NIKTO' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
+				ENABLE_NIKTO=1;
+		fi
+
+		# Parse [port scanning]
+
+		if [[ $(grep '^ENABLE_MASSCAN' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
+				check_root
+				ENABLE_MASSCAN=1;
+		fi
+
+		if [[ $(grep '^ENABLE_NMAP' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
+				ENABLE_NMAP=1;
+		fi
+
+		# Parse [screenshots]
+
+		if [[ $(grep '^ENABLE_SCREENSHOTS' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
+				ENABLE_SCREENSHOTS=1;
+		fi
+}
+
 # Handle CLI arguments
-while getopts ":hu:d:C:sicb:IaADX:po:Hn:" opt; do
+while getopts ":hu:d:L:C:sicb:IaADX:po:Hn:" opt; do
 		case ${opt} in
 				h ) # -h help
 						usage;
@@ -139,6 +349,20 @@ while getopts ":hu:d:C:sicb:IaADX:po:Hn:" opt; do
 						;;
 				u ) # -u URL/domain
 						DOMAIN=$OPTARG;
+						;;
+				L ) # -L configuration file
+						exists "$OPTARG";
+						RESULT=$?;
+						if [[ "$RESULT" -eq 1 ]]; then
+								CONFIG_FILE="$OPTARG";
+								parse_config;
+						else
+								echo -e "$RED""[!] Provided configuration file $OPTARG is empty or doesn't exist.""$NC";
+								usage;
+								exit 1;
+						fi
+						# Exit early if config file is found
+						break;
 						;;
 				d ) # -d subdomain enumeration wordlist
 						# Set to one of the defaults, else use provided wordlist
@@ -390,31 +614,6 @@ function check_paths() {
 		fi
 }
 
-# Check for root for runs using masscan
-function check_root() {
-		if [[ $EUID -ne 0 ]]; then
-		   while true; do
-				   echo -e "$ORANGE""[!] Please note: Script is not being run as root."
-				   echo -e "$ORANGE""[!] Provided script options include masscan, which must run as root."
-				   read -rp "Do you want to exit and [R]e-run as root, or [S]kip masscan? " CHOICE;
-						   case $CHOICE in
-								   [rR]* )
-										   echo -e "$RED""[!] Exiting script.""$NC";
-										   exit 1;
-										   ;;
-								   [sS]* )
-										   echo -e "$ORANGE""Skipping masscan.""$NC";
-										   SKIP_MASSCAN=1;
-										   break;
-										   ;;
-								   * )
-										   echo -e "$ORANGE""Please enter [R]e-run or [S]kip masscan.""$NC";
-										   ;;
-						   esac
-		   done
-		fi
-}
-
 function unique() {
 		# Remove blacklisted domains from all discovered domains
 		if [[ ! -z $BLACKLIST ]]; then 
@@ -579,20 +778,33 @@ function run_altdns() {
 }
 
 function run_massdns() {
-		# Call with domain as $1 and wordlist as $2
+		# Call with domain as $1, wordlist as $2, and alone as $3
 
-		# Run altdns to get altered domains to resolve along with other found domains
-		run_altdns;
+		# Check if being called without altdns
+		if [[ "$3" == "alone" ]]; then
+				# Create wordlist with appended domain for massdns
+				sed "/.*/ s/$/\.$1/" $2 > "$WORKING_DIR"/massdns-appended.txt;
 
-		# Create wordlist with appended domain for massdns
-		sed "/.*/ s/$/\.$1/" $2 > "$WORKING_DIR"/massdns-appended.txt;
+				echo -e "$GREEN""[i]$BLUE Scanning $(cat "$WORKING_DIR"/$ALL_DOMAIN "$WORKING_DIR"/$ALL_IP "$WORKING_DIR"/massdns-appended.txt | sort | uniq | wc -l) current unique $1 domains with massdns (in quiet mode).""$NC";
+				echo -e "$GREEN""[i]$ORANGE Command: cat (all found domains and IPs) | $MASSDNS_BIN -r $MASSDNS_RESOLVERS -q -t A -o S -w $WORKING_DIR/massdns-result.txt.""$NC";
+				START=$(date +%s);
+				cat "$WORKING_DIR"/$ALL_DOMAIN "$WORKING_DIR"/$ALL_IP "$WORKING_DIR"/massdns-appended.txt | sort | uniq | $MASSDNS_BIN -r $MASSDNS_RESOLVERS -q -t A -o S -w "$WORKING_DIR"/massdns-result.txt;
+				END=$(date +%s);
+				DIFF=$(( END - START ));
+		else
+				# Run altdns to get altered domains to resolve along with other discovered domains
+				run_altdns;
 
-		echo -e "$GREEN""[i]$BLUE Scanning $(cat "$WORKING_DIR"/$ALL_DOMAIN "$WORKING_DIR"/$ALL_IP "$WORKING_DIR"/altdns-output.txt "$WORKING_DIR"/massdns-appended.txt | sort | uniq | wc -l) current unique $1 domains and IPs, altdns generated domains, and domain-appended wordlist with massdns (in quiet mode).""$NC";
-		echo -e "$GREEN""[i]$ORANGE Command: cat (all found domains and IPs) | $MASSDNS_BIN -r $MASSDNS_RESOLVERS -q -t A -o S -w $WORKING_DIR/massdns-result.txt.""$NC";
-		START=$(date +%s);
-		cat "$WORKING_DIR"/$ALL_DOMAIN "$WORKING_DIR"/$ALL_IP "$WORKING_DIR"/altdns-output.txt "$WORKING_DIR"/massdns-appended.txt | sort | uniq | $MASSDNS_BIN -r $MASSDNS_RESOLVERS -q -t A -o S -w "$WORKING_DIR"/massdns-result.txt;
-		END=$(date +%s);
-		DIFF=$(( END - START ));
+				# Create wordlist with appended domain for massdns
+				sed "/.*/ s/$/\.$1/" $2 > "$WORKING_DIR"/massdns-appended.txt;
+
+				echo -e "$GREEN""[i]$BLUE Scanning $(cat "$WORKING_DIR"/$ALL_DOMAIN "$WORKING_DIR"/$ALL_IP "$WORKING_DIR"/altdns-output.txt "$WORKING_DIR"/massdns-appended.txt | sort | uniq | wc -l) current unique $1 domains and IPs, altdns generated domains, and domain-appended wordlist with massdns (in quiet mode).""$NC";
+				echo -e "$GREEN""[i]$ORANGE Command: cat (all found domains and IPs) | $MASSDNS_BIN -r $MASSDNS_RESOLVERS -q -t A -o S -w $WORKING_DIR/massdns-result.txt.""$NC";
+				START=$(date +%s);
+				cat "$WORKING_DIR"/$ALL_DOMAIN "$WORKING_DIR"/$ALL_IP "$WORKING_DIR"/altdns-output.txt "$WORKING_DIR"/massdns-appended.txt | sort | uniq | $MASSDNS_BIN -r $MASSDNS_RESOLVERS -q -t A -o S -w "$WORKING_DIR"/massdns-result.txt;
+				END=$(date +%s);
+				DIFF=$(( END - START ));
+		fi
 
 		# Parse results
 		grep CNAME "$WORKING_DIR"/massdns-result.txt > "$WORKING_DIR"/massdns-CNAMEs;
@@ -670,11 +882,19 @@ function run_aquatone () {
 						END=$(date +%s);
 						DIFF=$(( END - START ));
 						echo -e "$GREEN""[i]$BLUE Aquatone took $DIFF seconds to run.""$NC";
-				else
+				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) -gt 0 ]]; then
 						mkdir "$WORKING_DIR"/aquatone;
 						echo -e "$BLUE""[i] Running aquatone against all $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) interesting discovered subdomains.""$NC";
 						START=$(date +%s);
 						$AQUATONE -threads 10 -chrome-path "$CHROMIUM" -ports medium -out "$WORKING_DIR"/aquatone < "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+						END=$(date +%s);
+						DIFF=$(( END - START ));
+						echo -e "$GREEN""[i]$BLUE Aquatone took $DIFF seconds to run.""$NC";
+				else
+						mkdir "$WORKING_DIR"/aquatone;
+						echo -e "$BLUE""[i] Running aquatone against all $(wc -l "$WORKING_DIR"/$ALL_RESOLVED | cut -d ' ' -f 1) unique discovered subdomains.""$NC";
+						START=$(date +%s);
+						$AQUATONE -threads 10 -chrome-path "$CHROMIUM" -ports medium -out "$WORKING_DIR"/aquatone < "$WORKING_DIR"/$ALL_RESOLVED;
 						END=$(date +%s);
 						DIFF=$(( END - START ));
 						echo -e "$GREEN""[i]$BLUE Aquatone took $DIFF seconds to run.""$NC";
@@ -1008,7 +1228,7 @@ function run_inception() {
 				# Run inception
 				mkdir "$WORKING_DIR"/inception;
 				START=$(date +%s);
-				"$INCEPTION" -d "$3" -v | tee "$WORKING_DIR"/inception/"$ADOMAIN";
+				"$INCEPTION" -d "$3" -v | tee "$WORKING_DIR"/inception/inception-output.txt;
 				END=$(date +%s);
 				DIFF=$(( END - START ));
 				echo -e "$GREEN""[i]$BLUE Inception took $DIFF seconds to run.""$NC";
@@ -1018,7 +1238,7 @@ function run_inception() {
 				# Run inception
 				mkdir "$WORKING_DIR"/inception;
 				START=$(date +%s);
-				"$INCEPTION" -d "$3" -v | tee "$WORKING_DIR"/inception/"$ADOMAIN";
+				"$INCEPTION" -d "$3" -v | tee "$WORKING_DIR"/inception/inception-output.txt;
 				END=$(date +%s);
 				DIFF=$(( END - START ));
 				echo -e "$GREEN""[i]$BLUE Snallygaster took $DIFF seconds to run.""$NC";
@@ -1533,6 +1753,249 @@ INTERESTING_DOMAINS=interesting-domains.txt;
 touch "$WORKING_DIR"/"$ALL_DOMAIN";
 touch "$WORKING_DIR"/"$ALL_IP";
 touch "$WORKING_DIR"/"$ALL_RESOLVED";
+
+# Check for config file and run options if it exists
+if [[ "$CONFIG_FILE" != "" ]]; then
+		echo -e "$GREEN""Beginning scan with config file options.""$NC";
+		sleep 0.5;
+
+		## Subdomain enumeration
+		# Run dnscan
+		if [[ "$ENABLE_DNSCAN" -eq 1 ]]; then
+				# Check if $SUBDOMAIN_WORDLIST is set, else use short as default
+				if [[ "$SUBDOMAIN_WORDLIST" != "" ]]; then
+						run_dnscan "$DOMAIN" "$SUBDOMAIN_WORDLIST";
+				else
+						run_dnscan "$DOMAIN" "$SHORT";
+				fi
+		fi
+
+		# Run subfinder
+		if [[ "$ENABLE_SUBFINDER" -eq 1 ]]; then
+				# Check if $SUBDOMAIN_WORDLIST is set, else use short as default
+				if [[ "$SUBDOMAIN_WORDLIST" != "" ]]; then
+						run_subfinder "$DOMAIN" "$SUBDOMAIN_WORDLIST";
+				else
+						run_subfinder "$DOMAIN" "$SHORT";
+				fi
+		fi
+
+		# Run sublist3r
+		if [[ "$ENABLE_SUBLIST3R" -eq 1 ]]; then
+				run_sublist3r "$DOMAIN";
+		fi
+
+		# Run masscan and/or altdns
+		if [[ "$ENABLE_MASSDNS" -eq 1 ]]; then # Masscan will always run in order to get resolved domains
+				if [[ "$ENABLE_ALTDNS" -eq 1 ]]; then
+						# Check if $SUBDOMAIN_WORDLIST is set, else use short as default
+						if [[ "$SUBDOMAIN_WORDLIST" != "" ]]; then
+								run_massdns "$DOMAIN" "$SUBDOMAIN_WORDLIST";
+						else
+								run_massdns "$DOMAIN" "$SHORT";
+						fi
+				else
+						# Check if $SUBDOMAIN_WORDLIST is set, else use short as default
+						if [[ "$SUBDOMAIN_WORDLIST" != "" ]]; then
+								run_massdns "$DOMAIN" "$SUBDOMAIN_WORDLIST" "alone";
+						else
+								run_massdns "$DOMAIN" "$SHORT" "alone";
+						fi
+				fi
+		fi
+
+		## Screenshots
+		# Run aquatone
+		if [[ "$ENABLE_SCREENSHOTS" -eq 1 ]]; then
+				run_aquatone "default";
+		fi
+
+		## Content discovery
+		# Run inception
+		if [[ "$ENABLE_INCEPTION" -eq 1 ]]; then
+				# Check if $SUBDOMAIN_WORDLIST is set, else use short as default
+				if [[ "$CONTENT_WORDLIST" != "" ]]; then
+						if [[ "$USE_ALL" == 1 ]]; then
+								run_inception "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
+						# Make sure there are interesting domains
+						elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) -gt 0 ]]; then
+								run_inception "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+						else
+								run_inception "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
+						fi
+				else
+						if [[ "$USE_ALL" == 1 ]]; then
+								run_inception "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";
+						# Make sure there are interesting domains
+						elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) != 0 ]]; then
+								run_inception "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+						else
+								run_inception "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";
+						fi
+				fi
+		fi
+
+		# Run waybackurls
+		if [[ "$ENABLE_WAYBACKURLS" -eq 1 ]]; then
+				run_waybackurls "$DOMAIN";
+		fi
+
+		# Run ffuf
+		if [[ "$ENABLE_FFUF" -eq 1 ]]; then
+				# Check if $SUBDOMAIN_WORDLIST is set, else use short as default
+				if [[ "$CONTENT_WORDLIST" != "" ]]; then
+						if [[ "$USE_ALL" == 1 ]]; then
+								run_ffuf "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
+						# Make sure there are interesting domains
+						elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) -gt 0 ]]; then
+								run_ffuf "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+						else
+								run_ffuf "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
+						fi
+				else
+						if [[ "$USE_ALL" == 1 ]]; then
+								run_ffuf "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";
+						# Make sure there are interesting domains
+						elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) != 0 ]]; then
+								run_ffuf "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+						else
+								run_ffuf "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";
+						fi
+				fi
+		fi
+
+		# Run gobuster
+		if [[ "$ENABLE_GOBUSTER" -eq 1 ]]; then
+				# Check if $SUBDOMAIN_WORDLIST is set, else use short as default
+				if [[ "$CONTENT_WORDLIST" != "" ]]; then
+						if [[ "$USE_ALL" == 1 ]]; then
+								run_gobuster "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
+						# Make sure there are interesting domains
+						elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) -gt 0 ]]; then
+								run_gobuster "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+						else
+								run_gobuster "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
+						fi
+				else
+						if [[ "$USE_ALL" == 1 ]]; then
+								run_gobuster "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";
+						# Make sure there are interesting domains
+						elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) != 0 ]]; then
+								run_gobuster "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+						else
+								run_gobuster "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";
+						fi
+				fi
+		fi
+
+		# Run dirsearch
+		if [[ "$ENABLE_DIRSEARCH" -eq 1 ]]; then
+				# Check if $SUBDOMAIN_WORDLIST is set, else use short as default
+				if [[ "$CONTENT_WORDLIST" != "" ]]; then
+						if [[ "$USE_ALL" == 1 ]]; then
+								run_dirsearch "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
+						# Make sure there are interesting domains
+						elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) -gt 0 ]]; then
+								run_dirsearch "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+						else
+								run_dirsearch "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
+						fi
+				else
+						if [[ "$USE_ALL" == 1 ]]; then
+								run_dirsearch "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";
+						# Make sure there are interesting domains
+						elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) != 0 ]]; then
+								run_dirsearch "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+						else
+								run_dirsearch "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";
+						fi
+				fi
+		fi
+
+		## Information gathering
+		# Run subjack
+		if [[ "$ENABLE_SUBJACK" -eq 1 ]]; then
+				if [[ "$USE_ALL" == 1 ]]; then
+						run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+				# Make sure there are interesting domains
+				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) -gt 0 ]]; then
+						run_subjack "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+				else
+						run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+				fi
+		fi
+
+		# Run bfac
+		if [[ "$ENABLE_BFAC" -eq 1 ]]; then
+				if [[ "$USE_ALL" == 1 ]]; then
+						run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
+				# Make sure there are interesting domains
+				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) -gt 0 ]]; then
+						run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+				else
+						run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
+				fi
+		fi
+
+		# Run whatweb
+		if [[ "$ENABLE_WHATWEB" -eq 1 ]]; then
+				if [[ "$USE_ALL" == 1 ]]; then
+						run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+				# Make sure there are interesting domains
+				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) -gt 0 ]]; then
+						run_whatweb "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+				else
+						run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+				fi
+		fi
+
+		# Run wafw00f
+		if [[ "$ENABLE_WAFW00F" -eq 1 ]]; then
+				if [[ "$USE_ALL" == 1 ]]; then
+						run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+				# Make sure there are interesting domains
+				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) -gt 0 ]]; then
+						run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+				else
+						run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+				fi
+		fi
+
+		# Run nikto
+		if [[ "$ENABLE_NIKTO" -eq 1 ]]; then
+				if [[ "$USE_ALL" == 1 ]]; then
+						run_nikto "$WORKING_DIR"/"$ALL_RESOLVED";
+				# Make sure there are interesting domains
+				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) -gt 0 ]]; then
+						run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+				else
+						run_nikto "$WORKING_DIR"/"$ALL_RESOLVED";
+				fi
+		fi
+
+		## Port scanning
+		# Run masscan
+		if [[ "$ENABLE_MASSCAN" -eq 1 ]]; then
+				run_masscan;
+		fi
+
+		# Run nmap
+		if [[ "$ENABLE_NMAP" -eq 1 ]]; then
+				run_nmap;
+		fi
+
+		get_interesting;
+		list_found;
+
+		# Calculate scan runtime
+		SCAN_END=$(date +%s);
+		SCAN_DIFF=$(( SCAN_END - SCAN_START ));
+		if [[ "$NOTICA" != "" ]]; then
+				run_notica;
+		fi
+		echo -e "$BLUE""[i] Total script run time: $SCAN_DIFF seconds.""$NC";
+		exit 0;
+fi
 
 # Check for -D non-interactive default flag
 # Defaults for non-interactive:
