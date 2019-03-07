@@ -111,7 +111,7 @@ function install_nikto() {
 
 function install_dirsearch() {
 		echo -e "$GREEN""Installing dirsearch from Github.""$NC";
-		git clone https://github.com/maurosoria/dirsearch.git "$TOOLS"/wafw00f;
+		git clone https://github.com/maurosoria/dirsearch.git "$TOOLS"/dirsearch;
 }
 
 function install_corstest() {
