@@ -1574,16 +1574,20 @@ function run_subjack() {
 		# Call with domain as $1 and domain list as $2
 		if [[ $2 == $WORKING_DIR/$ALL_RESOLVED ]]; then
 				echo -e "$GREEN""[i]$BLUE Running subjack against all $(wc -l "$WORKING_DIR"/$ALL_RESOLVED | cut -d ' ' -f 1) unique discovered subdomains to check for subdomain takeover.""$NC";
+				echo -e "$GREEN""[i]$ORANGE It will run twice, once against HTTPS and once against HTTP.""$NC";
 				echo -e "$GREEN""[i]$ORANGE Command: subjack -d $1 -w $2 -v -t 20 -ssl -m -o $WORKING_DIR/subjack-output.txt""$NC";
 				START=$(date +%s);
-				"$SUBJACK" -d "$1" -w "$2" -v -t 20 -ssl -m -o "$WORKING_DIR"/subjack-output.txt -c "$HOME"/go/src/github.com/haccer/subjack/fingerprints.json;
+				"$SUBJACK" -d "$1" -w "$2" -v -t 20 -ssl -m -o "$WORKING_DIR"/subjack-https-output.txt -c "$HOME"/go/src/github.com/haccer/subjack/fingerprints.json;
+				"$SUBJACK" -d "$1" -w "$2" -v -t 20 -m -o "$WORKING_DIR"/subjack-http-output.txt -c "$HOME"/go/src/github.com/haccer/subjack/fingerprints.json;
 				END=$(date +%s);
 				DIFF=$(( END - START ));
 		else
 				echo -e "$GREEN""[i]$BLUE Running subjack against all $(wc -l "$WORKING_DIR"/$ALL_RESOLVED | cut -d ' ' -f 1) discovered interesting subdomains to check for subdomain takeover.""$NC";
+				echo -e "$GREEN""[i]$ORANGE It will run twice, once against HTTPS and once against HTTP.""$NC";
 				echo -e "$GREEN""[i]$ORANGE Command: subjack -d $1 -w $2 -v -t 20 -ssl -m -o $WORKING_DIR/subjack-output.txt""$NC";
 				START=$(date +%s);
-				"$SUBJACK" -d "$1" -w "$2" -v -t 20 -ssl -m -o "$WORKING_DIR"/subjack-output.txt -c "$HOME"/go/src/github.com/haccer/subjack/fingerprints.json;
+				"$SUBJACK" -d "$1" -w "$2" -v -t 20 -ssl -m -o "$WORKING_DIR"/subjack-https-output.txt -c "$HOME"/go/src/github.com/haccer/subjack/fingerprints.json;
+				"$SUBJACK" -d "$1" -w "$2" -v -t 20 -m -o "$WORKING_DIR"/subjack-http-output.txt -c "$HOME"/go/src/github.com/haccer/subjack/fingerprints.json;
 				END=$(date +%s);
 				DIFF=$(( END - START ));
 		fi
