@@ -1256,7 +1256,7 @@ function run_inception() {
 				"$INCEPTION" -d "$3" -v | tee "$WORKING_DIR"/inception/inception-output.txt;
 				END=$(date +%s);
 				DIFF=$(( END - START ));
-				echo -e "$GREEN""[i]$BLUE Snallygaster took $DIFF seconds to run.""$NC";
+				echo -e "$GREEN""[i]$BLUE Inception took $DIFF seconds to run.""$NC";
 		fi
 }
 
@@ -1549,7 +1549,7 @@ function run_wafw00f() {
 				done < "$2"
 				END=$(date +%s);
 				DIFF=$(( END - START ));
-				echo -e "$GREEN""[i]$BLUE whatweb took $DIFF seconds to run.""$NC";
+				echo -e "$GREEN""[i]$BLUE wafw00f took $DIFF seconds to run.""$NC";
 		else
 				echo -e "$GREEN""[i]$BLUE Running wafw00f against all $(wc -l "$2" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: wafw00f $HTTP://$1 -a | tee $WORKING_DIR/wafw00f.""$NC";
