@@ -3,19 +3,19 @@
 
 
 [general]
-# Set domain to scan (required)
+# Set domain to scan (required). Do not include a scheme, e.g. https:// or http://. Chomp Scan will add the appropriate scheme as needed.
 DOMAIN=
-# Use HTTP instead of default HTTPS
+# Use HTTP instead of default HTTPS, values are YES or blank
 ENABLE_HTTP=
-# Set custom output directory
+# Set custom output directory, value are a path to a directory or blank
 OUTPUT_DIR=
-# Use all discovered domains instead of default interesting discovered domains
+# Use all discovered domains instead of default interesting discovered domains, values are YES or blank
 USE_ALL=
-# Set Notica URL parameter for notifications
+# Set Notica URL parameter for notifications, values are a Notica URL parameter or blank. See notica.us for details.
 NOTICA=
-# Set custom domain blacklist file
+# Set custom domain blacklist file, values are a path to a file or blank
 BLACKLIST=
-# Set custom interesting word list
+# Set custom interesting word list, values are a path to a file or blank
 INTERESTING=
 
 
