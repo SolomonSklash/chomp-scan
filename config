@@ -1,5 +1,5 @@
 # Possible values for tools are case-sensitive YES or blank.
-# Wordlist values are either blank or a path to a file.
+# Wordlist values are either blank, a built-in wordlist name, or a path to a file.
 
 
 [general]
@@ -26,6 +26,7 @@ ENABLE_SUBFINDER=YES
 ENABLE_SUBLIST3R=YES
 ENABLE_ALTDNS=YES
 # Set wordlist
+# Possible options are SHORT, lONG, HUGE, or the path to a custom wordlist
 SUBDOMAIN_WORDLIST=
 
 
@@ -37,6 +38,7 @@ ENABLE_FFUF=YES
 ENABLE_GOBUSTER=YES
 ENABLE_DIRSEARCH=YES
 # Set wordlist
+# Possible options are SMALL, MEDIUM, LARGE, XL, XXL, or the path to a custom wordlist
 CONTENT_WORDLIST=
 
 
