@@ -1432,7 +1432,7 @@ function run_bfac() {
 				done < "$1"
 				END=$(date +%s);
 				DIFF=$(( END - START ));
-				echo -e "$GREEN""[i]$BLUE ffuf took $DIFF seconds to run.""$NC";
+				echo -e "$GREEN""[i]$BLUE bfac took $DIFF seconds to run.""$NC";
 		else
 				echo -e "$GREEN""[i]$BLUE Running bfac against all $(wc -l "$1" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: bfac -u $DOMAIN -xsc 404,301,302,400 -o $WORKING_DIR/bfac.""$NC";
@@ -1471,7 +1471,7 @@ function run_nikto() {
 				done < "$1"
 				END=$(date +%s);
 				DIFF=$(( END - START ));
-				echo -e "$GREEN""[i]$BLUE ffuf took $DIFF seconds to run.""$NC";
+				echo -e "$GREEN""[i]$BLUE Nikto took $DIFF seconds to run.""$NC";
 		else
 				echo -e "$GREEN""[i]$BLUE Running nikto against all $(wc -l "$1" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: nikto -h $HTTP://$DOMAIN -output $WORKING_DIR/nikto.""$NC";
@@ -1488,7 +1488,7 @@ function run_nikto() {
 				done < "$1"
 				END=$(date +%s);
 				DIFF=$(( END - START ));
-				echo -e "$GREEN""[i]$BLUE nikto took $DIFF seconds to run.""$NC";
+				echo -e "$GREEN""[i]$BLUE Nikto took $DIFF seconds to run.""$NC";
 		fi
 }
 
