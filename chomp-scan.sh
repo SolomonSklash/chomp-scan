@@ -256,12 +256,26 @@ function parse_config() {
 		fi
 
 		SUB_WORDLIST=$(grep '^SUBDOMAIN_WORDLIST' "$CONFIG_FILE" | cut -d '=' -f 2);
-		if [[ "$SUB_WORDLIST" != "" ]]; then
-				if [[ -w "$SUB_WORDLIST" ]]; then
-						SUBDOMAIN_WORDLIST="$SUB_WORDLIST";
-				else
-						echo -e "$RED""[!] Subdomain enumeration wordlist $SUB_WORDLIST does not exist or is not writable. Please check the configuration file.""$NC";
-						exit 1;
+		# Set to one of the defaults, else use provided wordlist
+		case "$SUB_WORDLIST" in
+				SHORT )
+						SUBDOMAIN_WORDLIST="$SHORT";
+						;;
+				LONG )
+						SUBDOMAIN_WORDLIST="$LONG";
+						;;
+				HUGE )
+						SUBDOMAIN_WORDLIST="$HUGE";
+						;;
+		esac
+		if [[ "$SUBDOMAIN_WORDLIST" == "" ]]; then
+				if [[ "$SUB_WORDLIST" != "" ]]; then
+						if [[ -w "$SUB_WORDLIST" ]]; then
+								SUBDOMAIN_WORDLIST="$SUB_WORDLIST";
+						else
+								echo -e "$RED""[!] Subdomain enumeration wordlist $SUB_WORDLIST does not exist or is not writable. Please check the configuration file.""$NC";
+								exit 1;
+						fi
 				fi
 		fi
 
@@ -294,12 +308,32 @@ function parse_config() {
 		fi
 
 		CON_WORDLIST=$(grep '^CONTENT_WORDLIST' "$CONFIG_FILE" | cut -d '=' -f 2);
-		if [[ "$CON_WORDLIST" != "" ]]; then
-				if [[ -w "$CON_WORDLIST" ]]; then
-						CONTENT_WORDLIST="$CON_WORDLIST";
-				else
-						echo -e "$RED""[!] Content discovery wordlist $CON_WORDLIST does not exist or is not writable. Please check the configuration file.""$NC";
-						exit 1;
+		# Set to one of the defaults, else use provided wordlist
+		case "$CON_WORDLIST" in
+				SMALL )
+						CONTENT_WORDLIST="$SMALL";
+						;;
+				MEDIUM )
+						CONTENT_WORDLIST="$MEDIUM";
+						;;
+				LARGE )
+						CONTENT_WORDLIST="$LARGE";
+						;;
+				XL )
+						CONTENT_WORDLIST="$XL";
+						;;
+				XXL )
+						CONTENT_WORDLIST="$XXL";
+						;;
+		esac
+		if [[ "$CONTENT_WORDLIST" == "" ]]; then
+				if [[ "$CON_WORDLIST" != "" ]]; then
+						if [[ -w "$CON_WORDLIST" ]]; then
+								CONTENT_WORDLIST="$CON_WORDLIST";
+						else
+								echo -e "$RED""[!] Content discovery wordlist $CON_WORDLIST does not exist or is not writable. Please check the configuration file.""$NC";
+								exit 1;
+						fi
 				fi
 		fi
 
