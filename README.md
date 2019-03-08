@@ -8,17 +8,15 @@ A scripted pipeline of tools to simplify the bug bounty/penetration test reconna
 ![](screenshots/screenshot01.png)
 
 ### Scope
-Chomp Scan is a Bash script that chains together the fastest and most effective tools (in my opinion/experience) for doing the long and sometimes tedious process of recon. No more looking for word lists and trying to remember when you started a scan and where the output is. Chomp Scan creates a timestamped output directory based on the search domain, e.g. *example.com-21:38:15*, and puts all tool output there, split into individual sub-directories as appropriate. Custom output directories are also supported via the `-o` flag.
+Chomp Scan is a Bash script that chains together the fastest and most effective tools (in my opinion/experience) for doing the long and sometimes tedious process of recon. No more looking for word lists and trying to remember when you started a scan and where the output is. Chomp Scan can focus on a list of potentially interesting subdomains, letting you save time and focus on high-value targets. It will even notify you via Notica when it's done running!
 
-**New**   Chomp Scan now integrates [Notica](https://notica.us), which allows you to receive a notification when the script finishes. Simply visit Notica and get a unique URL parameter, e.g. notica.us/?xxxxxxxx. Pass the parameter to Chomp Scan via the `-n` flag, keep the Notica page open in a browser tab on your computer or phone, and you will receive a message when Chomp Scan has finished running. No more constantly checking/forgetting to check those long running scans.
-
-Chomp Scan runs in multiple modes. The primary one is using command-line arguments to select which scanning phases to use, which wordlists, HTTP or HTTPS,  etc. A guided interactive mode is available, as well as a non-interactive mode, useful if you do not want to deal with setting multiple arguments.
+**New** Chomp Scan now integrates [Notica](https://notica.us), which allows you to receive a notification when the script finishes. Simply visit Notica and get a unique URL parameter, e.g. notica.us/?xxxxxxxx. Pass the parameter to Chomp Scan via the `-n` flag, keep the Notica page open in a browser tab on your computer or phone, and you will receive a message when Chomp Scan has finished running. No more constantly checking/forgetting to check those long running scans.
 
 A list of interesting words is included, such as *dev, test, uat, staging,* etc., and domains containing those terms are flagged. This way you can focus on the interesting domains first if you wish. This list can be customized to suit your own needs, or replaced with a different file via the `-X` flag.
 
-A blacklist file is included, to exclude certain domains from the results. However it does not prevent those domains from being resolved, only from being used for port scanning and content discovery. It can be passed via the `-b` flag.
+Chomp Scan runs in multiple modes. A new [Configuration File](https://github.com/SolomonSklash/chomp-scan/wiki/Configuration-File) is the recommended way to run scans, as it allows the most granular control of tools and settings. A standard CLI mode is included, which functions the same as any other CLI tool. A guided interactive mode is available, as well as a non-interactive mode, useful if you do not want to lookup parameters or worry about setting multiple arguments.
 
-Chomp Scan supports limited canceling/skipping of tools by pressing Ctrl-c. This can sometimes have unintended side effects, so use with care.
+Please see the [Wiki](https://github.com/SolomonSklash/chomp-scan/wiki) for detailed documentation.
 
 **Note: Chomp Scan is in active development, and new/different tools will be added as I come across them. Pull requests and comments welcome!**
 
@@ -58,30 +56,10 @@ Chomp Scan now features a configuration file option that provides more granular 
 
 ### Wordlists
 
-A variety of wordlists are used, both for subdomain bruteforcing and content discovery. Daniel Miessler's [Seclists](https://github.com/danielmiessler/SecLists) are used heavily, as well as Jason Haddix's [lists](https://gist.github.com/jhaddix). Different wordlists can be used by passing in a custom wordlist or using one of the built-in named argument lists below.
-
-#### Subdomain Bruteforcing
-| Argument Name | Filename | Word Count | Description |
-| ------ | ------ | ------ | ------ |
-| short | subdomains-top1mil-20000.txt | 22k | From Seclists |
-| long | sortedcombined-knock-dnsrecon-fierce-reconng.txt | 102k | From Seclists |
-| huge | huge-200k.txt | 199k | Combination I made of various wordlists, including Seclists |
-
-#### Content Discovery
-| Argument Name | Filename | Word Count | Description |
-| ------ | ------ | ------ | ------ |
-| small | big.txt | 20k | From Seclists |
-| medium | raft-large-combined.txt | 167k | Combination of the raft wordlists in Seclists |
-| large | seclists-combined.txt | 215k | Larger combination of all the Discovery/DNS lists in Seclists |
-| xl | haddix_content_discovery_all.txt | 373k | Jason Haddix's all content discovery list |
-| xxl | haddix-seclists-combined.txt | 486k | Combination of the two previous lists |
-
-#### Misc.
-* altdns-words.txt - 240 words - Used for creating domain permutations for [masscan](https://github.com/robertdavidgraham/masscan) to resolve. Borrowed from [altdns](https://github.com/infosec-au/altdns/blob/master/words.txt).
-* interesting.txt - 43 words - A list I created of potentially interesting words appearing in domain names. Provide your own interesting words list with the `-X` flag.
+A variety of wordlists are used, both for subdomain bruteforcing and content discovery. Daniel Miessler's [Seclists](https://github.com/danielmiessler/SecLists) are used heavily, as well as Jason Haddix's [lists](https://gist.github.com/jhaddix). Different wordlists can be used by passing in a custom wordlist or using one of the built-in named argument lists. See the [Wordlist](https://github.com/SolomonSklash/chomp-scan/wiki/Wordlists) wiki page for more details.
 
 ### Installation
-Clone this repo and run the included installer.sh script. Make sure to run `source ~/.profile` in your terminal after running the installer in order to add the Go binary path to your $PATH variable. Then run Chomp Scan.
+Clone this repo and run the included installer.sh script. Make sure to run `source ~/.profile` in your terminal after running the installer in order to add the Go binary path to your $PATH variable. Then run Chomp Scan. If you are using zsh, fish, or some other shell, make sure that `~/go/bin` is in your path.
 
 ### Usage
 Chomp Scan always runs subdomain enumeration, thus a domain is required via the `-u` flag. The domain should not contain a scheme, e.g. http:// or https://. By default, HTTPS is always used. This can be changed to HTTP by passing the `-H` flag. A wordlist is optional, and if one is not provided the built-in short list (20k words) is used.
@@ -137,12 +115,11 @@ Usage of Chomp Scan:
 
 ### In The Future
 
-Chomp Scan is still in active development, as I use it myself for bug hunting, so I intend to continue adding new features and tools as I come across them. New tool suggestions, feedback, and pull requests are all welcomed. Here is a short list of potential additions I'm considering:
+Chomp Scan is still in active development, as I use it myself for bug hunting, so I intend to continue adding new features and tools as I come across them. New tool suggestions, feedback, and pull requests are all welcomed. Possible additions:
 
-* Adding a config file, for more granular customization of tools and parameters
 * The generation of an HTML report, similar to what aquatone provides
 
-### Examples
+### Screenshots
 ![](screenshots/screenshot02.png)
 ![](screenshots/screenshot03.png)
 ![](screenshots/screenshot04.png)
