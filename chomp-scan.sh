@@ -1107,6 +1107,59 @@ function run_portscan() {
 		   done
 }
 
+function parse_gobuster() {
+		# Call with file name as $1
+        FILE=$1;
+   
+        # Get total line count
+        TOTAL=$(wc -l "$1" | cut -d ' ' -f 1);
+		if [[ "$TOTAL" -eq 0 ]]; then
+				return
+		fi
+   
+        # Get counts of different return codes
+	    COUNT_200=$(grep -c 'Status: 200' "$FILE");
+        COUNT_201=$(grep -c 'Status: 201' "$FILE");
+        COUNT_202=$(grep -c 'Status: 202' "$FILE");
+        COUNT_204=$(grep -c 'Status: 204' "$FILE");
+        COUNT_307=$(grep -c 'Status: 307' "$FILE");
+        COUNT_308=$(grep -c 'Status: 308' "$FILE");
+        COUNT_400=$(grep -c 'Status: 400' "$FILE");
+        COUNT_401=$(grep -c 'Status: 401' "$FILE");
+        COUNT_403=$(grep -c 'Status: 403' "$FILE");
+        COUNT_405=$(grep -c 'Status: 405' "$FILE");
+        COUNT_500=$(grep -c 'Status: 500' "$FILE");
+        COUNT_501=$(grep -c 'Status: 501' "$FILE");
+        COUNT_502=$(grep -c 'Status: 502' "$FILE");
+        COUNT_503=$(grep -c 'Status: 503' "$FILE");
+   
+        # Write return code counts to top of file
+	    echo -e "$GREEN""Number of 200 responses:\\t$BLUE $COUNT_200" >> "$FILE"-parsed;
+        echo -e "$GREEN""Number of 201 responses:\\t$BLUE $COUNT_201" >> "$FILE"-parsed;
+        echo -e "$GREEN""Number of 202 responses:\\t$BLUE $COUNT_202" >> "$FILE"-parsed;
+        echo -e "$GREEN""Number of 204 responses:\\t$BLUE $COUNT_204" >> "$FILE"-parsed;
+        echo -e "$GREEN""Number of 307 responses:\\t$BLUE $COUNT_307" >> "$FILE"-parsed;
+        echo -e "$GREEN""Number of 308 responses:\\t$BLUE $COUNT_308" >> "$FILE"-parsed;
+        echo -e "$GREEN""Number of 400 responses:\\t$BLUE $COUNT_400" >> "$FILE"-parsed;
+        echo -e "$GREEN""Number of 401 responses:\\t$BLUE $COUNT_401" >> "$FILE"-parsed;
+        echo -e "$GREEN""Number of 403 responses:\\t$BLUE $COUNT_403" >> "$FILE"-parsed;
+        echo -e "$GREEN""Number of 405 responses:\\t$BLUE $COUNT_405" >> "$FILE"-parsed;
+        echo -e "$GREEN""Number of 500 responses:\\t$BLUE $COUNT_500" >> "$FILE"-parsed;
+        echo -e "$GREEN""Number of 501 responses:\\t$BLUE $COUNT_501" >> "$FILE"-parsed;
+        echo -e "$GREEN""Number of 502 responses:\\t$BLUE $COUNT_502" >> "$FILE"-parsed;
+        echo -e "$GREEN""Number of 503 responses:\\t$BLUE $COUNT_503" >> "$FILE"-parsed;
+   
+        if [[ "$TOTAL" -gt 1000 ]]; then
+                echo -e "$GREEN""False positives:\\t\\t$RED Likely! Total count is $TOTAL.""$NC" >> "$FILE"-parsed;
+        else
+                echo -e $"$GREEN""False positives:\\t\\t$BLUE Unlikely. Total count is $TOTAL.""$NC" >> "$FILE"-parsed;
+        fi  
+        echo -e "\\n\\n\\n" >> "$FILE"-parsed;
+   
+        # Echo all parse d output to file
+		cat "$FILE" >> "$FILE"-parsed;
+}
+
 function run_gobuster() {
 		# Call with domain as $1, wordlist size as $2, and domain list as $3
 		if [[ $3 == $WORKING_DIR/$ALL_RESOLVED ]]; then # Run against all resolvable domains
@@ -1144,6 +1197,15 @@ function run_gobuster() {
 				DIFF=$(( END - START ));
 				echo -e "$GREEN""[i]$BLUE Gobuster took $DIFF seconds to run.""$NC";
 		fi
+
+		# Parse results for better readability of the output
+		for file in "$WORKING_DIR"/gobuster/*; do
+				COUNT=$(wc -l "$file" | cut -d ' ' -f 1);
+				# No output files have 17 lines
+				if [[ $COUNT -gt 17 ]]; then
+						parse_gobuster "$file";
+				fi
+		done
 }
 
 function parse_ffuf() {
