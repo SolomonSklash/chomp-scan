@@ -856,11 +856,11 @@ function run_massdns() {
 		fi
 
 		# Parse results
-		grep CNAME "$WORKING_DIR"/massdns-result.txt > "$WORKING_DIR"/massdns-CNAMEs;
+		grep CNAME "$WORKING_DIR"/massdns-result.txt > "$WORKING_DIR"/massdns-CNAMEs.txt;
 		grep -v CNAME "$WORKING_DIR"/massdns-result.txt | cut -d ' ' -f 3 >> "$WORKING_DIR"/$ALL_IP;
 
 		# Add any new in-scope CNAMEs to main list
-		cut -d ' ' -f 3 "$WORKING_DIR"/massdns-CNAMEs | grep "$DOMAIN.$" >> "$WORKING_DIR"/$ALL_DOMAIN;
+		cut -d ' ' -f 3 "$WORKING_DIR"/massdns-CNAMEs.txt | grep "$DOMAIN.$" >> "$WORKING_DIR"/$ALL_DOMAIN;
 
 		# Add newly discovered domains to all domains list
 		grep -v CNAME "$WORKING_DIR"/massdns-result.txt | cut -d ' ' -f 1 >> "$WORKING_DIR"/"$ALL_DOMAIN";
@@ -873,7 +873,7 @@ function run_massdns() {
 		sed -i 's/\.$//' "$WORKING_DIR"/"$ALL_RESOLVED";
 
 		echo -e "$GREEN""[i]$BLUE Massdns took $DIFF seconds to run.""$NC";
-		echo -e "$GREEN""[!]$ORANGE Check $WORKING_DIR/massdns-CNAMEs for a list of CNAMEs found.""$NC";
+		echo -e "$GREEN""[!]$ORANGE Check $WORKING_DIR/massdns-CNAMEs.txt for a list of CNAMEs found.""$NC";
 		sleep 1;
 
 		list_found;
