@@ -1111,13 +1111,13 @@ function run_gobuster() {
 		# Call with domain as $1, wordlist size as $2, and domain list as $3
 		if [[ $3 == $WORKING_DIR/$ALL_RESOLVED ]]; then # Run against all resolvable domains
 				echo -e "$GREEN""[i]$BLUE Running gobuster against all $(wc -l "$3" | cut -d ' ' -f 1) unique discovered domains.""$NC";
-				echo -e "$GREEN""[i]$BLUE Command: gobuster -u https://$DOMAIN -s '200,201,202,204,307,308,401,403,405,500,501,503' -to 3s -e -k -t 20 -w $2 -o gobuster.""$NC";
+				echo -e "$GREEN""[i]$BLUE Command: gobuster -u https://$DOMAIN -s '200,201,202,204,307,308,400,401,403,405,500,501,502,503' -to 3s -e -k -t 20 -w $2 -o gobuster.""$NC";
 				# Run gobuster
 				mkdir "$WORKING_DIR"/gobuster;
 				COUNT=$(wc -l "$3" | cut -d ' ' -f 1)
 				START=$(date +%s);
 				while read -r ADOMAIN; do
-						"$GOBUSTER" -u "$HTTP"://"$ADOMAIN" -s '200,201,202,204,307,308,401,403,405,500,501,503' -to 3s -e -k -t 20 -w "$2" -o "$WORKING_DIR"/gobuster/"$ADOMAIN".txt;
+						"$GOBUSTER" -u "$HTTP"://"$ADOMAIN" -s '200,201,202,204,307,308,400,401,403,405,500,501,502,503' -to 3s -e -k -t 20 -w "$2" -o "$WORKING_DIR"/gobuster/"$ADOMAIN".txt;
 						COUNT=$((COUNT - 1));
 						if [[ "$COUNT" != 0 ]]; then
 								echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
@@ -1128,13 +1128,13 @@ function run_gobuster() {
 				echo -e "$GREEN""[i]$BLUE Gobuster took $DIFF seconds to run.""$NC";
 		else # Run against all interesting domains
 				echo -e "$GREEN""[i]$BLUE Running gobuster against all $(wc -l "$3" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
-				echo -e "$GREEN""[i]$BLUE Command: gobuster -u $HTTP://$DOMAIN -s '200,201,202,204,307,308,401,403,405,500,501,503' -to 3s -e -k -t 20 -w $2 -o $WORKING_DIR/gobuster""$NC";
+				echo -e "$GREEN""[i]$BLUE Command: gobuster -u $HTTP://$DOMAIN -s '200,201,202,204,307,308,400,401,403,405,500,501,502,503' -to 3s -e -k -t 20 -w $2 -o $WORKING_DIR/gobuster""$NC";
 				# Run gobuster
 				mkdir "$WORKING_DIR"/gobuster;
 				COUNT=$(wc -l "$3" | cut -d ' ' -f 1)
 				START=$(date +%s);
 				while read -r ADOMAIN; do
-						"$GOBUSTER" -u "$HTTP"://"$ADOMAIN" -s '200,201,202,204,307,308,401,403,405,500,501,503' -to 3s -e -k -t 20 -w "$2" -o "$WORKING_DIR"/gobuster/"$ADOMAIN".txt;
+						"$GOBUSTER" -u "$HTTP"://"$ADOMAIN" -s '200,201,202,204,307,308,400,401,403,405,500,501,502,503' -to 3s -e -k -t 20 -w "$2" -o "$WORKING_DIR"/gobuster/"$ADOMAIN".txt;
 						COUNT=$((COUNT - 1));
 						if [[ "$COUNT" != 0 ]]; then
 								echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
@@ -1158,9 +1158,14 @@ function parse_ffuf() {
         COUNT_201=$(grep 'Status' "$1" | grep -c 201);
         COUNT_202=$(grep 'Status' "$1" | grep -c 202);
         COUNT_204=$(grep 'Status' "$1" | grep -c 204);
+        COUNT_307=$(grep 'Status' "$1" | grep -c 307);
+        COUNT_308=$(grep 'Status' "$1" | grep -c 308);
+        COUNT_400=$(grep 'Status' "$1" | grep -c 400);
         COUNT_401=$(grep 'Status' "$1" | grep -c 401);
         COUNT_403=$(grep 'Status' "$1" | grep -c 403);
+        COUNT_405=$(grep 'Status' "$1" | grep -c 405);
         COUNT_500=$(grep 'Status' "$1" | grep -c 500);
+        COUNT_501=$(grep 'Status' "$1" | grep -c 501);
         COUNT_502=$(grep 'Status' "$1" | grep -c 502);
         COUNT_503=$(grep 'Status' "$1" | grep -c 503);
    
@@ -1169,9 +1174,14 @@ function parse_ffuf() {
         echo -e "$GREEN""Number of 201 responses:\\t$BLUE $COUNT_201" >> "$FILE"-parsed;
         echo -e "$GREEN""Number of 202 responses:\\t$BLUE $COUNT_202" >> "$FILE"-parsed;
         echo -e "$GREEN""Number of 204 responses:\\t$BLUE $COUNT_204" >> "$FILE"-parsed;
+        echo -e "$GREEN""Number of 307 responses:\\t$BLUE $COUNT_307" >> "$FILE"-parsed;
+        echo -e "$GREEN""Number of 308 responses:\\t$BLUE $COUNT_308" >> "$FILE"-parsed;
+        echo -e "$GREEN""Number of 400 responses:\\t$BLUE $COUNT_400" >> "$FILE"-parsed;
         echo -e "$GREEN""Number of 401 responses:\\t$BLUE $COUNT_401" >> "$FILE"-parsed;
         echo -e "$GREEN""Number of 403 responses:\\t$BLUE $COUNT_403" >> "$FILE"-parsed;
+        echo -e "$GREEN""Number of 405 responses:\\t$BLUE $COUNT_405" >> "$FILE"-parsed;
         echo -e "$GREEN""Number of 500 responses:\\t$BLUE $COUNT_500" >> "$FILE"-parsed;
+        echo -e "$GREEN""Number of 501 responses:\\t$BLUE $COUNT_501" >> "$FILE"-parsed;
         echo -e "$GREEN""Number of 502 responses:\\t$BLUE $COUNT_502" >> "$FILE"-parsed;
         echo -e "$GREEN""Number of 503 responses:\\t$BLUE $COUNT_503" >> "$FILE"-parsed;
    
@@ -1199,7 +1209,7 @@ function run_ffuf() {
 				COUNT=$(wc -l "$3" | cut -d ' ' -f 1)
 				START=$(date +%s);
 				while read -r ADOMAIN; do
-						"$FFUF" -u "$HTTP"://"$ADOMAIN"/FUZZ -w "$2" -fc 301,302 -k -mc 200,201,202,204,401,403,500,502,503 | tee "$WORKING_DIR"/ffuf/"$ADOMAIN";
+						"$FFUF" -u "$HTTP"://"$ADOMAIN"/FUZZ -w "$2" -fc 301,302 -k -mc 200,201,202,204,307,308,400,401,403,405,500,501,502,503 | tee "$WORKING_DIR"/ffuf/"$ADOMAIN";
 						COUNT=$((COUNT - 1));
 						if [[ "$COUNT" != 0 ]]; then
 								echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
@@ -1216,7 +1226,7 @@ function run_ffuf() {
 				COUNT=$(wc -l "$3" | cut -d ' ' -f 1)
 				START=$(date +%s);
 				while read -r ADOMAIN; do
-						"$FFUF" -u "$HTTP"://"$ADOMAIN"/FUZZ -w "$2" -fc 301,302 -k -mc 200,201,202,204,401,403,500,502,503 | tee "$WORKING_DIR"/ffuf/"$ADOMAIN";
+						"$FFUF" -u "$HTTP"://"$ADOMAIN"/FUZZ -w "$2" -fc 301,302 -k -mc 200,201,202,204,307,308,400,401,403,405,500,501,502,503 | tee "$WORKING_DIR"/ffuf/"$ADOMAIN";
 						COUNT=$((COUNT - 1));
 						if [[ "$COUNT" != 0 ]]; then
 								echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
