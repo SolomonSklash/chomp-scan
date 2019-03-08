@@ -1146,6 +1146,46 @@ function run_gobuster() {
 		fi
 }
 
+function parse_ffuf() {
+		# Call with file name as $1
+        FILE=$1;
+   
+        # Get total line count
+        TOTAL=$(wc -l "$1" | cut -d ' ' -f 1);
+   
+        # Get counts of different return codes
+        COUNT_200=$(grep 'Status' "$1" | grep -c 200);
+        COUNT_201=$(grep 'Status' "$1" | grep -c 201);
+        COUNT_202=$(grep 'Status' "$1" | grep -c 202);
+        COUNT_204=$(grep 'Status' "$1" | grep -c 204);
+        COUNT_401=$(grep 'Status' "$1" | grep -c 401);
+        COUNT_403=$(grep 'Status' "$1" | grep -c 403);
+        COUNT_500=$(grep 'Status' "$1" | grep -c 500);
+        COUNT_502=$(grep 'Status' "$1" | grep -c 502);
+        COUNT_503=$(grep 'Status' "$1" | grep -c 503);
+   
+        # Write return code counts to top of file
+        echo -e "$GREEN""Number of 200 responses:\\t$BLUE $COUNT_200" >> "$FILE"-parsed;
+        echo -e "$GREEN""Number of 201 responses:\\t$BLUE $COUNT_201" >> "$FILE"-parsed;
+        echo -e "$GREEN""Number of 202 responses:\\t$BLUE $COUNT_202" >> "$FILE"-parsed;
+        echo -e "$GREEN""Number of 204 responses:\\t$BLUE $COUNT_204" >> "$FILE"-parsed;
+        echo -e "$GREEN""Number of 401 responses:\\t$BLUE $COUNT_401" >> "$FILE"-parsed;
+        echo -e "$GREEN""Number of 403 responses:\\t$BLUE $COUNT_403" >> "$FILE"-parsed;
+        echo -e "$GREEN""Number of 500 responses:\\t$BLUE $COUNT_500" >> "$FILE"-parsed;
+        echo -e "$GREEN""Number of 502 responses:\\t$BLUE $COUNT_502" >> "$FILE"-parsed;
+        echo -e "$GREEN""Number of 503 responses:\\t$BLUE $COUNT_503" >> "$FILE"-parsed;
+   
+        if [[ "$TOTAL" -gt 1000 ]]; then
+                echo -e "$GREEN""False positives:\\t\\t$RED Likely! Total count is $TOTAL.""$NC" >> "$FILE"-parsed;
+        else
+                echo -e $"$GREEN""False positives:\\t\\t$BLUE Unlikely. Total count is $TOTAL.""$NC" >> "$FILE"-parsed;
+        fi  
+        echo -e "\\n\\n\\n" >> "$FILE"-parsed;
+   
+        # Echo all parsed output to file
+        grep -v '::' "$1" | grep 'Status' >> "$FILE"-parsed;
+}
+
 function run_ffuf() {
 		# Trap SIGINT so broken ffuf runs can be cancelled
 		trap cancel SIGINT;
@@ -1186,6 +1226,15 @@ function run_ffuf() {
 				DIFF=$(( END - START ));
 				echo -e "$GREEN""[i]$BLUE ffuf took $DIFF seconds to run.""$NC";
 		fi
+
+		# Parse results for better readability of the output
+		for file in "$WORKING_DIR"/ffuf/*; do
+				COUNT=$(wc -l "$file" | cut -d ' ' -f 1);
+				# No output files have 17 lines
+				if [[ $COUNT -gt 17 ]]; then
+						parse_ffuf "$file";
+				fi
+		done
 }
 
 function run_dirsearch() {
