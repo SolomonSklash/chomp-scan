@@ -1437,6 +1437,9 @@ function run_snallygaster() {
 }
 
 function run_inception() {
+		# Trap SIGINT so broken inception runs can be cancelled
+		trap cancel SIGINT;
+
 		# Call with domain as $1, wordlist size as $2, and domain list as $3
 		if [[ $3 == $WORKING_DIR/$ALL_RESOLVED ]]; then
 				echo -e "$GREEN""[i]$BLUE Running inception against all $(wc -l "$3" | cut -d ' ' -f 1) unique discovered domains.""$NC";
@@ -2121,6 +2124,91 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 				run_aquatone "default";
 		fi
 
+		## Information gathering
+		# Run subjack
+		if [[ "$ENABLE_SUBJACK" -eq 1 ]]; then
+				if [[ "$USE_ALL" == 1 ]]; then
+						run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+				# Make sure there are interesting domains
+				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) -gt 0 ]]; then
+						run_subjack "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+				else
+						run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+				fi
+		fi
+
+		# Run CORStest
+		if [[ "$ENABLE_CORSTEST" -eq 1 ]]; then
+				if [[ "$USE_ALL" == 1 ]]; then
+						run_corstest "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+				# Make sure there are interesting domains
+				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) -gt 0 ]]; then
+						run_corstest "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+				else
+						run_corstest "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+				fi
+		fi
+
+		# Run S3Scanner
+		if [[ "$ENABLE_S3SCANNER" -eq 1 ]]; then
+				if [[ "$USE_ALL" == 1 ]]; then
+						run_s3scanner "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+				# Make sure there are interesting domains
+				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) -gt 0 ]]; then
+						run_s3scanner "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+				else
+						run_s3scanner "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+				fi
+		fi
+
+		# Run bfac
+		if [[ "$ENABLE_BFAC" -eq 1 ]]; then
+				if [[ "$USE_ALL" == 1 ]]; then
+						run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
+				# Make sure there are interesting domains
+				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) -gt 0 ]]; then
+						run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+				else
+						run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
+				fi
+		fi
+
+		# Run whatweb
+		if [[ "$ENABLE_WHATWEB" -eq 1 ]]; then
+				if [[ "$USE_ALL" == 1 ]]; then
+						run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+				# Make sure there are interesting domains
+				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) -gt 0 ]]; then
+						run_whatweb "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+				else
+						run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+				fi
+		fi
+
+		# Run wafw00f
+		if [[ "$ENABLE_WAFW00F" -eq 1 ]]; then
+				if [[ "$USE_ALL" == 1 ]]; then
+						run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+				# Make sure there are interesting domains
+				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) -gt 0 ]]; then
+						run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+				else
+						run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+				fi
+		fi
+
+		# Run nikto
+		if [[ "$ENABLE_NIKTO" -eq 1 ]]; then
+				if [[ "$USE_ALL" == 1 ]]; then
+						run_nikto "$WORKING_DIR"/"$ALL_RESOLVED";
+				# Make sure there are interesting domains
+				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) -gt 0 ]]; then
+						run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+				else
+						run_nikto "$WORKING_DIR"/"$ALL_RESOLVED";
+				fi
+		fi
+
 		## Content discovery
 		# Run inception
 		if [[ "$ENABLE_INCEPTION" -eq 1 ]]; then
@@ -2220,91 +2308,6 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 						else
 								run_dirsearch "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";
 						fi
-				fi
-		fi
-
-		## Information gathering
-		# Run subjack
-		if [[ "$ENABLE_SUBJACK" -eq 1 ]]; then
-				if [[ "$USE_ALL" == 1 ]]; then
-						run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
-				# Make sure there are interesting domains
-				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) -gt 0 ]]; then
-						run_subjack "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-				else
-						run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
-				fi
-		fi
-
-		# Run CORStest
-		if [[ "$ENABLE_CORSTEST" -eq 1 ]]; then
-				if [[ "$USE_ALL" == 1 ]]; then
-						run_corstest "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
-				# Make sure there are interesting domains
-				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) -gt 0 ]]; then
-						run_corstest "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-				else
-						run_corstest "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
-				fi
-		fi
-
-		# Run S3Scanner
-		if [[ "$ENABLE_S3SCANNER" -eq 1 ]]; then
-				if [[ "$USE_ALL" == 1 ]]; then
-						run_s3scanner "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
-				# Make sure there are interesting domains
-				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) -gt 0 ]]; then
-						run_s3scanner "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-				else
-						run_s3scanner "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
-				fi
-		fi
-
-		# Run bfac
-		if [[ "$ENABLE_BFAC" -eq 1 ]]; then
-				if [[ "$USE_ALL" == 1 ]]; then
-						run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
-				# Make sure there are interesting domains
-				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) -gt 0 ]]; then
-						run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-				else
-						run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
-				fi
-		fi
-
-		# Run whatweb
-		if [[ "$ENABLE_WHATWEB" -eq 1 ]]; then
-				if [[ "$USE_ALL" == 1 ]]; then
-						run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
-				# Make sure there are interesting domains
-				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) -gt 0 ]]; then
-						run_whatweb "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-				else
-						run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
-				fi
-		fi
-
-		# Run wafw00f
-		if [[ "$ENABLE_WAFW00F" -eq 1 ]]; then
-				if [[ "$USE_ALL" == 1 ]]; then
-						run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
-				# Make sure there are interesting domains
-				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) -gt 0 ]]; then
-						run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-				else
-						run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
-				fi
-		fi
-
-		# Run nikto
-		if [[ "$ENABLE_NIKTO" -eq 1 ]]; then
-				if [[ "$USE_ALL" == 1 ]]; then
-						run_nikto "$WORKING_DIR"/"$ALL_RESOLVED";
-				# Make sure there are interesting domains
-				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) -gt 0 ]]; then
-						run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-				else
-						run_nikto "$WORKING_DIR"/"$ALL_RESOLVED";
 				fi
 		fi
 
