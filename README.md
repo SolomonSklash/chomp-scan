@@ -52,7 +52,7 @@ Please see the [Wiki](https://github.com/SolomonSklash/chomp-scan/wiki) for deta
 * [dirsearch](https://github.com/maurosoria/dirsearch)
 
 ### Configuration File
-Chomp Scan now features a configuration file option that provides more granular control over which tools are run and is less cumbersome than passing a large number of CLI arguments. It can be used by passing the `-L` flag. An [example config](https://github.com/SolomonSklash/chomp-scan/blob/master/config) file is included in this repo as a template.
+Chomp Scan now features a configuration file option that provides more granular control over which tools are run and is less cumbersome than passing a large number of CLI arguments. It can be used by passing the `-L` flag. An [example config](https://github.com/SolomonSklash/chomp-scan/blob/master/config) file is included in this repo as a template, and complete config file details are available at the [Configuration File](https://github.com/SolomonSklash/chomp-scan/wiki/Configuration-File) wiki page.
 
 ### Wordlists
 
