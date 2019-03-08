@@ -42,6 +42,7 @@ CONFIG_FILE="";
 ENABLE_DNSCAN=0;
 ENABLE_SUBFINDER=0;
 ENABLE_SUBLIST3R=0;
+ENABLE_AMASS=0;
 ENABLE_ALTDNS=0;
 ENABLE_MASSDNS=1; # Constant
 ENABLE_INCEPTION=0;
@@ -84,6 +85,7 @@ DIRSEARCH=~/bounty/tools/dirsearch/dirsearch.py;
 SNALLY=~/bounty/tools/snallygaster/snallygaster;
 CORSTEST=~/bounty/tools/CORStest/corstest.py;
 S3SCANNER=~/bounty/tools/S3Scanner/s3scanner.py;
+AMASS=~/bounty/tools/amass/amass;
 
 # Other variables
 ALL_IP=all_discovered_ips.txt;
@@ -256,6 +258,10 @@ function parse_config() {
 				ENABLE_ALTDNS=1;
 		fi
 
+		if [[ $(grep '^ENABLE_AMASS' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
+				ENABLE_AMASS=1;
+		fi
+
 		SUB_WORDLIST=$(grep '^SUBDOMAIN_WORDLIST' "$CONFIG_FILE" | cut -d '=' -f 2);
 		# Set to one of the defaults, else use provided wordlist
 		case "$SUB_WORDLIST" in
@@ -281,7 +287,7 @@ function parse_config() {
 		fi
 
 		# Check that at least one subdomain enumeration tool is enabled
-		if [[ "$ENABLE_DNSCAN" -eq 0 ]] && [[ "$ENABLE_SUBFINDER" -eq 0 ]] && [[ "$ENABLE_SUBLIST3R" -eq 0 ]]; then
+		if [[ "$ENABLE_DNSCAN" -eq 0 ]] && [[ "$ENABLE_SUBFINDER" -eq 0 ]] && [[ "$ENABLE_SUBLIST3R" -eq 0 ]] && [[ "ENABLE_AMASS" -eq 0 ]]; then
 				echo -e "$RED""[!] At least one subdomain enumeration tool must be enabled. Please check the configuration file.""$NC";
 				exit 1;
 		fi
@@ -668,6 +674,10 @@ function check_paths() {
 				echo -e "$RED""[!] The path or the file specified by the path for S3Scanner does not exit.";
 				exit 1;
 		fi
+		if [[ "$AMASS" == "" ]] || [[ ! -f "$AMASS" ]]; then
+				echo -e "$RED""[!] The path or the file specified by the path for amass does not exit.";
+				exit 1;
+		fi
 }
 
 function unique() {
@@ -818,6 +828,30 @@ function run_sublist3r() {
 		sleep 1;
 }
 
+function run_amass() {
+		# Call with domain as $1 anbd wordlist as $2
+
+		echo -e "$GREEN""[i]$BLUE Scanning $1 with amass.""$NC";
+		echo -e "$GREEN""[i]$ORANGE Command: amass -d $1 -w $2 -ip -rf resolvers.txt -active -o $WORKING_DIR/amass-output.txt -min-for-recursive 3 -bl $BLACKLIST""$NC";
+		START=$(date +%s);
+		"$AMASS" -d "$1" -w "$2" -ip -rf resolvers.txt -active -o "$WORKING_DIR"/amass-output.txt -min-for-recursive 3 -bl "$BLACKLIST";
+		END=$(date +%s);
+		DIFF=$(( END - START ));
+
+		# Check that output file exists amd parse output
+		if [[ -f "$WORKING_DIR"/amass-output.txt ]]; then
+				# Cat output into main lists
+				cut -d ' ' -f 1 "$WORKING_DIR"/amass-output.txt >> "$WORKING_DIR"/"$ALL_DOMAIN";
+				# cut -d ' ' -f 1 "$WORKING_DIR"/amass-output.txt >> "$WORKING_DIR"/"$ALL_RESOLVED";
+				cut -d ' ' -f 2 "$WORKING_DIR"/amass-output.txt >> "$WORKING_DIR"/"$ALL_IP";
+				echo -e "$GREEN""[i]$BLUE sublist3r took $DIFF seconds to run.""$NC";
+				echo -e "$GREEN""[!]$ORANGE amass found $(wc -l "$WORKING_DIR"/amass-output.txt | cut -d ' ' -f 1) domains.""$NC";
+		fi
+
+		list_found;
+		sleep 1;
+}
+
 function run_altdns() {
 		# Run altdns with found subdomains combined with altdns-wordlist.txt
 
@@ -890,7 +924,7 @@ function run_massdns() {
 function run_subdomain_brute() {
 		# Ask user for wordlist size
 		while true; do
-		  echo -e "$ORANGE""[i] Beginning subdomain enumeration. This will use dnscan, subfinder, sublist3r, and massdns + altdns.";
+		  echo -e "$ORANGE""[i] Beginning subdomain enumeration. This will use dnscan, subfinder, sublist3r, amass, and massdns + altdns.";
 		  echo -e "$GREEN""[?] What size wordlist would you like to use for subdomain bruteforcing?";
 		  echo -e "$GREEN""[i] Sizes are [S]mall (22k domains), [L]arge (102k domains), and [H]uge (199k domains).";
 		  echo -e "$ORANGE";
@@ -901,6 +935,7 @@ function run_subdomain_brute() {
 				   run_dnscan "$DOMAIN" "$SHORT";
 				   run_subfinder "$DOMAIN" "$SHORT";
 				   run_sublist3r "$DOMAIN";
+				   run_amass "$DOMAIN" "$SHORT";
 				   run_massdns "$DOMAIN" "$SHORT";
 				   break
 				   ;;
@@ -909,6 +944,7 @@ function run_subdomain_brute() {
 				   run_dnscan "$DOMAIN" "$LONG";
 				   run_subfinder "$DOMAIN" "$LONG";
 				   run_sublist3r "$DOMAIN";
+				   run_amass "$DOMAIN" "$LONG";
 				   run_massdns "$DOMAIN" "$LONG";
 				   return;
 				   ;;
@@ -917,6 +953,7 @@ function run_subdomain_brute() {
 				   run_dnscan "$DOMAIN" "$SHORT";
 				   run_subfinder "$DOMAIN" "$HUGE";
 				   run_sublist3r "$DOMAIN";
+				   run_amass "$DOMAIN" "$HUGE";
 				   run_massdns "$DOMAIN" "$HUGE";
 				   break;
 				   ;;
@@ -2048,6 +2085,16 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 				run_sublist3r "$DOMAIN";
 		fi
 
+		# Run amass
+		if [[ "$ENABLE_AMASS" -eq 1 ]]; then
+				# Check if $SUBDOMAIN_WORDLIST is set, else use short as default
+				if [[ "$SUBDOMAIN_WORDLIST" != "" ]]; then
+						run_amass "$DOMAIN" "$SUBDOMAIN_WORDLIST";
+				else
+						run_amass "$DOMAIN" "$SHORT";
+				fi
+		fi
+
 		# Run masscan and/or altdns
 		if [[ "$ENABLE_MASSDNS" -eq 1 ]]; then # Masscan will always run in order to get resolved domains
 				if [[ "$ENABLE_ALTDNS" -eq 1 ]]; then
@@ -2306,6 +2353,7 @@ if [[ "$DEFAULT_MODE" == 1 ]]; then
 		run_dnscan "$DOMAIN" "$SHORT";
 		run_subfinder "$DOMAIN" "$SHORT";
 		run_sublist3r "$DOMAIN";
+		run_amass "$DOMAIN" "$SHORT";
 		run_massdns "$DOMAIN" "$SHORT";
 
 		# Call unique to make sure list is up to date for content discovery
@@ -2381,7 +2429,7 @@ fi
 
 # Always run subdomain bruteforce tools
 if [[ "$SUBDOMAIN_BRUTE" == 1 ]]; then
-		echo -e "$BLUE""[i] Beginning subdomain enumeration dnscan, subfinder, sublist3r, and massdns+altdns.""$NC";
+		echo -e "$BLUE""[i] Beginning subdomain enumeration dnscan, subfinder, sublist3r, amass, and massdns+altdns.""$NC";
 		sleep 0.5;
 
 		# Check if $SUBDOMAIN_WORDLIST is set, else use short as default
@@ -2389,11 +2437,13 @@ if [[ "$SUBDOMAIN_BRUTE" == 1 ]]; then
 				run_dnscan "$DOMAIN" "$SUBDOMAIN_WORDLIST";
 				run_subfinder "$DOMAIN" "$SUBDOMAIN_WORDLIST";
 				run_sublist3r "$DOMAIN";
+				run_amass "$DOMAIN" "$SUBDOMAIN_WORDLIST";
 				run_massdns "$DOMAIN" "$SUBDOMAIN_WORDLIST";
 		else
 				run_dnscan "$DOMAIN" "$SHORT";
 				run_subfinder "$DOMAIN" "$SHORT";
 				run_sublist3r "$DOMAIN";
+				run_amass "$DOMAIN" "$SHORT";
 				run_massdns "$DOMAIN" "$SHORT";
 		fi
 fi

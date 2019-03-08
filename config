@@ -24,6 +24,7 @@ INTERESTING=
 ENABLE_DNSCAN=YES
 ENABLE_SUBFINDER=YES
 ENABLE_SUBLIST3R=YES
+ENABLE_AMASS=YES
 ENABLE_ALTDNS=YES
 # Set wordlist
 # Possible options are SHORT, lONG, HUGE, or the path to a custom wordlist

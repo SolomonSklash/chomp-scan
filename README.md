@@ -26,6 +26,7 @@ Please see the [Wiki](https://github.com/SolomonSklash/chomp-scan/wiki) for deta
 * [dnscan](https://github.com/rbsec/dnscan)
 * [subfinder](https://github.com/subfinder/subfinder)
 * [sublist3r](https://github.com/aboul3la/Sublist3r)
+* [amass](https://github.com/OWASP/Amass)
 * [massdns](https://github.com/blechschmidt/massdns) + [altdns](https://github.com/infosec-au/altdns)
 
 #### Screenshots (optional)

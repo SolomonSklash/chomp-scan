@@ -151,6 +151,14 @@ function install_go() {
 		rm -rf go1.12.linux-amd64.tar.gz;
 }
 
+function install_amass() {
+		echo -e "$GREEN""Installing amass from Github.""$NC";
+		wget https://github.com/OWASP/Amass/releases/download/2.9.3/amass_2.9.3_linux_amd64.zip -O "$TOOLS"/amass.zip;
+		unzip "$TOOLS"/amass.zip;
+		mv amass_2.9.3_linux_amd64 amass;
+		rm amass.zip;
+}
+
 # Create install directory
 mkdir -pv "$HOME"/bounty/tools;
 
