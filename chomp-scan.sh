@@ -842,9 +842,8 @@ function run_amass() {
 		if [[ -f "$WORKING_DIR"/amass-output.txt ]]; then
 				# Cat output into main lists
 				cut -d ' ' -f 1 "$WORKING_DIR"/amass-output.txt >> "$WORKING_DIR"/"$ALL_DOMAIN";
-				# cut -d ' ' -f 1 "$WORKING_DIR"/amass-output.txt >> "$WORKING_DIR"/"$ALL_RESOLVED";
 				cut -d ' ' -f 2 "$WORKING_DIR"/amass-output.txt >> "$WORKING_DIR"/"$ALL_IP";
-				echo -e "$GREEN""[i]$BLUE sublist3r took $DIFF seconds to run.""$NC";
+				echo -e "$GREEN""[i]$BLUE amass took $DIFF seconds to run.""$NC";
 				echo -e "$GREEN""[!]$ORANGE amass found $(wc -l "$WORKING_DIR"/amass-output.txt | cut -d ' ' -f 1) domains.""$NC";
 		fi
 
