@@ -33,6 +33,7 @@ sandbox
 sso
 staff
 staging
+stg
 svn
 test
 testing
