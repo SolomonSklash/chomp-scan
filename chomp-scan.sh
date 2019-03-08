@@ -623,8 +623,14 @@ function check_paths() {
 				exit 1;
 		fi
 		if [[ "$SUBLIST3R" == "" ]] || [[ ! -f "$SUBLIST3R" ]]; then
-				echo -e "$RED""[!] The path or the file specified by the path for sublist3r does not exit.";
-				exit 1;
+				grep 'Kali' /etc/issue 1>/dev/null; 
+				KALI=$?;
+				if [[ "$KALI" == 0 ]]; then
+						SUBLIST3R=$(command -v sublist3r);
+				else
+						echo -e "$RED""[!] The path or the file specified by the path for sublist3r does not exit.";
+						exit 1;
+				fi
 		fi
 		if [[ "$DNSCAN" == "" ]] || [[ ! -f "$DNSCAN" ]]; then
 				echo -e "$RED""[!] The path or the file specified by the path for dnscan does not exit.";
