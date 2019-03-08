@@ -162,6 +162,7 @@ function check_root() {
 				   echo -e "$ORANGE""[!] Please note: Script is not being run as root."
 				   echo -e "$ORANGE""[!] Provided script options include masscan, which must run as root."
 				   echo -e "$ORANGE""[!] The script will hang while waiting for the sudo password."
+				   echo -e "$ORANGE""[!] If you are using Notica notifications, you will be notified when the sudo password is needed."
 				   read -rp "Do you want to exit and [R]e-run as root, [S]kip masscan, or [E]nter sudo password? " CHOICE;
 						   case $CHOICE in
 								   [rR]* )
@@ -998,6 +999,9 @@ function run_masscan() {
 				fi
 
 				START=$(date +%s);
+				if [[ "$NOTICA" != "" ]]; then
+						run_notica_sudo;
+				fi
 				sudo "$MASSCAN" -p1-65535 -iL "$WORKING_DIR"/$ALL_IP --rate=7000 -oL "$WORKING_DIR"/masscan-output.txt;
 				END=$(date +%s);
 				DIFF=$(( END - START ));
@@ -1964,6 +1968,12 @@ function run_notica() {
 		# Call Notica to signal end of script
 		echo -e "$BLUE""Sending Notica notification.""$NC";
 		curl --data "d:Chomp Scan has finished scanning $DOMAIN." "https://notica.us/?$NOTICA";
+}
+
+function run_notica_sudo() {
+		# Call Notica to alert that sudo is needed for masscan
+		echo -e "$ORANGE""Sending Notica notification that sudo is needed.""$NC";
+		curl --data "d:Chomp Scan Notification: Your sudo password is needed for masscan." "https://notica.us/?$NOTICA";
 }
 
 #### Error/path/argument checking before beginning script
