@@ -17,7 +17,6 @@ function install_kali() {
 	 	sudo apt-get install git wget curl nmap masscan whatweb sublist3r gobuster nikto wafw00f chromium openssl libnet-ssleay-perl p7zip-full build-essential python-pip python3-pip -y;
 		install_pip;
 		install_dnscan;
-		install_altdns;
 		install_bfac;
 		install_massdns;
 		install_aquatone;
@@ -32,7 +31,6 @@ function install_debian() {
 		install_pip;
 		sudo pip install wafw00f;
 		install_dnscan;
-		install_altdns;
 		install_bfac;
 		install_massdns;
 		install_aquatone;
@@ -48,7 +46,6 @@ function install_ubuntu() {
 		sudo apt-get install git wget curl nmap masscan nikto whatweb wafw00f chromium-browser python-pip python3-pip p7zip-full -y;
 		install_pip;
 		install_dnscan;
-		install_altdns;
 		install_bfac;
 		install_massdns;
 		install_aquatone;
@@ -69,11 +66,6 @@ function install_pip() {
 function install_dnscan() {
 		echo -e "$GREEN""Installing dnscan from Github.""$NC";
 		git clone https://github.com/rbsec/dnscan.git "$TOOLS"/dnscan;
-}
-
-function install_altdns() {
-		echo -e "$GREEN""Installing altdns from Github.""$NC";
-		git clone https://github.com/infosec-au/altdns.git "$TOOLS"/altdns;
 }
 
 function install_bfac() {
@@ -140,6 +132,8 @@ function install_go_tools() {
 		go get github.com/proabiral/inception;
 		echo -e "$GREEN""Installing waybackurls from Github.""$NC";
 		go get github.com/tomnomnom/waybackurls;
+		echo -e "$GREEN""Installing goaltdns from Github.""$NC";
+		go get github.com/subfinder/goaltdns;
 }
 
 function install_go() {

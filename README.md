@@ -27,7 +27,7 @@ Please see the [Wiki](https://github.com/SolomonSklash/chomp-scan/wiki) for deta
 * [subfinder](https://github.com/subfinder/subfinder)
 * [sublist3r](https://github.com/aboul3la/Sublist3r)
 * [amass](https://github.com/OWASP/Amass)
-* [massdns](https://github.com/blechschmidt/massdns) + [altdns](https://github.com/infosec-au/altdns)
+* [massdns](https://github.com/blechschmidt/massdns) + [goaltdns](https://github.com/subfinder/goaltdns)
 
 #### Screenshots (optional)
 * [aquatone](https://github.com/michenriksen/aquatone)

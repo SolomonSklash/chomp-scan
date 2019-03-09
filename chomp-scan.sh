@@ -43,7 +43,7 @@ ENABLE_DNSCAN=0;
 ENABLE_SUBFINDER=0;
 ENABLE_SUBLIST3R=0;
 ENABLE_AMASS=0;
-ENABLE_ALTDNS=0;
+ENABLE_GOALTDNS=0;
 ENABLE_MASSDNS=1; # Constant
 ENABLE_INCEPTION=0;
 ENABLE_WAYBACKURLS=0;
@@ -74,9 +74,9 @@ MASSCAN=$(command -v masscan);
 NIKTO=$(command -v nikto);
 INCEPTION=$(command -v inception);
 WAYBACKURLS=$(command -v waybackurls);
+GOALTDNS=$(command -v goaltdns);
 SUBLIST3R=~/bounty/tools/Sublist3r/sublist3r.py;
 DNSCAN=~/bounty/tools/dnscan/dnscan.py;
-ALTDNS=~/bounty/tools/altdns/altdns.py;
 MASSDNS_BIN=~/bounty/tools/massdns/bin/massdns;
 MASSDNS_RESOLVERS=resolvers.txt;
 AQUATONE=~/bounty/tools/aquatone/aquatone;
@@ -254,8 +254,8 @@ function parse_config() {
 				ENABLE_SUBLIST3R=1;
 		fi
 
-		if [[ $(grep '^ENABLE_ALTDNS' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
-				ENABLE_ALTDNS=1;
+		if [[ $(grep '^ENABLE_GOALTDNS' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
+				ENABLE_GOALTDNS=1;
 		fi
 
 		if [[ $(grep '^ENABLE_AMASS' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
@@ -628,6 +628,10 @@ function check_paths() {
 				echo -e "$RED""[!] The path or the file specified by the path for waybackurls does not exit.";
 				exit 1;
 		fi
+		if [[ "$GOALTDNS" == "" ]] || [[ ! -f "$GOALTDNS" ]]; then
+				echo -e "$RED""[!] The path or the file specified by the path for goaltdns does not exit.";
+				exit 1;
+		fi
 		if [[ "$SUBLIST3R" == "" ]] || [[ ! -f "$SUBLIST3R" ]]; then
 				grep 'Kali' /etc/issue 1>/dev/null; 
 				KALI=$?;
@@ -640,10 +644,6 @@ function check_paths() {
 		fi
 		if [[ "$DNSCAN" == "" ]] || [[ ! -f "$DNSCAN" ]]; then
 				echo -e "$RED""[!] The path or the file specified by the path for dnscan does not exit.";
-				exit 1;
-		fi
-		if [[ "$ALTDNS" == "" ]] || [[ ! -f "$ALTDNS" ]]; then
-				echo -e "$RED""[!] The path or the file specified by the path for altdns does not exit.";
 				exit 1;
 		fi
 		if [[ "$MASSDNS_BIN" == "" ]] || [[ ! -f "$MASSDNS_BIN" ]]; then
@@ -851,25 +851,25 @@ function run_amass() {
 		sleep 1;
 }
 
-function run_altdns() {
-		# Run altdns with found subdomains combined with altdns-wordlist.txt
+function run_goaltdns() {
+		# Run goaltdns with found subdomains combined with altdns-wordlist.txt
 
-		echo -e "$GREEN""[i]$BLUE Running altdns against all $(wc -l "$WORKING_DIR"/$ALL_DOMAIN | cut -d ' ' -f 1) unique discovered subdomains to generate domains for masscan to resolve.""$NC";
-		echo -e "$GREEN""[i]$ORANGE Command: altdns.py -i $WORKING_DIR/$ALL_DOMAIN -w wordlists/altdns-words.txt -o $WORKING_DIR/altdns-output.txt -t 20.""$NC";
+		echo -e "$GREEN""[i]$BLUE Running goaltdns against all $(wc -l "$WORKING_DIR"/$ALL_DOMAIN | cut -d ' ' -f 1) unique discovered subdomains to generate domains for masscan to resolve.""$NC";
+		echo -e "$GREEN""[i]$ORANGE Command: goaltdns -l $WORKING_DIR/$ALL_DOMAIN -w wordlists/altdns-words.txt -o $WORKING_DIR/goaltdns-output.txt.""$NC";
 		START=$(date +%s);
-		"$ALTDNS" -i "$WORKING_DIR"/$ALL_DOMAIN -w wordlists/altdns-words.txt -o "$WORKING_DIR"/altdns-output.txt -t 20
+		"$GOALTDNS" -l "$WORKING_DIR"/$ALL_DOMAIN -w wordlists/altdns-words.txt -o "$WORKING_DIR"/goaltdns-output.txt;
 		END=$(date +%s);
 		DIFF=$(( END - START ));
 
-		echo -e "$GREEN""[i]$BLUE Altdns took $DIFF seconds to run.""$NC";
-		echo -e "$GREEN""[i]$BLUE Altdns generated $(wc -l "$WORKING_DIR"/altdns-output.txt | cut -d ' ' -f 1) subdomains.""$NC";
+		echo -e "$GREEN""[i]$BLUE Goaltdns took $DIFF seconds to run.""$NC";
+		echo -e "$GREEN""[i]$BLUE Goaltdns generated $(wc -l "$WORKING_DIR"/goaltdns-output.txt | cut -d ' ' -f 1) subdomains.""$NC";
 		sleep 1;
 }
 
 function run_massdns() {
 		# Call with domain as $1, wordlist as $2, and alone as $3
 
-		# Check if being called without altdns
+		# Check if being called without goaltdns
 		if [[ "$3" == "alone" ]]; then
 				# Create wordlist with appended domain for massdns
 				sed "/.*/ s/$/\.$1/" $2 > "$WORKING_DIR"/massdns-appended.txt;
@@ -881,16 +881,16 @@ function run_massdns() {
 				END=$(date +%s);
 				DIFF=$(( END - START ));
 		else
-				# Run altdns to get altered domains to resolve along with other discovered domains
-				run_altdns;
+				# Run goaltdns to get altered domains to resolve along with other discovered domains
+				run_goaltdns;
 
 				# Create wordlist with appended domain for massdns
 				sed "/.*/ s/$/\.$1/" $2 > "$WORKING_DIR"/massdns-appended.txt;
 
-				echo -e "$GREEN""[i]$BLUE Scanning $(cat "$WORKING_DIR"/$ALL_DOMAIN "$WORKING_DIR"/$ALL_IP "$WORKING_DIR"/altdns-output.txt "$WORKING_DIR"/massdns-appended.txt | sort | uniq | wc -l) current unique $1 domains and IPs, altdns generated domains, and domain-appended wordlist with massdns (in quiet mode).""$NC";
+				echo -e "$GREEN""[i]$BLUE Scanning $(cat "$WORKING_DIR"/$ALL_DOMAIN "$WORKING_DIR"/$ALL_IP "$WORKING_DIR"/goaltdns-output.txt "$WORKING_DIR"/massdns-appended.txt | sort | uniq | wc -l) current unique $1 domains and IPs, goaltdns generated domains, and domain-appended wordlist with massdns (in quiet mode).""$NC";
 				echo -e "$GREEN""[i]$ORANGE Command: cat (all found domains and IPs) | $MASSDNS_BIN -r $MASSDNS_RESOLVERS -q -t A -o S -w $WORKING_DIR/massdns-result.txt.""$NC";
 				START=$(date +%s);
-				cat "$WORKING_DIR"/$ALL_DOMAIN "$WORKING_DIR"/$ALL_IP "$WORKING_DIR"/altdns-output.txt "$WORKING_DIR"/massdns-appended.txt | sort | uniq | $MASSDNS_BIN -r $MASSDNS_RESOLVERS -q -t A -o S -w "$WORKING_DIR"/massdns-result.txt;
+				cat "$WORKING_DIR"/$ALL_DOMAIN "$WORKING_DIR"/$ALL_IP "$WORKING_DIR"/goaltdns-output.txt "$WORKING_DIR"/massdns-appended.txt | sort | uniq | $MASSDNS_BIN -r $MASSDNS_RESOLVERS -q -t A -o S -w "$WORKING_DIR"/massdns-result.txt;
 				END=$(date +%s);
 				DIFF=$(( END - START ));
 		fi
@@ -923,7 +923,7 @@ function run_massdns() {
 function run_subdomain_brute() {
 		# Ask user for wordlist size
 		while true; do
-		  echo -e "$ORANGE""[i] Beginning subdomain enumeration. This will use dnscan, subfinder, sublist3r, amass, and massdns + altdns.";
+		  echo -e "$ORANGE""[i] Beginning subdomain enumeration. This will use dnscan, subfinder, sublist3r, amass, and massdns + goaltdns.";
 		  echo -e "$GREEN""[?] What size wordlist would you like to use for subdomain bruteforcing?";
 		  echo -e "$GREEN""[i] Sizes are [S]mall (22k domains), [L]arge (102k domains), and [H]uge (199k domains).";
 		  echo -e "$ORANGE";
@@ -2097,9 +2097,9 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 				fi
 		fi
 
-		# Run masscan and/or altdns
+		# Run masscan and/or goaltdns
 		if [[ "$ENABLE_MASSDNS" -eq 1 ]]; then # Masscan will always run in order to get resolved domains
-				if [[ "$ENABLE_ALTDNS" -eq 1 ]]; then
+				if [[ "$ENABLE_GOALTDNS" -eq 1 ]]; then
 						# Check if $SUBDOMAIN_WORDLIST is set, else use short as default
 						if [[ "$SUBDOMAIN_WORDLIST" != "" ]]; then
 								run_massdns "$DOMAIN" "$SUBDOMAIN_WORDLIST";
@@ -2431,7 +2431,7 @@ fi
 
 # Always run subdomain bruteforce tools
 if [[ "$SUBDOMAIN_BRUTE" == 1 ]]; then
-		echo -e "$BLUE""[i] Beginning subdomain enumeration dnscan, subfinder, sublist3r, amass, and massdns+altdns.""$NC";
+		echo -e "$BLUE""[i] Beginning subdomain enumeration dnscan, subfinder, sublist3r, amass, and massdns+goaltdns.""$NC";
 		sleep 0.5;
 
 		# Check if $SUBDOMAIN_WORDLIST is set, else use short as default
