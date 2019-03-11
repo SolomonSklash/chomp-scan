@@ -38,6 +38,7 @@ SKIP_MASSCAN=0;
 NOTICA="";
 CONFIG_FILE="";
 TOOL_PATH="$HOME/bounty/tools";
+TOOL_PATH_SET=0;
 
 # Config file variables
 ENABLE_DNSCAN=0;
@@ -62,31 +63,38 @@ ENABLE_MASSCAN=0;
 ENABLE_NMAP=0;
 ENABLE_SCREENSHOTS=0;
 
-# Tool paths
-SUBFINDER=$(command -v subfinder);
-SUBJACK=$(command -v subjack);
-FFUF=$(command -v ffuf);
-WHATWEB=$(command -v whatweb);
-WAFW00F=$(command -v wafw00f);
-GOBUSTER=$(command -v gobuster);
-CHROMIUM=$(command -v chromium);
-NMAP=$(command -v nmap);
-MASSCAN=$(command -v masscan);
-NIKTO=$(command -v nikto);
-INCEPTION=$(command -v inception);
-WAYBACKURLS=$(command -v waybackurls);
-GOALTDNS=$(command -v goaltdns);
-SUBLIST3R=$TOOL_PATH/Sublist3r/sublist3r.py;
-DNSCAN=$TOOL_PATH/dnscan/dnscan.py;
-MASSDNS_BIN=$TOOL_PATH/massdns/bin/massdns;
-MASSDNS_RESOLVERS=resolvers.txt;
-AQUATONE=$TOOL_PATH/aquatone/aquatone;
-BFAC=$TOOL_PATH/bfac/bfac;
-DIRSEARCH=$TOOL_PATH/dirsearch/dirsearch.py;
-SNALLY=$TOOL_PATH/snallygaster/snallygaster;
-CORSTEST=$TOOL_PATH/CORStest/corstest.py;
-S3SCANNER=$TOOL_PATH/S3Scanner/s3scanner.py;
-AMASS=$TOOL_PATH/amass/amass;
+function set_tool_paths() {
+		# If tool paths have not been set, set them
+		if [[ "$TOOL_PATH_SET" -eq 0 ]]; then
+				TOOL_PATH_SET=1;
+				SUBFINDER=$(command -v subfinder);
+				SUBJACK=$(command -v subjack);
+				FFUF=$(command -v ffuf);
+				WHATWEB=$(command -v whatweb);
+				WAFW00F=$(command -v wafw00f);
+				GOBUSTER=$(command -v gobuster);
+				CHROMIUM=$(command -v chromium);
+				NMAP=$(command -v nmap);
+				MASSCAN=$(command -v masscan);
+				NIKTO=$(command -v nikto);
+				INCEPTION=$(command -v inception);
+				WAYBACKURLS=$(command -v waybackurls);
+				GOALTDNS=$(command -v goaltdns);
+				SUBLIST3R=$TOOL_PATH/Sublist3r/sublist3r.py;
+				DNSCAN=$TOOL_PATH/dnscan/dnscan.py;
+				MASSDNS_BIN=$TOOL_PATH/massdns/bin/massdns;
+				MASSDNS_RESOLVERS=resolvers.txt;
+				AQUATONE=$TOOL_PATH/aquatone/aquatone;
+				BFAC=$TOOL_PATH/bfac/bfac;
+				DIRSEARCH=$TOOL_PATH/dirsearch/dirsearch.py;
+				SNALLY=$TOOL_PATH/snallygaster/snallygaster;
+				CORSTEST=$TOOL_PATH/CORStest/corstest.py;
+				S3SCANNER=$TOOL_PATH/S3Scanner/s3scanner.py;
+				AMASS=$TOOL_PATH/amass/amass;
+		else
+				return;
+		fi
+}
 
 # Other variables
 ALL_IP=all_discovered_ips.txt;
@@ -237,6 +245,17 @@ function parse_config() {
 						INTERESTING="$INTERESTING_FILE";
 				else
 						echo -e "$RED""[!] Interesting file $INTERESTING_FILE does not exist or is not writable. Please check the configuration file.""$NC";
+						exit 1;
+				fi
+		fi
+
+		CONFIG_TOOL_PATH=$(grep '^TOOL_PATH' "$CONFIG_FILE" | cut -d '=' -f 2);
+		if [[ "$CONFIG_TOOL_PATH" != "" ]]; then
+				if [[ -w "$CONFIG_TOOL_PATH" ]]; then
+						TOOL_PATH="$CONFIG_TOOL_PATH";
+						set_tool_paths;
+				else
+						echo -e "$RED""[!] Custom tool path $CONFIG_TOOL_PATH does not exist or is not writable. Please check the configuration file.""$NC";
 						exit 1;
 				fi
 		fi
@@ -572,6 +591,9 @@ done
 shift $((OPTIND -1));
 
 function check_paths() {
+		# Check if paths haven't been set and set them
+		set_tool_paths;
+
 		# Check for Debian/Ubuntu and set proper paths
 		grep 'Ubuntu' /etc/issue 1>/dev/null;
 		UBUNTU="$?";
