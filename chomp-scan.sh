@@ -37,6 +37,7 @@ INTERESTING=interesting.txt;
 SKIP_MASSCAN=0;
 NOTICA="";
 CONFIG_FILE="";
+TOOL_PATH="$HOME/bounty/tools";
 
 # Config file variables
 ENABLE_DNSCAN=0;
@@ -75,17 +76,17 @@ NIKTO=$(command -v nikto);
 INCEPTION=$(command -v inception);
 WAYBACKURLS=$(command -v waybackurls);
 GOALTDNS=$(command -v goaltdns);
-SUBLIST3R=~/bounty/tools/Sublist3r/sublist3r.py;
-DNSCAN=~/bounty/tools/dnscan/dnscan.py;
-MASSDNS_BIN=~/bounty/tools/massdns/bin/massdns;
+SUBLIST3R="$TOOL_PATH"/Sublist3r/sublist3r.py;
+DNSCAN=$TOOL_PATH/dnscan/dnscan.py;
+MASSDNS_BIN=$TOOL_PATH/massdns/bin/massdns;
 MASSDNS_RESOLVERS=resolvers.txt;
-AQUATONE=~/bounty/tools/aquatone/aquatone;
-BFAC=~/bounty/tools/bfac/bfac;
-DIRSEARCH=~/bounty/tools/dirsearch/dirsearch.py;
-SNALLY=~/bounty/tools/snallygaster/snallygaster;
-CORSTEST=~/bounty/tools/CORStest/corstest.py;
-S3SCANNER=~/bounty/tools/S3Scanner/s3scanner.py;
-AMASS=~/bounty/tools/amass/amass;
+AQUATONE=$TOOL_PATH/aquatone/aquatone;
+BFAC=$TOOL_PATH/bfac/bfac;
+DIRSEARCH=$TOOL_PATH/dirsearch/dirsearch.py;
+SNALLY=$TOOL_PATH/snallygaster/snallygaster;
+CORSTEST=$TOOL_PATH/CORStest/corstest.py;
+S3SCANNER=$TOOL_PATH/S3Scanner/s3scanner.py;
+AMASS=$TOOL_PATH/amass/amass;
 
 # Other variables
 ALL_IP=all_discovered_ips.txt;
@@ -580,7 +581,7 @@ function check_paths() {
 		grep 'Debian' /etc/issue 1>/dev/null;
 		DEBIAN="$?";
 		if [[ "$DEBIAN" == 0 ]]; then 
-				NIKTO="$HOME/bounty/tools/nikto/program/nikto.pl";
+				NIKTO="$HOME/"$TOOL_PATH"/nikto/program/nikto.pl";
 		fi
 
 		# Check that all paths are set
