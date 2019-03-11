@@ -60,9 +60,13 @@ Chomp Scan now features a configuration file option that provides more granular 
 A variety of wordlists are used, both for subdomain bruteforcing and content discovery. Daniel Miessler's [Seclists](https://github.com/danielmiessler/SecLists) are used heavily, as well as Jason Haddix's [lists](https://gist.github.com/jhaddix). Different wordlists can be used by passing in a custom wordlist or using one of the built-in named argument lists. See the [Wordlist](https://github.com/SolomonSklash/chomp-scan/wiki/Wordlists) wiki page for more details.
 
 ### Installation
-Clone this repo and run the included `installer.sh` script. Make sure to run `source ~/.profile` in your terminal after running the installer in order to add the Go binary path to your $PATH variable. Then run Chomp Scan. If you are using zsh, fish, or some other shell, make sure that `~/go/bin` is in your path. For more details, see the [Installation](https://github.com/SolomonSklash/chomp-scan/wiki/Installation) wiki page.
+Clone this repo and run the included `installer.sh` script, optionally including a custom file path to install necessary tools to. Make sure to run `source ~/.profile` in your terminal after running the installer in order to add the Go binary path to your $PATH variable. Then run Chomp Scan. If you are using zsh, fish, or some other shell, make sure that `~/go/bin` is in your path. For more details, see the [Installation](https://github.com/SolomonSklash/chomp-scan/wiki/Installation) wiki page.
+
+TLDR: `root@kali:~/chomp-scan# ./installer.sh [/some/optional/install/path]`
 
 ### Usage
+For complete usage information, see the [Usage](https://github.com/SolomonSklash/chomp-scan/wiki/Usage) page of the wiki.
+
 Chomp Scan always runs subdomain enumeration, thus a domain is required via the `-u` flag. The domain should not contain a scheme, e.g. http:// or https://. By default, HTTPS is always used. This can be changed to HTTP by passing the `-H` flag. A wordlist is optional, and if one is not provided the built-in short list (20k words) is used.
 
 Other scan phases are optional. Content discovery can take an optional wordlist, otherwise it defaults to the built-in short (22k words) list.
@@ -82,6 +86,8 @@ Usage of Chomp Scan:
                  (optional) Enable content discovery phase. The wordlist for this option defaults to short if not provided.
         -C wordlist
                  (optional) The wordlist to use for content discovery. Five built-in lists, small, medium, large, xl, and xxl can be used, as well as the path to a custom wordlist. The default is small.
+        -P file-path
+                 (optional) Set a custom directory for the location of tools. The path must exist and the directory must contain all needed tools.
         -s
                  (optional) Enable screenshots using Aquatone.
         -i

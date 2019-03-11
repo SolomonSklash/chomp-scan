@@ -17,6 +17,8 @@ NOTICA=
 BLACKLIST=
 # Set custom interesting word list, values are a path to a file or blank
 INTERESTING=
+# Set custom path to tools. This should be a fully qualified path to the directory that contains the downloaded tools from Github
+TOOL_PATH=
 
 
 [subdomain enumeration]

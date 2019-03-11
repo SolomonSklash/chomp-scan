@@ -37,6 +37,8 @@ INTERESTING=interesting.txt;
 SKIP_MASSCAN=0;
 NOTICA="";
 CONFIG_FILE="";
+TOOL_PATH="$HOME/bounty/tools";
+TOOL_PATH_SET=0;
 
 # Config file variables
 ENABLE_DNSCAN=0;
@@ -61,36 +63,43 @@ ENABLE_MASSCAN=0;
 ENABLE_NMAP=0;
 ENABLE_SCREENSHOTS=0;
 
-# Tool paths
-SUBFINDER=$(command -v subfinder);
-SUBJACK=$(command -v subjack);
-FFUF=$(command -v ffuf);
-WHATWEB=$(command -v whatweb);
-WAFW00F=$(command -v wafw00f);
-GOBUSTER=$(command -v gobuster);
-CHROMIUM=$(command -v chromium);
-NMAP=$(command -v nmap);
-MASSCAN=$(command -v masscan);
-NIKTO=$(command -v nikto);
-INCEPTION=$(command -v inception);
-WAYBACKURLS=$(command -v waybackurls);
-GOALTDNS=$(command -v goaltdns);
-SUBLIST3R=~/bounty/tools/Sublist3r/sublist3r.py;
-DNSCAN=~/bounty/tools/dnscan/dnscan.py;
-MASSDNS_BIN=~/bounty/tools/massdns/bin/massdns;
-MASSDNS_RESOLVERS=resolvers.txt;
-AQUATONE=~/bounty/tools/aquatone/aquatone;
-BFAC=~/bounty/tools/bfac/bfac;
-DIRSEARCH=~/bounty/tools/dirsearch/dirsearch.py;
-SNALLY=~/bounty/tools/snallygaster/snallygaster;
-CORSTEST=~/bounty/tools/CORStest/corstest.py;
-S3SCANNER=~/bounty/tools/S3Scanner/s3scanner.py;
-AMASS=~/bounty/tools/amass/amass;
-
 # Other variables
 ALL_IP=all_discovered_ips.txt;
 ALL_DOMAIN=all_discovered_domains.txt;
 ALL_RESOLVED=all_resolved_domains.txt;
+
+function set_tool_paths() {
+		# If tool paths have not been set, set them
+		if [[ "$TOOL_PATH_SET" -eq 0 ]]; then
+				TOOL_PATH_SET=1;
+				SUBFINDER=$(command -v subfinder);
+				SUBJACK=$(command -v subjack);
+				FFUF=$(command -v ffuf);
+				WHATWEB=$(command -v whatweb);
+				WAFW00F=$(command -v wafw00f);
+				GOBUSTER=$(command -v gobuster);
+				CHROMIUM=$(command -v chromium);
+				NMAP=$(command -v nmap);
+				MASSCAN=$(command -v masscan);
+				NIKTO=$(command -v nikto);
+				INCEPTION=$(command -v inception);
+				WAYBACKURLS=$(command -v waybackurls);
+				GOALTDNS=$(command -v goaltdns);
+				SUBLIST3R=$TOOL_PATH/Sublist3r/sublist3r.py;
+				DNSCAN=$TOOL_PATH/dnscan/dnscan.py;
+				MASSDNS_BIN=$TOOL_PATH/massdns/bin/massdns;
+				MASSDNS_RESOLVERS=resolvers.txt;
+				AQUATONE=$TOOL_PATH/aquatone/aquatone;
+				BFAC=$TOOL_PATH/bfac/bfac;
+				DIRSEARCH=$TOOL_PATH/dirsearch/dirsearch.py;
+				SNALLY=$TOOL_PATH/snallygaster/snallygaster;
+				CORSTEST=$TOOL_PATH/CORStest/corstest.py;
+				S3SCANNER=$TOOL_PATH/S3Scanner/s3scanner.py;
+				AMASS=$TOOL_PATH/amass/amass;
+		else
+				return;
+		fi
+}
 
 function banner() {
 		BANNER='
@@ -123,6 +132,7 @@ function usage() {
 		echo -e "$BLUE""\\t-d wordlist\\n\\t\\t$ORANGE (optional) The wordlist to use for subdomain enumeration. Three built-in lists, short, long, and huge can be used, as well as the path to a custom wordlist. The default is short.""$NC";
 		echo -e "$BLUE""\\t-c \\n\\t\\t$ORANGE (optional) Enable content discovery phase. The wordlist for this option defaults to short if not provided.""$NC";
 		echo -e "$BLUE""\\t-C wordlist \\n\\t\\t$ORANGE (optional) The wordlist to use for content discovery. Five built-in lists, small, medium, large, xl, and xxl can be used, as well as the path to a custom wordlist. The default is small.""$NC";
+		echo -e "$BLUE""\\t-P file-path \\n\\t\\t$ORANGE (optional) Set a custom directory for the location of tools. The path must exist and the directory must contain all needed tools.""$NC";
 		echo -e "$BLUE""\\t-s \\n\\t\\t$ORANGE (optional) Enable screenshots using Aquatone.""$NC";
 		echo -e "$BLUE""\\t-i \\n\\t\\t$ORANGE (optional) Enable information gathering phase, using subjack, CORStest, S3Scanner, bfac, whatweb, wafw00f, and nikto.""$NC";
 		echo -e "$BLUE""\\t-p \\n\\t\\t$ORANGE (optional) Enable portscanning phase, using masscan (run as root) and nmap.""$NC";
@@ -236,6 +246,17 @@ function parse_config() {
 						INTERESTING="$INTERESTING_FILE";
 				else
 						echo -e "$RED""[!] Interesting file $INTERESTING_FILE does not exist or is not writable. Please check the configuration file.""$NC";
+						exit 1;
+				fi
+		fi
+
+		CONFIG_TOOL_PATH=$(grep '^TOOL_PATH' "$CONFIG_FILE" | cut -d '=' -f 2);
+		if [[ "$CONFIG_TOOL_PATH" != "" ]]; then
+				if [[ -w "$CONFIG_TOOL_PATH" ]]; then
+						TOOL_PATH="$CONFIG_TOOL_PATH";
+						set_tool_paths;
+				else
+						echo -e "$RED""[!] Custom tool path $CONFIG_TOOL_PATH does not exist or is not writable. Please check the configuration file.""$NC";
 						exit 1;
 				fi
 		fi
@@ -393,7 +414,7 @@ function parse_config() {
 }
 
 # Handle CLI arguments
-while getopts ":hu:d:L:C:sicb:IaADX:po:Hn:" opt; do
+while getopts ":hu:d:L:C:sicb:IaADX:po:Hn:P:" opt; do
 		case ${opt} in
 				h ) # -h help
 						usage;
@@ -536,6 +557,18 @@ while getopts ":hu:d:L:C:sicb:IaADX:po:Hn:" opt; do
 				p ) # -p enable port scanning
 						PORTSCANNING=1;
 						;;
+				P ) # -P custom tool path
+						exists "$OPTARG";
+						RESULT=$?;
+						if [[ "$RESULT" -eq 1 ]]; then
+								TOOL_PATH="$OPTARG";
+								set_tool_paths;
+						else
+								echo -e "$RED""[!] Provided tool path $OPTARG is empty or doesn't exist.""$NC";
+								usage;
+								exit 1;
+						fi
+						;;
 				o ) # -o output directory
 						if [[ -w "$OPTARG" ]]; then
 								WORKING_DIR="$OPTARG";
@@ -571,6 +604,9 @@ done
 shift $((OPTIND -1));
 
 function check_paths() {
+		# Check if paths haven't been set and set them
+		set_tool_paths;
+
 		# Check for Debian/Ubuntu and set proper paths
 		grep 'Ubuntu' /etc/issue 1>/dev/null;
 		UBUNTU="$?";
@@ -580,7 +616,7 @@ function check_paths() {
 		grep 'Debian' /etc/issue 1>/dev/null;
 		DEBIAN="$?";
 		if [[ "$DEBIAN" == 0 ]]; then 
-				NIKTO="$HOME/bounty/tools/nikto/program/nikto.pl";
+				NIKTO="$HOME/$TOOL_PATH/nikto/program/nikto.pl";
 		fi
 
 		# Check that all paths are set
