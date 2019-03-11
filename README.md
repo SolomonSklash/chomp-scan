@@ -82,6 +82,8 @@ Usage of Chomp Scan:
                  (optional) Enable content discovery phase. The wordlist for this option defaults to short if not provided.
         -C wordlist
                  (optional) The wordlist to use for content discovery. Five built-in lists, small, medium, large, xl, and xxl can be used, as well as the path to a custom wordlist. The default is small.
+        -P file-path
+                 (optional) The wordlist to use for content discovery. Five built-in lists, small, medium, large, xl, and xxl can be used, as well as the path to a custom wordlist. The default is small.
         -s
                  (optional) Enable screenshots using Aquatone.
         -i
