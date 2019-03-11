@@ -151,7 +151,7 @@ function install_go() {
 function install_amass() {
 		echo -e "$GREEN""Installing amass from Github.""$NC";
 		wget https://github.com/OWASP/Amass/releases/download/2.9.4/amass_2.9.4_linux_amd64.zip -O "$TOOLS"/amass.zip;
-		unzip "$TOOLS"/amass.zip;
+		unzip "$TOOLS"/amass.zip -d "$TOOLS";
 		mv "$TOOLS"/amass_2.9.4_linux_amd64 "$TOOLS"/amass;
 		rm "$TOOLS"/amass.zip;
 }
