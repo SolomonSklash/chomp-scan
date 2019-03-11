@@ -153,6 +153,19 @@ function install_amass() {
 		rm amass.zip;
 }
 
+# Check for custom path
+CUSTOM_PATH=$1;
+if [[ "$CUSTOM_PATH" != "" ]]; then
+		if [[ -e "$1" ]]; then
+				TOOLS="$CUSTOM_PATH";
+		else
+				echo -e "$RED""The path provided does not exist or can't be opened""$NC";
+				exit 1;
+		fi
+fi
+
+
+
 # Create install directory
 mkdir -pv "$HOME"/bounty/tools;
 
