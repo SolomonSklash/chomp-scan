@@ -65,6 +65,8 @@ Clone this repo and run the included `installer.sh` script, optionally including
 TLDR: `root@kali:~/chomp-scan# ./installer.sh [/some/optional/install/path]`
 
 ### Usage
+For complete usage information, see the [Usage](https://github.com/SolomonSklash/chomp-scan/wiki/Usage) page of the wiki.
+
 Chomp Scan always runs subdomain enumeration, thus a domain is required via the `-u` flag. The domain should not contain a scheme, e.g. http:// or https://. By default, HTTPS is always used. This can be changed to HTTP by passing the `-H` flag. A wordlist is optional, and if one is not provided the built-in short list (20k words) is used.
 
 Other scan phases are optional. Content discovery can take an optional wordlist, otherwise it defaults to the built-in short (22k words) list.
