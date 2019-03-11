@@ -413,7 +413,7 @@ function parse_config() {
 }
 
 # Handle CLI arguments
-while getopts ":hu:d:L:C:sicb:IaADX:po:Hn:" opt; do
+while getopts ":hu:d:L:C:sicb:IaADX:po:Hn:P:" opt; do
 		case ${opt} in
 				h ) # -h help
 						usage;
@@ -555,6 +555,18 @@ while getopts ":hu:d:L:C:sicb:IaADX:po:Hn:" opt; do
 						;;
 				p ) # -p enable port scanning
 						PORTSCANNING=1;
+						;;
+				P ) # -P custom tool path
+						exists "$OPTARG";
+						RESULT=$?;
+						if [[ "$RESULT" -eq 1 ]]; then
+								TOOL_PATH="$OPTARG";
+								set_tool_paths;
+						else
+								echo -e "$RED""[!] Provided tool path $OPTARG is empty or doesn't exist.""$NC";
+								usage;
+								exit 1;
+						fi
 						;;
 				o ) # -o output directory
 						if [[ -w "$OPTARG" ]]; then
