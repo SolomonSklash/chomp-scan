@@ -63,6 +63,11 @@ ENABLE_MASSCAN=0;
 ENABLE_NMAP=0;
 ENABLE_SCREENSHOTS=0;
 
+# Other variables
+ALL_IP=all_discovered_ips.txt;
+ALL_DOMAIN=all_discovered_domains.txt;
+ALL_RESOLVED=all_resolved_domains.txt;
+
 function set_tool_paths() {
 		# If tool paths have not been set, set them
 		if [[ "$TOOL_PATH_SET" -eq 0 ]]; then
@@ -95,11 +100,6 @@ function set_tool_paths() {
 				return;
 		fi
 }
-
-# Other variables
-ALL_IP=all_discovered_ips.txt;
-ALL_DOMAIN=all_discovered_domains.txt;
-ALL_RESOLVED=all_resolved_domains.txt;
 
 function banner() {
 		BANNER='
