@@ -1080,14 +1080,13 @@ function run_masscan() {
 				if [[ "$NOTICA" != "" ]]; then
 						run_notica_sudo;
 				fi
-				sudo "$MASSCAN" -p1-65535 -iL "$WORKING_DIR"/$ALL_IP --rate=7000 -oL "$WORKING_DIR"/masscan-output.txt;
+				sudo "$MASSCAN" -p1-65535 -iL "$WORKING_DIR"/$ALL_IP --rate=7000 -oL "$WORKING_DIR"/root-masscan-output.txt;
 				END=$(date +%s);
 				DIFF=$(( END - START ));
 				echo -e "$GREEN""[i]$BLUE Masscan took $DIFF seconds to run.""$NC";
 
 				# Trim # from first and last lines of output
-				grep -v '#' "$WORKING_DIR"/masscan-output.txt > "$WORKING_DIR"/temp;
-				sudo mv "$WORKING_DIR"/temp "$WORKING_DIR"/masscan-output.txt;
+				grep -v '#' "$WORKING_DIR"/root-masscan-output.txt > "$WORKING_DIR"/masscan-output.txt;
 			fi
 }
 
