@@ -116,9 +116,9 @@ Usage of Chomp Scan:
                  (optional) Use all unique discovered domains for scans, rather than interesting domains. This cannot be used with -A.
         -A
                  (optional, default) Use only interesting discovered domains for scans, rather than all discovered domains. This cannot be used with -a.
-		-H
+	-H
                  (optional) Use HTTP for connecting to sites instead of HTTPS.
-		-r
+	-r
                  (optional) Enable creation of Burp scope JSON file with rescope.
         -h
                  (optional) Display this help page.
