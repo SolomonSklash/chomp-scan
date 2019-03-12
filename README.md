@@ -10,11 +10,13 @@ A scripted pipeline of tools to simplify the bug bounty/penetration test reconna
 ### Scope
 Chomp Scan is a Bash script that chains together the fastest and most effective tools (in my opinion/experience) for doing the long and sometimes tedious process of recon. No more looking for word lists and trying to remember when you started a scan and where the output is. Chomp Scan can focus on a list of potentially interesting subdomains, letting you save time and focus on high-value targets. It can even notify you via Notica when it's done running!
 
-**New** Chomp Scan now integrates [Notica](https://notica.us), which allows you to receive a notification when the script finishes. Simply visit Notica and get a unique URL parameter, e.g. notica.us/?xxxxxxxx. Pass the parameter to Chomp Scan via the `-n` flag, keep the Notica page open in a browser tab on your computer or phone, and you will receive a message when Chomp Scan has finished running. No more constantly checking/forgetting to check those long running scans.
+Chomp Scan now integrates [Notica](https://notica.us), which allows you to receive a notification when the script finishes. Simply visit Notica and get a unique URL parameter, e.g. notica.us/?xxxxxxxx. Pass the parameter to Chomp Scan via the `-n` flag, keep the Notica page open in a browser tab on your computer or phone, and you will receive a message when Chomp Scan has finished running. No more constantly checking/forgetting to check those long running scans.
 
 A list of interesting words is included, such as *dev, test, uat, staging,* etc., and domains containing those terms are flagged. This way you can focus on the interesting domains first if you wish. This list can be customized to suit your own needs, or replaced with a different file via the `-X` flag.
 
 Chomp Scan runs in multiple modes. A new [Configuration File](https://github.com/SolomonSklash/chomp-scan/wiki/Configuration-File) is the recommended way to run scans, as it allows the most granular control of tools and settings. A standard CLI mode is included, which functions the same as any other CLI tool. A guided interactive mode is available, as well as a non-interactive mode, useful if you do not want to lookup parameters or worry about setting multiple arguments.
+
+**New** Chomp Scan now includes [rescope](https://github.com/root4loot/rescope). Rescope will parse all resolved domains discovered by Chomp Scan and generate a JSON scope file that can be imported into Burp Suite. This option can be enabled by setting the `ENABLE_RESCOPE` variable in the configuration file or by passing the `-r` flag via the command line.
 
 Please see the [Wiki](https://github.com/SolomonSklash/chomp-scan/wiki) for detailed documentation.
 
@@ -116,6 +118,8 @@ Usage of Chomp Scan:
                  (optional, default) Use only interesting discovered domains for scans, rather than all discovered domains. This cannot be used with -a.
 		-H
                  (optional) Use HTTP for connecting to sites instead of HTTPS.
+		-r
+                 (optional) Enable creation of Burp scope JSON file with rescope.
         -h
                  (optional) Display this help page.
 ```

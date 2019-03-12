@@ -137,6 +137,8 @@ function install_go_tools() {
 		go get github.com/tomnomnom/waybackurls;
 		echo -e "$GREEN""Installing goaltdns from Github.""$NC";
 		go get github.com/subfinder/goaltdns;
+		echo -e "$GREEN""Installing rescope from Github.""$NC";
+		go get github.com/root4loot/rescope;
 }
 
 function install_go() {

@@ -19,6 +19,8 @@ BLACKLIST=
 INTERESTING=
 # Set custom path to tools. This should be a fully qualified path to the directory that contains the downloaded tools from Github
 TOOL_PATH=
+# Enable parsing resolved domains into a Burp-formatted JSON file
+ENABLE_RESCOPE=YES
 
 
 [subdomain enumeration]

@@ -62,6 +62,7 @@ ENABLE_NIKTO=0;
 ENABLE_MASSCAN=0;
 ENABLE_NMAP=0;
 ENABLE_SCREENSHOTS=0;
+ENABLE_RESCOPE=0;
 
 # Other variables
 ALL_IP=all_discovered_ips.txt;
@@ -85,6 +86,7 @@ function set_tool_paths() {
 				INCEPTION=$(command -v inception);
 				WAYBACKURLS=$(command -v waybackurls);
 				GOALTDNS=$(command -v goaltdns);
+				RESCOPE=$(command -v rescope);
 				SUBLIST3R=$TOOL_PATH/Sublist3r/sublist3r.py;
 				DNSCAN=$TOOL_PATH/dnscan/dnscan.py;
 				MASSDNS_BIN=$TOOL_PATH/massdns/bin/massdns;
@@ -151,6 +153,7 @@ function usage() {
 		echo -e "$BLUE""\\t-a \\n\\t\\t$ORANGE (optional) Use all unique discovered domains for scans, rather than interesting domains. This cannot be used with -A.""$NC";
 		echo -e "$BLUE""\\t-A \\n\\t\\t$ORANGE (optional, default) Use only interesting discovered domains for scans, rather than all discovered domains. This cannot be used with -a.""$NC";
 		echo -e "$BLUE""\\t-H \\n\\t\\t$ORANGE (optional) Use HTTP for connecting to sites instead of HTTPS.""$NC";
+		echo -e "$BLUE""\\t-r \\n\\t\\t$ORANGE (optional) Enable creation of Burp scope JSON file with rescope.""$NC";
 		echo -e "$BLUE""\\t-h \\n\\t\\t$ORANGE (optional) Display this help page.""$NC";
 }
 
@@ -259,6 +262,10 @@ function parse_config() {
 						echo -e "$RED""[!] Custom tool path $CONFIG_TOOL_PATH does not exist or is not writable. Please check the configuration file.""$NC";
 						exit 1;
 				fi
+		fi
+
+		if [[ $(grep '^ENABLE_RESCOPE' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
+				ENABLE_RESCOPE=1;
 		fi
 
 		# Parse [subdomain enumeration]
@@ -414,7 +421,7 @@ function parse_config() {
 }
 
 # Handle CLI arguments
-while getopts ":hu:d:L:C:sicb:IaADX:po:Hn:P:" opt; do
+while getopts ":hu:d:L:C:sicb:IaADX:po:Hn:P:r" opt; do
 		case ${opt} in
 				h ) # -h help
 						usage;
@@ -584,6 +591,9 @@ while getopts ":hu:d:L:C:sicb:IaADX:po:Hn:P:" opt; do
 				n ) # -n Notica URL parameter
 						NOTICA="$OPTARG";
 						;;
+				r ) # -r run rescope
+						ENABLE_RESCOPE=1;
+						;;
 				\? ) # Invalid option
 						echo -e "$RED""[!] Invalid Option: -$OPTARG" 1>&2;
 						usage;
@@ -712,6 +722,10 @@ function check_paths() {
 		fi
 		if [[ "$AMASS" == "" ]] || [[ ! -f "$AMASS" ]]; then
 				echo -e "$RED""[!] The path or the file specified by the path for amass does not exit.";
+				exit 1;
+		fi
+		if [[ "$RESCOPE" == "" ]] || [[ ! -f "$RESCOPE" ]]; then
+				echo -e "$RED""[!] The path or the file specified by the path for rescope does not exit.";
 				exit 1;
 		fi
 }
@@ -2056,6 +2070,15 @@ function run_notica_sudo() {
 		curl --data "d:Chomp Scan Notification: Your sudo password is needed for masscan." "https://notica.us/?$NOTICA";
 }
 
+function run_rescope() {
+		echo -e "$BLUE""[i] Creating a Burp scope file with rescope.""$NC";
+		
+		# Make sure resolved domains exists
+		if [[ $(wc -l "$WORKING_DIR"/"$ALL_RESOLVED" | cut -d ' ' -f 1) -gt 0 ]]; then
+				"$RESCOPE" burp -i "$WORKING_DIR"/"$ALL_RESOLVED" -o "$WORKING_DIR"/burp-scope.json -s;
+		fi
+}
+
 #### Error/path/argument checking before beginning script
 
 # Check that -u domain was passed
@@ -2360,6 +2383,11 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 		get_interesting;
 		list_found;
 
+		# Run rescope
+		if [[ "$ENABLE_RESCOPE" -eq 1 ]]; then
+				run_rescope;
+		fi
+
 		# Calculate scan runtime
 		SCAN_END=$(date +%s);
 		SCAN_DIFF=$(( SCAN_END - SCAN_START ));
@@ -2413,6 +2441,7 @@ if [[ "$DEFAULT_MODE" == 1 ]]; then
 		run_dirsearch "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$ALL_RESOLVED";
 		get_interesting;
 		list_found;
+		run_rescope;
 
 		# Calculate scan runtime
 		SCAN_END=$(date +%s);
@@ -2446,6 +2475,7 @@ if [[ "$INTERACTIVE" == 1 ]]; then
 		run_content_discovery;
 		get_interesting;
 		list_found;
+		run_rescope;
 
 		# Calculate scan runtime
 		SCAN_END=$(date +%s);
@@ -2605,6 +2635,11 @@ fi
 
 get_interesting;
 list_found;
+
+# -r rescope
+if [[ "$ENABLE_RESCOPE" == 1 ]]; then
+		run_rescope;
+fi
 
 # Calculate scan runtime
 SCAN_END=$(date +%s);
