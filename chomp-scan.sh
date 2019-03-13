@@ -1710,13 +1710,13 @@ function run_nikto() {
 		# Call with domain list as $1
 		if [[ $1 == $WORKING_DIR/$ALL_RESOLVED ]]; then
 				echo -e "$GREEN""[i]$BLUE Running nikto against all $(wc -l "$1" | cut -d ' ' -f 1) unique discovered domains.""$NC";
-				echo -e "$GREEN""[i]$BLUE Command: nikto -h $HTTP://$DOMAIN -output $WORKING_DIR/nikto.""$NC";
+				echo -e "$GREEN""[i]$BLUE Command: nikto -h $HTTP://$DOMAIN -Format html -output $WORKING_DIR/nikto.""$NC";
 				# Run nikto
 				COUNT=$(wc -l "$1" | cut -d ' ' -f 1)
 				mkdir "$WORKING_DIR"/nikto;
 				START=$(date +%s);
 				while read -r ADOMAIN; do
-						"$NIKTO" -h "$HTTP"://"$ADOMAIN" -output "$WORKING_DIR"/nikto/"$ADOMAIN".txt;
+						"$NIKTO" -h "$HTTP"://"$ADOMAIN" -Format html -output "$WORKING_DIR"/nikto/"$ADOMAIN".html;
 						COUNT=$((COUNT - 1));
 						if [[ "$COUNT" != 0 ]]; then
 								echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
@@ -1727,13 +1727,13 @@ function run_nikto() {
 				echo -e "$GREEN""[i]$BLUE Nikto took $DIFF seconds to run.""$NC";
 		else
 				echo -e "$GREEN""[i]$BLUE Running nikto against all $(wc -l "$1" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
-				echo -e "$GREEN""[i]$BLUE Command: nikto -h $HTTP://$DOMAIN -output $WORKING_DIR/nikto.""$NC";
+				echo -e "$GREEN""[i]$BLUE Command: nikto -h $HTTP://$DOMAIN -Format html -output $WORKING_DIR/nikto.""$NC";
 				# Run nikto
 				COUNT=$(wc -l "$1" | cut -d ' ' -f 1)
 				mkdir "$WORKING_DIR"/nikto;
 				START=$(date +%s);
 				while read -r ADOMAIN; do
-						"$NIKTO" -h "$HTTP"://"$ADOMAIN" -output "$WORKING_DIR"/nikto/"$ADOMAIN".txt;
+						"$NIKTO" -h "$HTTP"://"$ADOMAIN" -Format html -output "$WORKING_DIR"/nikto/"$ADOMAIN".html;
 						COUNT=$((COUNT - 1));
 						if [[ "$COUNT" != 0 ]]; then
 								echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
