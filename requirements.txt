@@ -1,11 +1,12 @@
-tldextract
-argparse
-termcolor
 dnspython
-requests
 colorama
+requests
+requests[socks]
+argparse
 awscli
 sh
 pytest-xdist
 coloredlogs
 boto3
+tldextract
+termcolor
