@@ -62,8 +62,8 @@ function install_ubuntu() {
 function install_pip() {
 		# Run both pip installs
 		 echo -e "$GREEN""Installing requirements for Python 2 and Python 3.""$NC";
-		sudo pip2 install -r requirements2.txt;
-		sudo pip3 install -r requirements3.txt;
+		sudo pip2 install -r requirements.txt;
+		sudo pip3 install -r requirements.txt;
 }
 
 function install_dnscan() {
