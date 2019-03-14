@@ -2075,7 +2075,7 @@ function run_rescope() {
 		
 		# Make sure resolved domains exists
 		if [[ $(wc -l "$WORKING_DIR"/"$ALL_RESOLVED" | cut -d ' ' -f 1) -gt 0 ]]; then
-				"$RESCOPE" burp -i "$WORKING_DIR"/"$ALL_RESOLVED" -o "$WORKING_DIR"/burp-scope.json -s;
+				"$RESCOPE" --burp -i "$WORKING_DIR"/"$ALL_RESOLVED" -o "$WORKING_DIR"/burp-scope.json -s;
 		fi
 }
 
