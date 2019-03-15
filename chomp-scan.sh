@@ -1671,13 +1671,13 @@ function run_bfac() {
 		# Call with domain list as $1
 		if [[ $1 == $WORKING_DIR/$ALL_RESOLVED ]]; then
 				echo -e "$GREEN""[i]$BLUE Running bfac against all $(wc -l "$1" | cut -d ' ' -f 1) unique discovered domains.""$NC";
-				echo -e "$GREEN""[i]$BLUE Command: bfac -u $DOMAIN -xsc 404,301,302,400 -o $WORKING_DIR/bfac.""$NC";
-				# Run ffuf
+				echo -e "$GREEN""[i]$BLUE Command: bfac -u $DOMAIN --detection-technique all --threads 30 -ra -xsc 400,403,404,301,302,503 --verbose-output $WORKING_DIR/bfac.""$NC";
+				# Run bfac
 				mkdir "$WORKING_DIR"/bfac;
 				COUNT=$(wc -l "$1" | cut -d ' ' -f 1)
 				START=$(date +%s);
 				while read -r ADOMAIN; do
-						$BFAC -u "$ADOMAIN" -xsc 404,301,302,400 -o "$WORKING_DIR"/bfac/"$ADOMAIN";
+						python $BFAC -u "$ADOMAIN" --detection-technique all --threads 30 -ra -xsc 400,403,404,301,302,503 --verbose-output "$WORKING_DIR"/bfac/"$ADOMAIN";
 						COUNT=$((COUNT - 1));
 						if [[ "$COUNT" != 0 ]]; then
 								echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
@@ -1688,13 +1688,13 @@ function run_bfac() {
 				echo -e "$GREEN""[i]$BLUE bfac took $DIFF seconds to run.""$NC";
 		else
 				echo -e "$GREEN""[i]$BLUE Running bfac against all $(wc -l "$1" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
-				echo -e "$GREEN""[i]$BLUE Command: bfac -u $DOMAIN -xsc 404,301,302,400 -o $WORKING_DIR/bfac.""$NC";
-				# Run ffuf
+				echo -e "$GREEN""[i]$BLUE Command: bfac -u $DOMAIN --detection-technique all --threads 30 -ra -xsc 400,403,404,301,302,503 --verbose-output $WORKING_DIR/bfac.""$NC";
+				# Run bfac
 				mkdir "$WORKING_DIR"/bfac;
 				COUNT=$(wc -l "$1" | cut -d ' ' -f 1)
 				START=$(date +%s);
 				while read -r ADOMAIN; do
-						$BFAC -u "$ADOMAIN" -xsc 404,301,302,400 -o "$WORKING_DIR"/bfac/"$ADOMAIN";
+						python $BFAC -u "$ADOMAIN" --detection-technique all --threads 30 -ra -xsc 400,403,404,301,302,503 --verbose-output "$WORKING_DIR"/bfac/"$ADOMAIN";
 						COUNT=$((COUNT - 1));
 						if [[ "$COUNT" != 0 ]]; then
 								echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
