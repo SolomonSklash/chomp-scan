@@ -1411,13 +1411,13 @@ function run_dirsearch() {
 		# Call with domain as $1, wordlist size as $2, and domain list as $3
 		if [[ $3 == $WORKING_DIR/$ALL_RESOLVED ]]; then
 				echo -e "$GREEN""[i]$BLUE Running dirsearch against all $(wc -l "$3" | cut -d ' ' -f 1) unique discovered domains.""$NC";
-				echo -e "$GREEN""[i]$BLUE Command: dirsearch -u $DOMAIN -e php,aspx,asp -t 20 -x 302,400 -F --plain-text-report=$WORKING_DIR/dirsearch/$DOMAIN.txt -w$2""$NC";
+				echo -e "$GREEN""[i]$BLUE Command: dirsearch -u $DOMAIN -e asp,aspx,php,php3,php4,php5,txt,shtm,shtml,phtm,phtml,jhtml,pl,jsp,cfm,cfml,py,rb,cfg,zip,pdf,gz,tar,tar.gz,tgz,doc,docx,xls,xlsx,conf,ini -t 20 -x 302,400,403 -F --plain-text-report=$WORKING_DIR/dirsearch/$DOMAIN.txt -w$2""$NC";
 				# Run dirsearch
 				mkdir "$WORKING_DIR"/dirsearch;
 				COUNT=$(wc -l "$3" | cut -d ' ' -f 1)
 				START=$(date +%s);
 				while read -r ADOMAIN; do
-						"$DIRSEARCH" -u "$HTTP"://"$ADOMAIN" -e php,aspx,asp -t 20 -x 302,400 -F --plain-text-report="$WORKING_DIR"/dirsearch/"$ADOMAIN".txt -w "$2";
+						"$DIRSEARCH" -u "$HTTP"://"$ADOMAIN" -e asp,aspx,php,php3,php4,php5,txt,shtm,shtml,phtm,phtml,jhtml,pl,jsp,cfm,cfml,py,rb,cfg,zip,pdf,gz,tar,tar.gz,tgz,doc,docx,xls,xlsx,conf,ini -t 20 -x 302,400,403 -F --plain-text-report="$WORKING_DIR"/dirsearch/"$ADOMAIN".txt -w "$2";
 						COUNT=$((COUNT - 1));
 						if [[ "$COUNT" != 0 ]]; then
 								echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
@@ -1428,13 +1428,13 @@ function run_dirsearch() {
 				echo -e "$GREEN""[i]$BLUE Dirsearch took $DIFF seconds to run.""$NC";
 		else
 				echo -e "$GREEN""[i]$BLUE Running dirsearch against all $(wc -l "$3" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
-				echo -e "$GREEN""[i]$BLUE Command: dirsearch -u $DOMAIN -e php,aspx,asp -t 20 -x 302,400 -F --plain-text-report=$WORKING_DIR/dirsearch/$DOMAIN.txt -w$2""$NC";
+				echo -e "$GREEN""[i]$BLUE Command: dirsearch -u $DOMAIN -e asp,aspx,php,php3,php4,php5,txt,shtm,shtml,phtm,phtml,jhtml,pl,jsp,cfm,cfml,py,rb,cfg,zip,pdf,gz,tar,tar.gz,tgz,doc,docx,xls,xlsx,conf,ini -t 20 -x 302,400,403 -F --plain-text-report=$WORKING_DIR/dirsearch/$DOMAIN.txt -w$2""$NC";
 				# Run dirsearch
 				mkdir "$WORKING_DIR"/dirsearch;
 				COUNT=$(wc -l "$3" | cut -d ' ' -f 1)
 				START=$(date +%s);
 				while read -r ADOMAIN; do
-						"$DIRSEARCH" -u "$HTTP"://"$ADOMAIN" -e php,aspx,asp -t 20 -x 302,400 -F --plain-text-report="$WORKING_DIR"/dirsearch/"$ADOMAIN".txt -w "$2";
+						"$DIRSEARCH" -u "$HTTP"://"$ADOMAIN" -e asp,aspx,php,php3,php4,php5,txt,shtm,shtml,phtm,phtml,jhtml,pl,jsp,cfm,cfml,py,rb,cfg,zip,pdf,gz,tar,tar.gz,tgz,doc,docx,xls,xlsx,conf,ini -t 20 -x 302,400,403 -F --plain-text-report="$WORKING_DIR"/dirsearch/"$ADOMAIN".txt -w "$2";
 						COUNT=$((COUNT - 1));
 						if [[ "$COUNT" != 0 ]]; then
 								echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
