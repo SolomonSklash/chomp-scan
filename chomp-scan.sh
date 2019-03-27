@@ -1411,13 +1411,13 @@ function run_dirsearch() {
 		# Call with domain as $1, wordlist size as $2, and domain list as $3
 		if [[ $3 == $WORKING_DIR/$ALL_RESOLVED ]]; then
 				echo -e "$GREEN""[i]$BLUE Running dirsearch against all $(wc -l "$3" | cut -d ' ' -f 1) unique discovered domains.""$NC";
-				echo -e "$GREEN""[i]$BLUE Command: dirsearch -u $DOMAIN -e * -t 20 -x 301,400,403,500,503 -F --plain-text-report=$WORKING_DIR/dirsearch/$DOMAIN.txt -w$2""$NC";
+				echo -e "$GREEN""[i]$BLUE Command: dirsearch -u $DOMAIN -e * -t 20 -x 301,400,403,404,500,503 -F --plain-text-report=$WORKING_DIR/dirsearch/$DOMAIN.txt -w$2""$NC";
 				# Run dirsearch
 				mkdir "$WORKING_DIR"/dirsearch;
 				COUNT=$(wc -l "$3" | cut -d ' ' -f 1)
 				START=$(date +%s);
 				while read -r ADOMAIN; do
-						"$DIRSEARCH" -u "$HTTP"://"$ADOMAIN" -e * -t 20 -x 301,400,403,500,503 -F --plain-text-report="$WORKING_DIR"/dirsearch/"$ADOMAIN".txt -w "$2";
+						"$DIRSEARCH" -u "$HTTP"://"$ADOMAIN" -e * -t 20 -x 301,400,403,404,500,503 -F --plain-text-report="$WORKING_DIR"/dirsearch/"$ADOMAIN".txt -w "$2";
 						COUNT=$((COUNT - 1));
 						if [[ "$COUNT" != 0 ]]; then
 								echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
@@ -1428,13 +1428,13 @@ function run_dirsearch() {
 				echo -e "$GREEN""[i]$BLUE Dirsearch took $DIFF seconds to run.""$NC";
 		else
 				echo -e "$GREEN""[i]$BLUE Running dirsearch against all $(wc -l "$3" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
-				echo -e "$GREEN""[i]$BLUE Command: dirsearch -u $DOMAIN -e * -t 20 -x 301,400,403,500,503 -F --plain-text-report=$WORKING_DIR/dirsearch/$DOMAIN.txt -w$2""$NC";
+				echo -e "$GREEN""[i]$BLUE Command: dirsearch -u $DOMAIN -e * -t 20 -x 301,400,403,404,500,503 -F --plain-text-report=$WORKING_DIR/dirsearch/$DOMAIN.txt -w$2""$NC";
 				# Run dirsearch
 				mkdir "$WORKING_DIR"/dirsearch;
 				COUNT=$(wc -l "$3" | cut -d ' ' -f 1)
 				START=$(date +%s);
 				while read -r ADOMAIN; do
-						"$DIRSEARCH" -u "$HTTP"://"$ADOMAIN" -e * -t 20 -x 301,400,403,500,503 -F --plain-text-report="$WORKING_DIR"/dirsearch/"$ADOMAIN".txt -w "$2";
+						"$DIRSEARCH" -u "$HTTP"://"$ADOMAIN" -e * -t 20 -x 301,400,403,404,500,503 -F --plain-text-report="$WORKING_DIR"/dirsearch/"$ADOMAIN".txt -w "$2";
 						COUNT=$((COUNT - 1));
 						if [[ "$COUNT" != 0 ]]; then
 								echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
@@ -1671,13 +1671,13 @@ function run_bfac() {
 		# Call with domain list as $1
 		if [[ $1 == $WORKING_DIR/$ALL_RESOLVED ]]; then
 				echo -e "$GREEN""[i]$BLUE Running bfac against all $(wc -l "$1" | cut -d ' ' -f 1) unique discovered domains.""$NC";
-				echo -e "$GREEN""[i]$BLUE Command: bfac -u $DOMAIN --detection-technique all --threads 30 -ra -xsc 400,403,404,301,302,503 --verbose-output $WORKING_DIR/bfac.""$NC";
+				echo -e "$GREEN""[i]$BLUE Command: bfac -u $DOMAIN --detection-technique all --threads 30 -ra -xsc 301,400,403,404,500,503 --verbose-output $WORKING_DIR/bfac.""$NC";
 				# Run bfac
 				mkdir "$WORKING_DIR"/bfac;
 				COUNT=$(wc -l "$1" | cut -d ' ' -f 1)
 				START=$(date +%s);
 				while read -r ADOMAIN; do
-						python $BFAC -u "$ADOMAIN" --detection-technique all --threads 30 -ra -xsc 400,403,404,301,302,503 --verbose-output "$WORKING_DIR"/bfac/"$ADOMAIN";
+						python $BFAC -u "$ADOMAIN" --detection-technique all --threads 30 -ra -xsc 301,400,403,404,500,503 --verbose-output "$WORKING_DIR"/bfac/"$ADOMAIN";
 						COUNT=$((COUNT - 1));
 						if [[ "$COUNT" != 0 ]]; then
 								echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
@@ -1688,13 +1688,13 @@ function run_bfac() {
 				echo -e "$GREEN""[i]$BLUE bfac took $DIFF seconds to run.""$NC";
 		else
 				echo -e "$GREEN""[i]$BLUE Running bfac against all $(wc -l "$1" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
-				echo -e "$GREEN""[i]$BLUE Command: bfac -u $DOMAIN --detection-technique all --threads 30 -ra -xsc 400,403,404,301,302,503 --verbose-output $WORKING_DIR/bfac.""$NC";
+				echo -e "$GREEN""[i]$BLUE Command: bfac -u $DOMAIN --detection-technique all --threads 30 -ra -xsc 301,400,403,404,500,503 --verbose-output $WORKING_DIR/bfac.""$NC";
 				# Run bfac
 				mkdir "$WORKING_DIR"/bfac;
 				COUNT=$(wc -l "$1" | cut -d ' ' -f 1)
 				START=$(date +%s);
 				while read -r ADOMAIN; do
-						python $BFAC -u "$ADOMAIN" --detection-technique all --threads 30 -ra -xsc 400,403,404,301,302,503 --verbose-output "$WORKING_DIR"/bfac/"$ADOMAIN";
+						python $BFAC -u "$ADOMAIN" --detection-technique all --threads 30 -ra -xsc 301,400,403,404,500,503 --verbose-output "$WORKING_DIR"/bfac/"$ADOMAIN";
 						COUNT=$((COUNT - 1));
 						if [[ "$COUNT" != 0 ]]; then
 								echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
