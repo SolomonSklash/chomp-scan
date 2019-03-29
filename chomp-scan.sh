@@ -879,7 +879,7 @@ function run_sublist3r() {
 }
 
 function run_amass() {
-		# Call with domain as $1 anbd wordlist as $2
+		# Call with domain as $1 and wordlist as $2
 
 		echo -e "$GREEN""[i]$BLUE Scanning $1 with amass.""$NC";
 		echo -e "$GREEN""[i]$ORANGE Command: amass -d $1 -w $2 -ip -rf resolvers.txt -active -o $WORKING_DIR/amass-output.txt -min-for-recursive 3 -bl $BLACKLIST""$NC";
@@ -1496,7 +1496,7 @@ function run_inception() {
 				# Run inception
 				mkdir "$WORKING_DIR"/inception;
 				START=$(date +%s);
-				"$INCEPTION" -d "$3" -v | tee "$WORKING_DIR"/inception/inception-output.txt;
+				"$INCEPTION" -d "$3" -v -provider wordlists/provider.json | tee "$WORKING_DIR"/inception/inception-output.txt;
 				END=$(date +%s);
 				DIFF=$(( END - START ));
 				echo -e "$GREEN""[i]$BLUE Inception took $DIFF seconds to run.""$NC";
@@ -1506,7 +1506,8 @@ function run_inception() {
 				# Run inception
 				mkdir "$WORKING_DIR"/inception;
 				START=$(date +%s);
-				"$INCEPTION" -d "$3" -v | tee "$WORKING_DIR"/inception/inception-output.txt;
+				"$INCEPTION" -d "$3" -v -provider wordlists/provider.json | tee "$WORKING_DIR"/inception/inception-output.txt;
+
 				END=$(date +%s);
 				DIFF=$(( END - START ));
 				echo -e "$GREEN""[i]$BLUE Inception took $DIFF seconds to run.""$NC";
