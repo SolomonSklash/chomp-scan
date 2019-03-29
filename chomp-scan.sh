@@ -760,9 +760,9 @@ function unique() {
 
 function list_found() {
 		unique;
-		echo -e "$GREEN""[+] Found $(wc -l "$WORKING_DIR"/$ALL_IP | cut -d ' ' -f 1) unique IPs so far.""$NC"
-		echo -e "$GREEN""[+] Found $(wc -l "$WORKING_DIR"/$ALL_DOMAIN | cut -d ' ' -f 1) unique discovered domains so far.""$NC"
-		echo -e "$GREEN""[+] Found $(wc -l "$WORKING_DIR"/$ALL_RESOLVED | cut -d ' ' -f 1) unique resolvable domains so far.""$NC"
+		echo -e "$GREEN""[+] Found $(wc -l "$WORKING_DIR"/$ALL_IP | awk '{print $1}') unique IPs so far.""$NC"
+		echo -e "$GREEN""[+] Found $(wc -l "$WORKING_DIR"/$ALL_DOMAIN | awk '{print $1}') unique discovered domains so far.""$NC"
+		echo -e "$GREEN""[+] Found $(wc -l "$WORKING_DIR"/$ALL_RESOLVED | awk '{print $1}') unique resolvable domains so far.""$NC"
 }
 
 function get_interesting() {
@@ -780,9 +780,9 @@ function get_interesting() {
 				return;
 		else
 				# Make sure > 0 domains are found
-				FOUND=$(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1);
+				FOUND=$(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | awk '{print $1}');
 				if [[ $FOUND -gt 0 ]]; then
-						echo -e "$RED""[!] The following $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) potentially interesting subdomains have been found ($WORKING_DIR/$INTERESTING_DOMAINS):""$ORANGE";
+						echo -e "$RED""[!] The following $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | awk '{print $1}') potentially interesting subdomains have been found ($WORKING_DIR/$INTERESTING_DOMAINS):""$ORANGE";
 						cat "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 						sleep 1;
 				else
@@ -820,7 +820,7 @@ function run_dnscan() {
 		cat "$WORKING_DIR"/dnscan-domains.txt >> "$WORKING_DIR"/"$ALL_DOMAIN";
 
 		echo -e "$GREEN""[i]$BLUE dnsscan took $DIFF seconds to run.""$NC";
-		echo -e "$GREEN""[!]$ORANGE dnscan found $(wc -l "$WORKING_DIR"/dnscan-ips.txt | cut -d ' ' -f 1) IP/domain pairs.""$NC";
+		echo -e "$GREEN""[!]$ORANGE dnscan found $(wc -l "$WORKING_DIR"/dnscan-ips.txt | awk '{print $1}') IP/domain pairs.""$NC";
 		list_found;
 		sleep 1;
 
@@ -848,7 +848,7 @@ function run_subfinder() {
 		cat "$WORKING_DIR"/subfinder-domains.txt >> "$WORKING_DIR"/$ALL_DOMAIN;
 
 		echo -e "$GREEN""[i]$BLUE Subfinder took $DIFF seconds to run.""$NC";
-		echo -e "$GREEN""[!]$ORANGE Subfinder found $(wc -l "$WORKING_DIR"/subfinder-domains.txt | cut -d ' ' -f 1) domains.""$N";
+		echo -e "$GREEN""[!]$ORANGE Subfinder found $(wc -l "$WORKING_DIR"/subfinder-domains.txt | awk '{print $1}') domains.""$N";
 		list_found;
 		sleep 1;
 }
@@ -871,7 +871,7 @@ function run_sublist3r() {
 				# Cat output into main lists
 				cat "$WORKING_DIR"/sublist3r-output.txt >> "$WORKING_DIR"/$ALL_DOMAIN;
 				echo -e "$GREEN""[i]$BLUE sublist3r took $DIFF seconds to run.""$NC";
-				echo -e "$GREEN""[!]$ORANGE sublist3r found $(wc -l "$WORKING_DIR"/sublist3r-output.txt | cut -d ' ' -f 1) domains.""$NC";
+				echo -e "$GREEN""[!]$ORANGE sublist3r found $(wc -l "$WORKING_DIR"/sublist3r-output.txt | awk '{print $1}') domains.""$NC";
 		fi
 
 		list_found;
@@ -894,7 +894,7 @@ function run_amass() {
 				cut -d ' ' -f 1 "$WORKING_DIR"/amass-output.txt >> "$WORKING_DIR"/"$ALL_DOMAIN";
 				cut -d ' ' -f 2 "$WORKING_DIR"/amass-output.txt >> "$WORKING_DIR"/"$ALL_IP";
 				echo -e "$GREEN""[i]$BLUE amass took $DIFF seconds to run.""$NC";
-				echo -e "$GREEN""[!]$ORANGE amass found $(wc -l "$WORKING_DIR"/amass-output.txt | cut -d ' ' -f 1) domains.""$NC";
+				echo -e "$GREEN""[!]$ORANGE amass found $(wc -l "$WORKING_DIR"/amass-output.txt | awk '{print $1}') domains.""$NC";
 		fi
 
 		list_found;
@@ -904,7 +904,7 @@ function run_amass() {
 function run_goaltdns() {
 		# Run goaltdns with found subdomains combined with altdns-wordlist.txt
 
-		echo -e "$GREEN""[i]$BLUE Running goaltdns against all $(wc -l "$WORKING_DIR"/$ALL_DOMAIN | cut -d ' ' -f 1) unique discovered subdomains to generate domains for masscan to resolve.""$NC";
+		echo -e "$GREEN""[i]$BLUE Running goaltdns against all $(wc -l "$WORKING_DIR"/$ALL_DOMAIN | awk '{print $1}') unique discovered subdomains to generate domains for masscan to resolve.""$NC";
 		echo -e "$GREEN""[i]$ORANGE Command: goaltdns -l $WORKING_DIR/$ALL_DOMAIN -w wordlists/altdns-words.txt -o $WORKING_DIR/goaltdns-output.txt.""$NC";
 		START=$(date +%s);
 		"$GOALTDNS" -l "$WORKING_DIR"/$ALL_DOMAIN -w wordlists/altdns-words.txt -o "$WORKING_DIR"/goaltdns-output.txt;
@@ -912,7 +912,7 @@ function run_goaltdns() {
 		DIFF=$(( END - START ));
 
 		echo -e "$GREEN""[i]$BLUE Goaltdns took $DIFF seconds to run.""$NC";
-		echo -e "$GREEN""[i]$BLUE Goaltdns generated $(wc -l "$WORKING_DIR"/goaltdns-output.txt | cut -d ' ' -f 1) subdomains.""$NC";
+		echo -e "$GREEN""[i]$BLUE Goaltdns generated $(wc -l "$WORKING_DIR"/goaltdns-output.txt | awk '{print $1}') subdomains.""$NC";
 		sleep 1;
 }
 
@@ -1018,15 +1018,15 @@ function run_aquatone () {
 		if [[ "$1" == "default" ]]; then
 				if [[ "$USE_ALL" == 1 ]]; then
 						mkdir "$WORKING_DIR"/aquatone;
-						echo -e "$BLUE""[i] Running aquatone against all $(wc -l "$WORKING_DIR"/$ALL_RESOLVED | cut -d ' ' -f 1) unique discovered subdomains.""$NC";
+						echo -e "$BLUE""[i] Running aquatone against all $(wc -l "$WORKING_DIR"/$ALL_RESOLVED | awk '{print $1}') unique discovered subdomains.""$NC";
 						START=$(date +%s);
 						$AQUATONE -threads 10 -chrome-path "$CHROMIUM" -ports medium -out "$WORKING_DIR"/aquatone < "$WORKING_DIR"/$ALL_RESOLVED;
 						END=$(date +%s);
 						DIFF=$(( END - START ));
 						echo -e "$GREEN""[i]$BLUE Aquatone took $DIFF seconds to run.""$NC";
-				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) -gt 0 ]]; then
+				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | awk '{print $1}') -gt 0 ]]; then
 						mkdir "$WORKING_DIR"/aquatone;
-						echo -e "$BLUE""[i] Running aquatone against all $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) interesting discovered subdomains.""$NC";
+						echo -e "$BLUE""[i] Running aquatone against all $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | awk '{print $1}') interesting discovered subdomains.""$NC";
 						START=$(date +%s);
 						$AQUATONE -threads 10 -chrome-path "$CHROMIUM" -ports medium -out "$WORKING_DIR"/aquatone < "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 						END=$(date +%s);
@@ -1034,7 +1034,7 @@ function run_aquatone () {
 						echo -e "$GREEN""[i]$BLUE Aquatone took $DIFF seconds to run.""$NC";
 				else
 						mkdir "$WORKING_DIR"/aquatone;
-						echo -e "$BLUE""[i] Running aquatone against all $(wc -l "$WORKING_DIR"/$ALL_RESOLVED | cut -d ' ' -f 1) unique discovered subdomains.""$NC";
+						echo -e "$BLUE""[i] Running aquatone against all $(wc -l "$WORKING_DIR"/$ALL_RESOLVED | awk '{print $1}') unique discovered subdomains.""$NC";
 						START=$(date +%s);
 						$AQUATONE -threads 10 -chrome-path "$CHROMIUM" -ports medium -out "$WORKING_DIR"/aquatone < "$WORKING_DIR"/$ALL_RESOLVED;
 						END=$(date +%s);
@@ -1064,7 +1064,7 @@ function run_aquatone () {
 				done
 				mkdir "$WORKING_DIR"/aquatone;
 
-				echo -e "$GREEN""[i]$BLUE Running aquatone against all $(wc -l "$WORKING_DIR"/$ALL_RESOLVED | cut -d ' ' -f 1) unique discovered subdomains.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running aquatone against all $(wc -l "$WORKING_DIR"/$ALL_RESOLVED | awk '{print $1}') unique discovered subdomains.""$NC";
 				START=$(date +%s);
 				$AQUATONE -threads 10 -chrome-path "$CHROMIUM" -ports medium -out "$WORKING_DIR"/aquatone < "$WORKING_DIR"/$ALL_RESOLVED;
 				END=$(date +%s);
@@ -1080,11 +1080,11 @@ function run_masscan() {
 				sleep 1;
 		else
 				# Run masscan against all IPs found on all ports
-				echo -e "$GREEN""[i]$BLUE Running masscan against all $(wc -l "$WORKING_DIR"/$ALL_IP | cut -d ' ' -f 1) unique discovered IP addresses.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running masscan against all $(wc -l "$WORKING_DIR"/$ALL_IP | awk '{print $1}') unique discovered IP addresses.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: masscan -p1-65535 -il $WORKING_DIR/$ALL_IP --rate=7000 -oL $WORKING_DIR/masscan-output.txt.""$NC";
 
 				# Check that IP list is not empty
-				IP_COUNT=$(wc -l "$WORKING_DIR"/$ALL_IP | cut -d ' ' -f 1);
+				IP_COUNT=$(wc -l "$WORKING_DIR"/$ALL_IP | awk '{print $1}');
 				if [[ "$IP_COUNT" -lt 1 ]]; then
 						echo -e "$RED""[i] No IP addresses have been found. Skipping masscan scan.""$NC";
 						return;
@@ -1106,7 +1106,7 @@ function run_masscan() {
 
 function run_nmap() {
 		# Check that IP list is not empty
-		IP_COUNT=$(wc -l "$WORKING_DIR"/$ALL_IP | cut -d ' ' -f 1);
+		IP_COUNT=$(wc -l "$WORKING_DIR"/$ALL_IP | awk '{print $1}');
 		if [[ "$IP_COUNT" -lt 1 ]]; then
 				echo -e "$RED""[i] No IP addresses have been found. Skipping nmap scan.""$NC";
 				return;
@@ -1114,7 +1114,7 @@ function run_nmap() {
 
 		# Run nmap against all-ip.txt against ports found by masscan, unless alone arg is passed as $1
 		if [[ "$1" == "alone" ]]; then
-				echo -e "$GREEN""[i]$BLUE Running nmap against all $(wc -l "$WORKING_DIR"/"$ALL_IP" | cut -d ' ' -f 1) unique discovered IP addresses.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running nmap against all $(wc -l "$WORKING_DIR"/"$ALL_IP" | awk '{print $1}') unique discovered IP addresses.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: nmap -n -v -sV -iL $WORKING_DIR/all_ip.txt -oA $WORKING_DIR/nmap-output --stylesheet https://raw.githubusercontent.com/honze-net/nmap-bootstrap-xsl/master/nmap-bootstrap.xsl.""$NC";
 				START=$(date +%s);
 				"$NMAP" -n -v -sV -iL "$WORKING_DIR"/"$ALL_IP" -oA "$WORKING_DIR"/nmap-output --stylesheet https://raw.githubusercontent.com/honze-net/nmap-bootstrap-xsl/master/nmap-bootstrap.xsl;
@@ -1123,7 +1123,7 @@ function run_nmap() {
 				echo -e "$GREEN""[i]$BLUE Nmap took $DIFF seconds to run.""$NC";
 		# Make sure masscan actually created output
 		elif [[ ! -s "$WORKING_DIR"/masscan-output.txt ]]; then
-				echo -e "$GREEN""[i]$BLUE Running nmap against all $(wc -l "$WORKING_DIR"/"$ALL_IP" | cut -d ' ' -f 1) unique discovered IP addresses.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running nmap against all $(wc -l "$WORKING_DIR"/"$ALL_IP" | awk '{print $1}') unique discovered IP addresses.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: nmap -n -v -sV -iL $WORKING_DIR/all_discovered_ips.txt -oA $WORKING_DIR/nmap-output --stylesheet https://raw.githubusercontent.com/honze-net/nmap-bootstrap-xsl/master/nmap-bootstrap.xsl.""$NC";
 				START=$(date +%s);
 				"$NMAP" -n -v -sV -iL "$WORKING_DIR"/"$ALL_IP" -oA "$WORKING_DIR"/nmap-output --stylesheet https://raw.githubusercontent.com/honze-net/nmap-bootstrap-xsl/master/nmap-bootstrap.xsl;
@@ -1137,7 +1137,7 @@ function run_nmap() {
 				rm "$WORKING_DIR"/temp;
 
 				# Count ports in case it's over nmap's ~22k parameter limit, then run multiple scans
-				PORT_NUMBER=$(wc -l "$WORKING_DIR"/ports | cut -d ' ' -f 1);
+				PORT_NUMBER=$(wc -l "$WORKING_DIR"/ports | awk '{print $1}');
 
 				if [[ $PORT_NUMBER -gt 22000 ]]; then
 						echo -e "$GREEN""[!]$RED WARNING: Masscan found more than 22k open ports. This is more than nmap's port argument length limit, and likely indicates lots of false positives. Consider running nmap with -p- to scan all ports.""$NC";
@@ -1148,7 +1148,7 @@ function run_nmap() {
 				# Get live IPs from masscan
 				cut -d ' ' -f 4 "$WORKING_DIR"/masscan-output.txt >> "$WORKING_DIR"/"$ALL_IP";
 				
-				echo -e "$GREEN""[i]$BLUE Running nmap against $(wc -l "$WORKING_DIR"/"$ALL_IP" | cut -d ' ' -f 1) unique discovered IP addresses and $(wc -l "$WORKING_DIR"/ports | cut -d ' ' -f 1) ports identified by masscan.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running nmap against $(wc -l "$WORKING_DIR"/"$ALL_IP" | awk '{print $1}') unique discovered IP addresses and $(wc -l "$WORKING_DIR"/ports | awk '{print $1}') ports identified by masscan.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: nmap -n -v -sV -iL $WORKING_DIR/all_discovered_ips.txt -p $(tr '\n' , < "$WORKING_DIR"/ports) -oA $WORKING_DIR/nmap-output.""$NC";
 				START=$(date +%s);
 				nmap -n -v -sV -iL "$WORKING_DIR"/"$ALL_IP" -p "$(tr '\n' , < "$WORKING_DIR"/ports)" -oA "$WORKING_DIR"/nmap-output;
@@ -1207,7 +1207,7 @@ function parse_gobuster() {
         FILE=$1;
    
         # Get total line count
-        TOTAL=$(wc -l "$1" | cut -d ' ' -f 1);
+        TOTAL=$(wc -l "$1" | awk '{print $1}');
 		if [[ "$TOTAL" -eq 0 ]]; then
 				return
 		fi
@@ -1258,11 +1258,11 @@ function parse_gobuster() {
 function run_gobuster() {
 		# Call with domain as $1, wordlist size as $2, and domain list as $3
 		if [[ $3 == $WORKING_DIR/$ALL_RESOLVED ]]; then # Run against all resolvable domains
-				echo -e "$GREEN""[i]$BLUE Running gobuster against all $(wc -l "$3" | cut -d ' ' -f 1) unique discovered domains.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running gobuster against all $(wc -l "$3" | awk '{print $1}') unique discovered domains.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: gobuster -u https://$DOMAIN -s '200,201,202,204,307,308,400,401,403,405,500,501,502,503' -to 3s -e -k -t 20 -w $2 -o gobuster.""$NC";
 				# Run gobuster
 				mkdir "$WORKING_DIR"/gobuster;
-				COUNT=$(wc -l "$3" | cut -d ' ' -f 1)
+				COUNT=$(wc -l "$3" | awk '{print $1}')
 				START=$(date +%s);
 				while read -r ADOMAIN; do
 						"$GOBUSTER" -u "$HTTP"://"$ADOMAIN" -s '200,201,202,204,307,308,400,401,403,405,500,501,502,503' -to 3s -e -k -t 20 -w "$2" -o "$WORKING_DIR"/gobuster/"$ADOMAIN".txt;
@@ -1275,11 +1275,11 @@ function run_gobuster() {
 				DIFF=$(( END - START ));
 				echo -e "$GREEN""[i]$BLUE Gobuster took $DIFF seconds to run.""$NC";
 		else # Run against all interesting domains
-				echo -e "$GREEN""[i]$BLUE Running gobuster against all $(wc -l "$3" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running gobuster against all $(wc -l "$3" | awk '{print $1}') discovered interesting domains.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: gobuster -u $HTTP://$DOMAIN -s '200,201,202,204,307,308,400,401,403,405,500,501,502,503' -to 3s -e -k -t 20 -w $2 -o $WORKING_DIR/gobuster""$NC";
 				# Run gobuster
 				mkdir "$WORKING_DIR"/gobuster;
-				COUNT=$(wc -l "$3" | cut -d ' ' -f 1)
+				COUNT=$(wc -l "$3" | awk '{print $1}')
 				START=$(date +%s);
 				while read -r ADOMAIN; do
 						"$GOBUSTER" -u "$HTTP"://"$ADOMAIN" -s '200,201,202,204,307,308,400,401,403,405,500,501,502,503' -to 3s -e -k -t 20 -w "$2" -o "$WORKING_DIR"/gobuster/"$ADOMAIN".txt;
@@ -1295,7 +1295,7 @@ function run_gobuster() {
 
 		# Parse results for better readability of the output
 		for file in "$WORKING_DIR"/gobuster/*; do
-				COUNT=$(wc -l "$file" | cut -d ' ' -f 1);
+				COUNT=$(wc -l "$file" | awk '{print $1}');
 				# No output files have 17 lines
 				if [[ $COUNT -gt 17 ]]; then
 						parse_gobuster "$file";
@@ -1308,7 +1308,7 @@ function parse_ffuf() {
         FILE=$1;
    
         # Get total line count
-        TOTAL=$(wc -l "$1" | cut -d ' ' -f 1);
+        TOTAL=$(wc -l "$1" | awk '{print $1}');
    
         # Get counts of different return codes
         COUNT_200=$(grep 'Status' "$1" | grep -c 200);
@@ -1359,11 +1359,11 @@ function run_ffuf() {
 
 		# Call with domain as $1, wordlist size as $2, and domain list as $3
 		if [[ $3 == $WORKING_DIR/$ALL_RESOLVED ]]; then
-				echo -e "$GREEN""[i]$BLUE Running ffuf against all $(wc -l "$3" | cut -d ' ' -f 1) unique discovered domains.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running ffuf against all $(wc -l "$3" | awk '{print $1}') unique discovered domains.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: ffuf -u $HTTP://$DOMAIN/FUZZ -w $2 -fc 301,302 -k | tee $WORKING_DIR/ffuf.""$NC";
 				# Run ffuf
 				mkdir "$WORKING_DIR"/ffuf;
-				COUNT=$(wc -l "$3" | cut -d ' ' -f 1)
+				COUNT=$(wc -l "$3" | awk '{print $1}')
 				START=$(date +%s);
 				while read -r ADOMAIN; do
 						"$FFUF" -u "$HTTP"://"$ADOMAIN"/FUZZ -w "$2" -fc 301,302 -k -mc 200,201,202,204,307,308,400,401,403,405,500,501,502,503 | tee "$WORKING_DIR"/ffuf/"$ADOMAIN";
@@ -1376,11 +1376,11 @@ function run_ffuf() {
 				DIFF=$(( END - START ));
 				echo -e "$GREEN""[i]$BLUE ffuf took $DIFF seconds to run.""$NC";
 		else
-				echo -e "$GREEN""[i]$BLUE Running ffuf against all $(wc -l "$3" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running ffuf against all $(wc -l "$3" | awk '{print $1}') discovered interesting domains.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: ffuf -u $HTTP://$DOMAIN/FUZZ -w $2 -fc 301,302 -k | tee $WORKING_DIR/ffuf.""$NC";
 				# Run ffuf
 				mkdir "$WORKING_DIR"/ffuf;
-				COUNT=$(wc -l "$3" | cut -d ' ' -f 1)
+				COUNT=$(wc -l "$3" | awk '{print $1}')
 				START=$(date +%s);
 				while read -r ADOMAIN; do
 						"$FFUF" -u "$HTTP"://"$ADOMAIN"/FUZZ -w "$2" -fc 301,302 -k -mc 200,201,202,204,307,308,400,401,403,405,500,501,502,503 | tee "$WORKING_DIR"/ffuf/"$ADOMAIN";
@@ -1396,7 +1396,7 @@ function run_ffuf() {
 
 		# Parse results for better readability of the output
 		for file in "$WORKING_DIR"/ffuf/*; do
-				COUNT=$(wc -l "$file" | cut -d ' ' -f 1);
+				COUNT=$(wc -l "$file" | awk '{print $1}');
 				# No output files have 17 lines
 				if [[ $COUNT -gt 17 ]]; then
 						parse_ffuf "$file";
@@ -1410,11 +1410,11 @@ function run_dirsearch() {
 
 		# Call with domain as $1, wordlist size as $2, and domain list as $3
 		if [[ $3 == $WORKING_DIR/$ALL_RESOLVED ]]; then
-				echo -e "$GREEN""[i]$BLUE Running dirsearch against all $(wc -l "$3" | cut -d ' ' -f 1) unique discovered domains.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running dirsearch against all $(wc -l "$3" | awk '{print $1}') unique discovered domains.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: dirsearch -u $DOMAIN -e php,aspx,asp -t 20 -x 302,400 -F --plain-text-report=$WORKING_DIR/dirsearch/$DOMAIN.txt -w$2""$NC";
 				# Run dirsearch
 				mkdir "$WORKING_DIR"/dirsearch;
-				COUNT=$(wc -l "$3" | cut -d ' ' -f 1)
+				COUNT=$(wc -l "$3" | awk '{print $1}')
 				START=$(date +%s);
 				while read -r ADOMAIN; do
 						"$DIRSEARCH" -u "$HTTP"://"$ADOMAIN" -e php,aspx,asp -t 20 -x 302,400 -F --plain-text-report="$WORKING_DIR"/dirsearch/"$ADOMAIN".txt -w "$2";
@@ -1427,11 +1427,11 @@ function run_dirsearch() {
 				DIFF=$(( END - START ));
 				echo -e "$GREEN""[i]$BLUE Dirsearch took $DIFF seconds to run.""$NC";
 		else
-				echo -e "$GREEN""[i]$BLUE Running dirsearch against all $(wc -l "$3" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running dirsearch against all $(wc -l "$3" | awk '{print $1}') discovered interesting domains.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: dirsearch -u $DOMAIN -e php,aspx,asp -t 20 -x 302,400 -F --plain-text-report=$WORKING_DIR/dirsearch/$DOMAIN.txt -w$2""$NC";
 				# Run dirsearch
 				mkdir "$WORKING_DIR"/dirsearch;
-				COUNT=$(wc -l "$3" | cut -d ' ' -f 1)
+				COUNT=$(wc -l "$3" | awk '{print $1}')
 				START=$(date +%s);
 				while read -r ADOMAIN; do
 						"$DIRSEARCH" -u "$HTTP"://"$ADOMAIN" -e php,aspx,asp -t 20 -x 302,400 -F --plain-text-report="$WORKING_DIR"/dirsearch/"$ADOMAIN".txt -w "$2";
@@ -1449,11 +1449,11 @@ function run_dirsearch() {
 function run_snallygaster() {
 		# Call with domain as $1, wordlist size as $2, and domain list as $3
 		if [[ $3 == $WORKING_DIR/$ALL_RESOLVED ]]; then
-				echo -e "$GREEN""[i]$BLUE Running snallygaster against all $(wc -l "$3" | cut -d ' ' -f 1) unique discovered domains.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running snallygaster against all $(wc -l "$3" | awk '{print $1}') unique discovered domains.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: snallygaster $DOMAIN -d --nowww | tee $WORKING_DIR/snallygaster/$ADOMAIN""$NC";
 				# Run snallygaster
 				mkdir "$WORKING_DIR"/snallygaster;
-				COUNT=$(wc -l "$3" | cut -d ' ' -f 1)
+				COUNT=$(wc -l "$3" | awk '{print $1}')
 				START=$(date +%s);
 				while read -r ADOMAIN; do
 						"$SNALLY" "$ADOMAIN" -d --nowww # | tee "$WORKING_DIR"/snallygaster/"$ADOMAIN";
@@ -1466,11 +1466,11 @@ function run_snallygaster() {
 				DIFF=$(( END - START ));
 				echo -e "$GREEN""[i]$BLUE Snallygaster took $DIFF seconds to run.""$NC";
 		else
-				echo -e "$GREEN""[i]$BLUE Running dirsearch against all $(wc -l "$3" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running dirsearch against all $(wc -l "$3" | awk '{print $1}') discovered interesting domains.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: snallygaster $DOMAIN -d --nowww | tee $WORKING_DIR/snallygaster/$ADOMAIN""$NC";
 				# Run snallygaster
 				mkdir "$WORKING_DIR"/snallygaster;
-				COUNT=$(wc -l "$3" | cut -d ' ' -f 1)
+				COUNT=$(wc -l "$3" | awk '{print $1}')
 				START=$(date +%s);
 				while read -r ADOMAIN; do
 						"$SNALLY" "$ADOMAIN" -d --nowww  #| tee "$WORKING_DIR"/snallygaster/"$ADOMAIN";
@@ -1491,7 +1491,7 @@ function run_inception() {
 
 		# Call with domain as $1, wordlist size as $2, and domain list as $3
 		if [[ $3 == $WORKING_DIR/$ALL_RESOLVED ]]; then
-				echo -e "$GREEN""[i]$BLUE Running inception against all $(wc -l "$3" | cut -d ' ' -f 1) unique discovered domains.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running inception against all $(wc -l "$3" | awk '{print $1}') unique discovered domains.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: inception -d all_discovered_domains -v | tee $WORKING_DIR/inception""$NC";
 				# Run inception
 				mkdir "$WORKING_DIR"/inception;
@@ -1501,7 +1501,7 @@ function run_inception() {
 				DIFF=$(( END - START ));
 				echo -e "$GREEN""[i]$BLUE Inception took $DIFF seconds to run.""$NC";
 		else
-				echo -e "$GREEN""[i]$BLUE Running inception against all $(wc -l "$3" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running inception against all $(wc -l "$3" | awk '{print $1}') discovered interesting domains.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: inception -d interesting_domains.txt -v | tee $WORKING_DIR/inception""$NC";
 				# Run inception
 				mkdir "$WORKING_DIR"/inception;
@@ -1598,7 +1598,7 @@ while true; do
 		   ;;
    [iI]* ) 
 		   # Check if any interesting domains have been found.'
-		   COUNT=$(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1);
+		   COUNT=$(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | awk '{print $1}');
 		   if [[ "$COUNT" -lt 1 ]]; then
 				   echo -e "$RED""[!] No interesting domains have been discovered.""$NC";
 				   return;
@@ -1671,11 +1671,11 @@ done
 function run_bfac() {
 		# Call with domain list as $1
 		if [[ $1 == $WORKING_DIR/$ALL_RESOLVED ]]; then
-				echo -e "$GREEN""[i]$BLUE Running bfac against all $(wc -l "$1" | cut -d ' ' -f 1) unique discovered domains.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running bfac against all $(wc -l "$1" | awk '{print $1}') unique discovered domains.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: bfac -u $DOMAIN -xsc 404,301,302,400 -o $WORKING_DIR/bfac.""$NC";
 				# Run ffuf
 				mkdir "$WORKING_DIR"/bfac;
-				COUNT=$(wc -l "$1" | cut -d ' ' -f 1)
+				COUNT=$(wc -l "$1" | awk '{print $1}')
 				START=$(date +%s);
 				while read -r ADOMAIN; do
 						$BFAC -u "$ADOMAIN" -xsc 404,301,302,400 -o "$WORKING_DIR"/bfac/"$ADOMAIN";
@@ -1688,11 +1688,11 @@ function run_bfac() {
 				DIFF=$(( END - START ));
 				echo -e "$GREEN""[i]$BLUE bfac took $DIFF seconds to run.""$NC";
 		else
-				echo -e "$GREEN""[i]$BLUE Running bfac against all $(wc -l "$1" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running bfac against all $(wc -l "$1" | awk '{print $1}') discovered interesting domains.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: bfac -u $DOMAIN -xsc 404,301,302,400 -o $WORKING_DIR/bfac.""$NC";
 				# Run ffuf
 				mkdir "$WORKING_DIR"/bfac;
-				COUNT=$(wc -l "$1" | cut -d ' ' -f 1)
+				COUNT=$(wc -l "$1" | awk '{print $1}')
 				START=$(date +%s);
 				while read -r ADOMAIN; do
 						$BFAC -u "$ADOMAIN" -xsc 404,301,302,400 -o "$WORKING_DIR"/bfac/"$ADOMAIN";
@@ -1710,10 +1710,10 @@ function run_bfac() {
 function run_nikto() {
 		# Call with domain list as $1
 		if [[ $1 == $WORKING_DIR/$ALL_RESOLVED ]]; then
-				echo -e "$GREEN""[i]$BLUE Running nikto against all $(wc -l "$1" | cut -d ' ' -f 1) unique discovered domains.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running nikto against all $(wc -l "$1" | awk '{print $1}') unique discovered domains.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: nikto -h $HTTP://$DOMAIN -Format html -output $WORKING_DIR/nikto.""$NC";
 				# Run nikto
-				COUNT=$(wc -l "$1" | cut -d ' ' -f 1)
+				COUNT=$(wc -l "$1" | awk '{print $1}')
 				mkdir "$WORKING_DIR"/nikto;
 				START=$(date +%s);
 				while read -r ADOMAIN; do
@@ -1727,10 +1727,10 @@ function run_nikto() {
 				DIFF=$(( END - START ));
 				echo -e "$GREEN""[i]$BLUE Nikto took $DIFF seconds to run.""$NC";
 		else
-				echo -e "$GREEN""[i]$BLUE Running nikto against all $(wc -l "$1" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running nikto against all $(wc -l "$1" | awk '{print $1}') discovered interesting domains.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: nikto -h $HTTP://$DOMAIN -Format html -output $WORKING_DIR/nikto.""$NC";
 				# Run nikto
-				COUNT=$(wc -l "$1" | cut -d ' ' -f 1)
+				COUNT=$(wc -l "$1" | awk '{print $1}')
 				mkdir "$WORKING_DIR"/nikto;
 				START=$(date +%s);
 				while read -r ADOMAIN; do
@@ -1749,10 +1749,10 @@ function run_nikto() {
 function run_whatweb() {
 		# Call with domain as $1 and domain list as $2
 		if [[ $2 == $WORKING_DIR/$ALL_RESOLVED ]]; then
-				echo -e "$GREEN""[i]$BLUE Running whatweb against all $(wc -l "$2" | cut -d ' ' -f 1) unique discovered domains.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running whatweb against all $(wc -l "$2" | awk '{print $1}') unique discovered domains.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: whatweb -v -a 3 -h $HTTP://$DOMAIN | tee $WORKING_DIR/whatweb.""$NC";
 				# Run whatweb
-				COUNT=$(wc -l "$2" | cut -d ' ' -f 1)
+				COUNT=$(wc -l "$2" | awk '{print $1}')
 				mkdir "$WORKING_DIR"/whatweb;
 				START=$(date +%s);
 				while read -r ADOMAIN; do
@@ -1766,10 +1766,10 @@ function run_whatweb() {
 				DIFF=$(( END - START ));
 				echo -e "$GREEN""[i]$BLUE whatweb took $DIFF seconds to run.""$NC";
 		else
-				echo -e "$GREEN""[i]$BLUE Running whatweb against all $(wc -l "$2" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running whatweb against all $(wc -l "$2" | awk '{print $1}') discovered interesting domains.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: whatweb -v -a 3 -h $HTTP://$DOMAIN | tee $WORKING_DIR/whatweb.""$NC";
 				# Run whatweb
-				COUNT=$(wc -l "$2" | cut -d ' ' -f 1)
+				COUNT=$(wc -l "$2" | awk '{print $1}')
 				mkdir "$WORKING_DIR"/whatweb;
 				START=$(date +%s);
 				while read -r ADOMAIN; do
@@ -1788,10 +1788,10 @@ function run_whatweb() {
 function run_wafw00f() {
 		# Call with domain as $1 and domain list as $2
 		if [[ $2 == $WORKING_DIR/$ALL_RESOLVED ]]; then
-				echo -e "$GREEN""[i]$BLUE Running wafw00f against all $(wc -l "$2" | cut -d ' ' -f 1) unique discovered domains.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running wafw00f against all $(wc -l "$2" | awk '{print $1}') unique discovered domains.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: wafw00f $HTTP://$1 -a | tee $WORKING_DIR/wafw00f.""$NC";
 				# Run wafw00f
-				COUNT=$(wc -l "$2" | cut -d ' ' -f 1)
+				COUNT=$(wc -l "$2" | awk '{print $1}')
 				mkdir "$WORKING_DIR"/wafw00f;
 				START=$(date +%s);
 				while read -r ADOMAIN; do
@@ -1805,10 +1805,10 @@ function run_wafw00f() {
 				DIFF=$(( END - START ));
 				echo -e "$GREEN""[i]$BLUE wafw00f took $DIFF seconds to run.""$NC";
 		else
-				echo -e "$GREEN""[i]$BLUE Running wafw00f against all $(wc -l "$2" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running wafw00f against all $(wc -l "$2" | awk '{print $1}') discovered interesting domains.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: wafw00f $HTTP://$1 -a | tee $WORKING_DIR/wafw00f.""$NC";
 				# Run wafw00f
-				COUNT=$(wc -l "$2" | cut -d ' ' -f 1)
+				COUNT=$(wc -l "$2" | awk '{print $1}')
 				mkdir "$WORKING_DIR"/wafw00f;
 				START=$(date +%s);
 				while read -r ADOMAIN; do
@@ -1827,7 +1827,7 @@ function run_wafw00f() {
 function run_subjack() {
 		# Call with domain as $1 and domain list as $2
 		if [[ $2 == $WORKING_DIR/$ALL_RESOLVED ]]; then
-				echo -e "$GREEN""[i]$BLUE Running subjack against all $(wc -l "$WORKING_DIR"/$ALL_RESOLVED | cut -d ' ' -f 1) unique discovered subdomains to check for subdomain takeover.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running subjack against all $(wc -l "$WORKING_DIR"/$ALL_RESOLVED | awk '{print $1}') unique discovered subdomains to check for subdomain takeover.""$NC";
 				echo -e "$GREEN""[i]$ORANGE It will run twice, once against HTTPS and once against HTTP.""$NC";
 				echo -e "$GREEN""[i]$ORANGE Command: subjack -d $1 -w $2 -v -t 20 -ssl -m -o $WORKING_DIR/subjack-output.txt""$NC";
 				START=$(date +%s);
@@ -1836,7 +1836,7 @@ function run_subjack() {
 				END=$(date +%s);
 				DIFF=$(( END - START ));
 		else
-				echo -e "$GREEN""[i]$BLUE Running subjack against all $(wc -l "$WORKING_DIR"/$ALL_RESOLVED | cut -d ' ' -f 1) discovered interesting subdomains to check for subdomain takeover.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running subjack against all $(wc -l "$WORKING_DIR"/$ALL_RESOLVED | awk '{print $1}') discovered interesting subdomains to check for subdomain takeover.""$NC";
 				echo -e "$GREEN""[i]$ORANGE It will run twice, once against HTTPS and once against HTTP.""$NC";
 				echo -e "$GREEN""[i]$ORANGE Command: subjack -d $1 -w $2 -v -t 20 -ssl -m -o $WORKING_DIR/subjack-output.txt""$NC";
 				START=$(date +%s);
@@ -1854,7 +1854,7 @@ function run_subjack() {
 function run_corstest() {
 		# Call with domain as $1 and domain list as $2
 		if [[ $2 == $WORKING_DIR/$ALL_RESOLVED ]]; then
-				echo -e "$GREEN""[i]$BLUE Running CORStest against all $(wc -l "$2" | cut -d ' ' -f 1) unique discovered domains.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running CORStest against all $(wc -l "$2" | awk '{print $1}') unique discovered domains.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: corstest.py $2 -v -p 64 | tee $WORKING_DIR/CORStest-output.txt.""$NC";
 				# Run CORStest
 				START=$(date +%s);
@@ -1863,7 +1863,7 @@ function run_corstest() {
 				DIFF=$(( END - START ));
 				echo -e "$GREEN""[i]$BLUE CORStest took $DIFF seconds to run.""$NC";
 		else
-				echo -e "$GREEN""[i]$BLUE Running CORStest against all $(wc -l "$2" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running CORStest against all $(wc -l "$2" | awk '{print $1}') discovered interesting domains.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: corstest.py $2 -v -p 64 | tee $WORKING_DIR/CORStest-output.txt.""$NC";
 				# Run CORStest
 				START=$(date +%s);
@@ -1877,7 +1877,7 @@ function run_corstest() {
 function run_s3scanner() {
 		# Call with domain as $1 and domain list as $2
 		if [[ $2 == $WORKING_DIR/$ALL_RESOLVED ]]; then
-				echo -e "$GREEN""[i]$BLUE Running S3Scanner against all $(wc -l "$2" | cut -d ' ' -f 1) unique discovered domains.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running S3Scanner against all $(wc -l "$2" | awk '{print $1}') unique discovered domains.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: s3scanner.py ""$NC";
 				# Run S3Scanner
 				START=$(date +%s);
@@ -1886,7 +1886,7 @@ function run_s3scanner() {
 				DIFF=$(( END - START ));
 				echo -e "$GREEN""[i]$BLUE S3Scanner took $DIFF seconds to run.""$NC";
 		else
-				echo -e "$GREEN""[i]$BLUE Running S3Scanner against all $(wc -l "$2" | cut -d ' ' -f 1) discovered interesting domains.""$NC";
+				echo -e "$GREEN""[i]$BLUE Running S3Scanner against all $(wc -l "$2" | awk '{print $1}') discovered interesting domains.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: s3scanner.py ""$NC";
 				# Run S3Scanner
 				START=$(date +%s);
@@ -1979,7 +1979,7 @@ while true; do
 		   ;;
    [iI]* ) 
 		   # Check if any interesting domains have been found.'
-		   COUNT=$(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1);
+		   COUNT=$(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | awk '{print $1}');
 		   if [[ "$COUNT" -lt 1 ]]; then
 				   echo -e "$RED""[!] No interesting domains have been discovered.""$NC";
 				   return;
@@ -2075,7 +2075,7 @@ function run_rescope() {
 		echo -e "$BLUE""[i] Creating a Burp scope file with rescope.""$NC";
 		
 		# Make sure resolved domains exists
-		if [[ $(wc -l "$WORKING_DIR"/"$ALL_RESOLVED" | cut -d ' ' -f 1) -gt 0 ]]; then
+		if [[ $(wc -l "$WORKING_DIR"/"$ALL_RESOLVED" | awk '{print $1}') -gt 0 ]]; then
 				"$RESCOPE" --burp -i "$WORKING_DIR"/"$ALL_RESOLVED" -o "$WORKING_DIR"/burp-scope.json -s;
 		fi
 }
@@ -2189,7 +2189,7 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 				if [[ "$USE_ALL" == 1 ]]; then
 						run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 				# Make sure there are interesting domains
-				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) -gt 0 ]]; then
+				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | awk '{print $1}') -gt 0 ]]; then
 						run_subjack "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 				else
 						run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -2201,7 +2201,7 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 				if [[ "$USE_ALL" == 1 ]]; then
 						run_corstest "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 				# Make sure there are interesting domains
-				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) -gt 0 ]]; then
+				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | awk '{print $1}') -gt 0 ]]; then
 						run_corstest "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 				else
 						run_corstest "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -2213,7 +2213,7 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 				if [[ "$USE_ALL" == 1 ]]; then
 						run_s3scanner "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 				# Make sure there are interesting domains
-				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) -gt 0 ]]; then
+				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | awk '{print $1}') -gt 0 ]]; then
 						run_s3scanner "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 				else
 						run_s3scanner "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -2225,7 +2225,7 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 				if [[ "$USE_ALL" == 1 ]]; then
 						run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
 				# Make sure there are interesting domains
-				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) -gt 0 ]]; then
+				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | awk '{print $1}') -gt 0 ]]; then
 						run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 				else
 						run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -2237,7 +2237,7 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 				if [[ "$USE_ALL" == 1 ]]; then
 						run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 				# Make sure there are interesting domains
-				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) -gt 0 ]]; then
+				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | awk '{print $1}') -gt 0 ]]; then
 						run_whatweb "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 				else
 						run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -2249,7 +2249,7 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 				if [[ "$USE_ALL" == 1 ]]; then
 						run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 				# Make sure there are interesting domains
-				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) -gt 0 ]]; then
+				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | awk '{print $1}') -gt 0 ]]; then
 						run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 				else
 						run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -2261,7 +2261,7 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 				if [[ "$USE_ALL" == 1 ]]; then
 						run_nikto "$WORKING_DIR"/"$ALL_RESOLVED";
 				# Make sure there are interesting domains
-				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) -gt 0 ]]; then
+				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | awk '{print $1}') -gt 0 ]]; then
 						run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 				else
 						run_nikto "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -2276,7 +2276,7 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 						if [[ "$USE_ALL" == 1 ]]; then
 								run_inception "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
 						# Make sure there are interesting domains
-						elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) -gt 0 ]]; then
+						elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | awk '{print $1}') -gt 0 ]]; then
 								run_inception "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 						else
 								run_inception "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -2285,7 +2285,7 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 						if [[ "$USE_ALL" == 1 ]]; then
 								run_inception "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";
 						# Make sure there are interesting domains
-						elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) != 0 ]]; then
+						elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | awk '{print $1}') != 0 ]]; then
 								run_inception "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 						else
 								run_inception "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -2305,7 +2305,7 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 						if [[ "$USE_ALL" == 1 ]]; then
 								run_ffuf "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
 						# Make sure there are interesting domains
-						elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) -gt 0 ]]; then
+						elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | awk '{print $1}') -gt 0 ]]; then
 								run_ffuf "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 						else
 								run_ffuf "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -2314,7 +2314,7 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 						if [[ "$USE_ALL" == 1 ]]; then
 								run_ffuf "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";
 						# Make sure there are interesting domains
-						elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) != 0 ]]; then
+						elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | awk '{print $1}') != 0 ]]; then
 								run_ffuf "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 						else
 								run_ffuf "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -2329,7 +2329,7 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 						if [[ "$USE_ALL" == 1 ]]; then
 								run_gobuster "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
 						# Make sure there are interesting domains
-						elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) -gt 0 ]]; then
+						elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | awk '{print $1}') -gt 0 ]]; then
 								run_gobuster "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 						else
 								run_gobuster "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -2338,7 +2338,7 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 						if [[ "$USE_ALL" == 1 ]]; then
 								run_gobuster "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";
 						# Make sure there are interesting domains
-						elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) != 0 ]]; then
+						elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | awk '{print $1}') != 0 ]]; then
 								run_gobuster "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 						else
 								run_gobuster "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -2353,7 +2353,7 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 						if [[ "$USE_ALL" == 1 ]]; then
 								run_dirsearch "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
 						# Make sure there are interesting domains
-						elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) -gt 0 ]]; then
+						elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | awk '{print $1}') -gt 0 ]]; then
 								run_dirsearch "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 						else
 								run_dirsearch "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -2362,7 +2362,7 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 						if [[ "$USE_ALL" == 1 ]]; then
 								run_dirsearch "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";
 						# Make sure there are interesting domains
-						elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) != 0 ]]; then
+						elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | awk '{print $1}') != 0 ]]; then
 								run_dirsearch "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 						else
 								run_dirsearch "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -2546,7 +2546,7 @@ if [[ "$INFO_GATHERING" == 1 ]]; then
 				run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 				run_nikto "$WORKING_DIR"/"$ALL_RESOLVED";
 		# Make sure there are interesting domains
-		elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) -gt 0 ]]; then
+		elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | awk '{print $1}') -gt 0 ]]; then
 				run_subjack "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 				run_corstest "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 				run_s3scanner "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
@@ -2583,7 +2583,7 @@ if [[ "$CONTENT_DISCOVERY" == 1 ]]; then
 						run_gobuster "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
 						run_dirsearch "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
 				# Make sure there are interesting domains
-				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) -gt 0 ]]; then
+				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | awk '{print $1}') -gt 0 ]]; then
 						run_inception "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 						run_waybackurls "$DOMAIN";
 						# run_snallygaster "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
@@ -2607,7 +2607,7 @@ if [[ "$CONTENT_DISCOVERY" == 1 ]]; then
 						run_gobuster "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";
 						run_dirsearch "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";
 				# Make sure there are interesting domains
-				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | cut -d ' ' -f 1) != 0 ]]; then
+				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | awk '{print $1}') != 0 ]]; then
 						run_inception "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 						run_waybackurls "$DOMAIN";
 						# run_snallygaster "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
