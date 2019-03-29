@@ -620,12 +620,12 @@ function check_paths() {
 		# Check for Debian/Ubuntu and set proper paths
 		grep 'Ubuntu' /etc/issue 1>/dev/null;
 		UBUNTU="$?";
-		if [[ "$UBUNTU" == 0 ]]; then 
+		if [[ "$UBUNTU" -eq 0 ]]; then 
 				CHROMIUM=$(command -v chromium-browser);
 		fi
 		grep 'Debian' /etc/issue 1>/dev/null;
 		DEBIAN="$?";
-		if [[ "$DEBIAN" == 0 ]]; then 
+		if [[ "$DEBIAN" -eq 0 ]]; then 
 				NIKTO="$HOME/$TOOL_PATH/nikto/program/nikto.pl";
 		fi
 
@@ -681,7 +681,7 @@ function check_paths() {
 		if [[ "$SUBLIST3R" == "" ]] || [[ ! -f "$SUBLIST3R" ]]; then
 				grep 'Kali' /etc/issue 1>/dev/null; 
 				KALI=$?;
-				if [[ "$KALI" == 0 ]]; then
+				if [[ "$KALI" -eq 0 ]]; then
 						SUBLIST3R=$(command -v sublist3r);
 				else
 						echo -e "$RED""[!] The path or the file specified by the path for sublist3r does not exit.";
@@ -1016,7 +1016,7 @@ function run_subdomain_brute() {
 function run_aquatone () {
 		# Call empty or with default as $1 for -D default non-interactive mode
 		if [[ "$1" == "default" ]]; then
-				if [[ "$USE_ALL" == 1 ]]; then
+				if [[ "$USE_ALL" -eq 1 ]]; then
 						mkdir "$WORKING_DIR"/aquatone;
 						echo -e "$BLUE""[i] Running aquatone against all $(wc -l "$WORKING_DIR"/$ALL_RESOLVED | awk '{print $1}') unique discovered subdomains.""$NC";
 						START=$(date +%s);
@@ -1075,7 +1075,7 @@ function run_aquatone () {
 
 function run_masscan() {
 		# Check if not root and SKIP_MASSCAN is set
-		if [[ "$SKIP_MASSCAN" == 1 ]]; then
+		if [[ "$SKIP_MASSCAN" -eq 1 ]]; then
 				echo -e "$ORANGE""[!] Skipping masscan since script is not being run as root.""$NC";
 				sleep 1;
 		else
@@ -2090,7 +2090,7 @@ if [[ "$DOMAIN" == "" ]]; then
 fi
 
 # Check for mutually exclusive interactive and non-interactive modes
-if [[ "$INTERACTIVE" == 1 ]] && [[ "$DEFAULT_MODE" == 1 ]]; then
+if [[ "$INTERACTIVE" -eq 1 ]] && [[ "$DEFAULT_MODE" -eq 1 ]]; then
 		echo -e "$RED""[!] Both interactive mode (-I) and non-interactive mode (-D) cannot be run together. Exiting.""$NC";
 		usage;
 		exit 1;
@@ -2186,7 +2186,7 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 		## Information gathering
 		# Run subjack
 		if [[ "$ENABLE_SUBJACK" -eq 1 ]]; then
-				if [[ "$USE_ALL" == 1 ]]; then
+				if [[ "$USE_ALL" -eq 1 ]]; then
 						run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 				# Make sure there are interesting domains
 				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | awk '{print $1}') -gt 0 ]]; then
@@ -2198,7 +2198,7 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 
 		# Run CORStest
 		if [[ "$ENABLE_CORSTEST" -eq 1 ]]; then
-				if [[ "$USE_ALL" == 1 ]]; then
+				if [[ "$USE_ALL" -eq 1 ]]; then
 						run_corstest "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 				# Make sure there are interesting domains
 				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | awk '{print $1}') -gt 0 ]]; then
@@ -2210,7 +2210,7 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 
 		# Run S3Scanner
 		if [[ "$ENABLE_S3SCANNER" -eq 1 ]]; then
-				if [[ "$USE_ALL" == 1 ]]; then
+				if [[ "$USE_ALL" -eq 1 ]]; then
 						run_s3scanner "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 				# Make sure there are interesting domains
 				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | awk '{print $1}') -gt 0 ]]; then
@@ -2222,7 +2222,7 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 
 		# Run bfac
 		if [[ "$ENABLE_BFAC" -eq 1 ]]; then
-				if [[ "$USE_ALL" == 1 ]]; then
+				if [[ "$USE_ALL" -eq 1 ]]; then
 						run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
 				# Make sure there are interesting domains
 				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | awk '{print $1}') -gt 0 ]]; then
@@ -2234,7 +2234,7 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 
 		# Run whatweb
 		if [[ "$ENABLE_WHATWEB" -eq 1 ]]; then
-				if [[ "$USE_ALL" == 1 ]]; then
+				if [[ "$USE_ALL" -eq 1 ]]; then
 						run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 				# Make sure there are interesting domains
 				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | awk '{print $1}') -gt 0 ]]; then
@@ -2246,7 +2246,7 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 
 		# Run wafw00f
 		if [[ "$ENABLE_WAFW00F" -eq 1 ]]; then
-				if [[ "$USE_ALL" == 1 ]]; then
+				if [[ "$USE_ALL" -eq 1 ]]; then
 						run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 				# Make sure there are interesting domains
 				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | awk '{print $1}') -gt 0 ]]; then
@@ -2258,7 +2258,7 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 
 		# Run nikto
 		if [[ "$ENABLE_NIKTO" -eq 1 ]]; then
-				if [[ "$USE_ALL" == 1 ]]; then
+				if [[ "$USE_ALL" -eq 1 ]]; then
 						run_nikto "$WORKING_DIR"/"$ALL_RESOLVED";
 				# Make sure there are interesting domains
 				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | awk '{print $1}') -gt 0 ]]; then
@@ -2273,7 +2273,7 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 		if [[ "$ENABLE_INCEPTION" -eq 1 ]]; then
 				# Check if $SUBDOMAIN_WORDLIST is set, else use short as default
 				if [[ "$CONTENT_WORDLIST" != "" ]]; then
-						if [[ "$USE_ALL" == 1 ]]; then
+						if [[ "$USE_ALL" -eq 1 ]]; then
 								run_inception "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
 						# Make sure there are interesting domains
 						elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | awk '{print $1}') -gt 0 ]]; then
@@ -2282,7 +2282,7 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 								run_inception "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
 						fi
 				else
-						if [[ "$USE_ALL" == 1 ]]; then
+						if [[ "$USE_ALL" -eq 1 ]]; then
 								run_inception "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";
 						# Make sure there are interesting domains
 						elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | awk '{print $1}') != 0 ]]; then
@@ -2302,7 +2302,7 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 		if [[ "$ENABLE_FFUF" -eq 1 ]]; then
 				# Check if $SUBDOMAIN_WORDLIST is set, else use short as default
 				if [[ "$CONTENT_WORDLIST" != "" ]]; then
-						if [[ "$USE_ALL" == 1 ]]; then
+						if [[ "$USE_ALL" -eq 1 ]]; then
 								run_ffuf "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
 						# Make sure there are interesting domains
 						elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | awk '{print $1}') -gt 0 ]]; then
@@ -2311,7 +2311,7 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 								run_ffuf "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
 						fi
 				else
-						if [[ "$USE_ALL" == 1 ]]; then
+						if [[ "$USE_ALL" -eq 1 ]]; then
 								run_ffuf "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";
 						# Make sure there are interesting domains
 						elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | awk '{print $1}') != 0 ]]; then
@@ -2326,7 +2326,7 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 		if [[ "$ENABLE_GOBUSTER" -eq 1 ]]; then
 				# Check if $SUBDOMAIN_WORDLIST is set, else use short as default
 				if [[ "$CONTENT_WORDLIST" != "" ]]; then
-						if [[ "$USE_ALL" == 1 ]]; then
+						if [[ "$USE_ALL" -eq 1 ]]; then
 								run_gobuster "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
 						# Make sure there are interesting domains
 						elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | awk '{print $1}') -gt 0 ]]; then
@@ -2335,7 +2335,7 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 								run_gobuster "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
 						fi
 				else
-						if [[ "$USE_ALL" == 1 ]]; then
+						if [[ "$USE_ALL" -eq 1 ]]; then
 								run_gobuster "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";
 						# Make sure there are interesting domains
 						elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | awk '{print $1}') != 0 ]]; then
@@ -2350,7 +2350,7 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 		if [[ "$ENABLE_DIRSEARCH" -eq 1 ]]; then
 				# Check if $SUBDOMAIN_WORDLIST is set, else use short as default
 				if [[ "$CONTENT_WORDLIST" != "" ]]; then
-						if [[ "$USE_ALL" == 1 ]]; then
+						if [[ "$USE_ALL" -eq 1 ]]; then
 								run_dirsearch "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
 						# Make sure there are interesting domains
 						elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | awk '{print $1}') -gt 0 ]]; then
@@ -2359,7 +2359,7 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 								run_dirsearch "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
 						fi
 				else
-						if [[ "$USE_ALL" == 1 ]]; then
+						if [[ "$USE_ALL" -eq 1 ]]; then
 								run_dirsearch "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";
 						# Make sure there are interesting domains
 						elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | awk '{print $1}') != 0 ]]; then
@@ -2408,7 +2408,7 @@ fi
 # Content discovery: ffuf, gobuster, and dirsearch
 # Information gathering: all tools
 # Domains to scan: all unique resolvable
-if [[ "$DEFAULT_MODE" == 1 ]]; then
+if [[ "$DEFAULT_MODE" -eq 1 ]]; then
 		# Check if we're root since we're running masscan
 		check_root;
 
@@ -2456,7 +2456,7 @@ if [[ "$DEFAULT_MODE" == 1 ]]; then
 fi
 
 # Run in interactive mode, ignoring other parameters
-if [[ "$INTERACTIVE" == 1 ]]; then
+if [[ "$INTERACTIVE" -eq 1 ]]; then
 		# Check if we're root since we're running masscan
 		check_root;
 
@@ -2490,13 +2490,13 @@ if [[ "$INTERACTIVE" == 1 ]]; then
 fi
 
 # Preemptively check for -p portscanning
-if [[ "$PORTSCANNING" == 1 ]]; then
+if [[ "$PORTSCANNING" -eq 1 ]]; then
 		# Check if we're root since we're running masscan
 		check_root;
 fi
 
 # Always run subdomain bruteforce tools
-if [[ "$SUBDOMAIN_BRUTE" == 1 ]]; then
+if [[ "$SUBDOMAIN_BRUTE" -eq 1 ]]; then
 		echo -e "$BLUE""[i] Beginning subdomain enumeration dnscan, subfinder, sublist3r, amass, and massdns+goaltdns.""$NC";
 		sleep 0.5;
 
@@ -2519,7 +2519,7 @@ fi
 get_interesting "silent";
 
 # -s screenshot with aquatone
-if [[ "$SCREENSHOTS" == 1 ]]; then
+if [[ "$SCREENSHOTS" -eq 1 ]]; then
 		echo -e "$BLUE""[i] Taking screenshots with aquatone.""$NC";
 		sleep 0.5;
 
@@ -2530,14 +2530,14 @@ if [[ "$SCREENSHOTS" == 1 ]]; then
 fi
 
 # -i information gathering
-if [[ "$INFO_GATHERING" == 1 ]]; then
+if [[ "$INFO_GATHERING" -eq 1 ]]; then
 		echo -e "$BLUE""[i] Beginning information gathering with subjack, CORStest, S3Scanner, bfac, whatweb, wafw00f, and nikto.""$NC";
 		sleep 0.5;
 
 		# Call unique to make sure list is up to date for content discovery
 		unique;
 
-		if [[ "$USE_ALL" == 1 ]]; then
+		if [[ "$USE_ALL" -eq 1 ]]; then
 				run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 				run_corstest "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 				run_s3scanner "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -2566,7 +2566,7 @@ if [[ "$INFO_GATHERING" == 1 ]]; then
 fi
 
 # -C run content discovery
-if [[ "$CONTENT_DISCOVERY" == 1 ]]; then
+if [[ "$CONTENT_DISCOVERY" -eq 1 ]]; then
 		echo -e "$BLUE""[i] Beginning content discovery with inception, waybackurls, ffuf, gobuster, and dirsearch.""$NC";
 		sleep 0.5;
 
@@ -2575,7 +2575,7 @@ if [[ "$CONTENT_DISCOVERY" == 1 ]]; then
 
 		# Check if $SUBDOMAIN_WORDLIST is set, else use short as default
 		if [[ "$CONTENT_WORDLIST" != "" ]]; then
-				if [[ "$USE_ALL" == 1 ]]; then
+				if [[ "$USE_ALL" -eq 1 ]]; then
 						run_inception "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
 						run_waybackurls "$DOMAIN";
 						# run_snallygaster "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -2599,7 +2599,7 @@ if [[ "$CONTENT_DISCOVERY" == 1 ]]; then
 						run_dirsearch "$DOMAIN" "$CONTENT_WORDLIST" "$WORKING_DIR"/"$ALL_RESOLVED";
 				fi
 		else
-				if [[ "$USE_ALL" == 1 ]]; then
+				if [[ "$USE_ALL" -eq 1 ]]; then
 						run_inception "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";
 						run_waybackurls "$DOMAIN";
 						# run_snallygaster "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -2626,7 +2626,7 @@ if [[ "$CONTENT_DISCOVERY" == 1 ]]; then
 fi
 
 # -p portscanning
-if [[ "$PORTSCANNING" == 1 ]]; then
+if [[ "$PORTSCANNING" -eq 1 ]]; then
 		echo -e "$GREEN""Beginning portscanning with masscan (if root) and nmap.""$NC";
 		sleep 0.5;
 
@@ -2638,7 +2638,7 @@ get_interesting;
 list_found;
 
 # -r rescope
-if [[ "$ENABLE_RESCOPE" == 1 ]]; then
+if [[ "$ENABLE_RESCOPE" -eq 1 ]]; then
 		run_rescope;
 fi
 
