@@ -26,6 +26,7 @@ function install_kali() {
 		install_s3scanner;
 		install_amass;
 		install_dirsearch;
+		install_go;
 		install_go_tools;
 }
 function install_debian() {
