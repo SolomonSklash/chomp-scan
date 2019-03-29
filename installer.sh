@@ -25,6 +25,7 @@ function install_kali() {
 		install_corstest;
 		install_s3scanner;
 		install_amass;
+		install_dirsearch;
 		install_go_tools;
 }
 function install_debian() {
@@ -42,6 +43,7 @@ function install_debian() {
 		install_s3scanner;
 		install_nikto;
 		install_amass;
+		install_dirsearch;
 		install_go;
 		install_go_tools;
 }
@@ -58,6 +60,7 @@ function install_ubuntu() {
 		install_corstest;
 		install_s3scanner;
 		install_amass;
+		install_dirsearch;
 		install_go;
 		install_go_tools;
 }
