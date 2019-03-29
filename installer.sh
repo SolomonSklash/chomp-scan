@@ -169,8 +169,6 @@ if [[ "$CUSTOM_PATH" != "" ]]; then
 		fi
 fi
 
-
-
 # Create install directory
 mkdir -pv "$HOME"/bounty/tools;
 
