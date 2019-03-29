@@ -146,6 +146,7 @@ function install_go() {
 		wget https://dl.google.com/go/go1.12.linux-amd64.tar.gz;
 		sudo tar -C /usr/local -xzf go1.12.linux-amd64.tar.gz;
 		echo "export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin:" >> "$HOME"/.profile;
+		echo "export GOPATH=$HOME/go" >> "$HOME"/.profile;
 		source "$HOME"/.profile;
 		rm -rf go1.12.linux-amd64.tar.gz;
 }
