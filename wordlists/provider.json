@@ -1,0 +1,171 @@
+[
+  {
+  "vulnerability":"PHP info is publicly viewable",
+    "sendIn":"url",
+    "payload":["/php.php","/phpinfo.php","/info.php","/_profiler/phpinfo"],
+    "checkIn":"responseBody",
+    "checkFor":"PHP Extension&&&&PHP API&&&&PHP Version",
+    "color":"red"
+  },
+  {
+  "vulnerability":"Server status is publicly viewable",
+  "sendIn":"url",
+  "payload":["/server-status"],
+  "checkIn":"responseBody",
+  "checkFor":"Apache Server Status&&&&Server Version&&&&CPU Usage:",
+  "color":"yellow"
+  },
+  {
+  "vulnerability":"Tomcat Server status is publicly viewable",
+  "sendIn":"url",
+  "payload":["/status?full=true"],
+  "checkIn":"responseBody",
+  "checkFor":"Current thread count",
+  "color":"yellow"
+  },
+  {
+    "vulnerability":"Git Exposed publicly",
+    "sendIn":"url",
+    "payload":["/.git/config"],
+    "checkIn":"responseBody",
+    "checkFor":"[core]",
+    "color":"red"
+  },
+    {
+      "vulnerability": "Lazy File Manager",
+      "sendIn": "url",
+      "payload": [
+        "/lfm.php"
+      ],
+      "checkIn": "responseBody",
+      "checkFor": "Lazy File Manager",
+      "color": "blue"
+    },
+    {
+      "vulnerability": "IntelliJ IDEA WebServer config file",
+      "sendIn": "url",
+      "payload": [
+        "/.idea/WebServers.xml"
+      ],
+      "checkIn": "responseBody",
+      "checkFor": "name=\"WebServers\"",
+      "color": "red"
+    },
+    {
+      "vulnerability": "Symfony Database Config File",
+      "sendIn": "url",
+      "payload": [
+        "/config/databases.yml"
+      ],
+      "checkIn": "responseBody",
+      "checkFor": "param:&&&&class:",
+      "color": "red"
+    },
+    {
+      "vulnerability": "Rails Database Config file",
+      "sendIn": "url",
+      "payload": [
+        "/config/database.yml"
+      ],
+      "checkIn": "responseBody",
+      "checkFor": "database:&&&&adapter:",
+      "color": "red"
+    },
+    {
+      "vulnerability": "wsFTP ini File",
+      "sendIn": "url",
+      "payload": [
+        "/WS_FTP.ini",
+        "/ws_ftp.ini",
+        "/WS_FTP.INI"
+      ],
+      "checkIn": "responseBody",
+      "checkFor": "[_config_]",
+      "color": "red"
+    },
+    {
+      "vulnerability": "Filezilla config file",
+      "sendIn": "url",
+      "payload": [
+        "/filezilla.xml",
+        "/sitemanager.xml",
+        "/FileZilla.xml"
+      ],
+      "checkIn": "responseBody",
+      "checkFor": "<FileZilla",
+      "color": "yellow"
+    },
+    {
+      "vulnerability": "Winscp ini file ",
+      "sendIn": "url",
+      "payload": [
+        "/winscp.ini",
+        "/WinSCP.ini"
+      ],
+      "checkIn": "responseBody",
+      "checkFor": "[Configuration]",
+      "color": "yellow"
+    },
+    {
+      "vulnerability": "Magento Config",
+      "sendIn": "url",
+      "payload": [
+        "/app/etc/local.xml",
+        "/store/app/etc/local.xml"
+      ],
+      "checkIn": "responseBody",
+      "checkFor": "Mage&&&&<config",
+      "color": "yellow"
+    },
+    {
+      "vulnerability": "Key Detected",
+      "sendIn": "url",
+      "payload": [
+        "/privatekey.key",
+        "/myserver.key",
+        "/key.pem",
+        "/id_rsa",
+        "/id_dsa",
+        "/.ssh/id_rsa",
+        "/.ssh/id_dsa"
+      ],
+      "checkIn": "responseBody",
+      "checkFor": "BEGIN EC PRIVATE KEY||||BEGIN DSA PRIVATE KEY||||BEGIN RSA PRIVATE KEY||||BEGIN PRIVATE KEY",
+      "color": "red"
+    },
+    {
+      "vulnerability": ".env file detected",
+      "sendIn": "url",
+      "payload": [
+        "/.env"
+      ],
+      "checkIn": "responseBody",
+      "checkFor": "DB_PASSWORD=||||APP_ENV=",
+      "color": "red"
+    },
+    {
+        "vulnerability": "XSS",
+        "sendIn": "url",
+        "color": "red",
+        "payload": [
+            "/canary'\"\"'>><svg/onload=alert(1)>"
+        ],
+        "checkIn": "responseBody",
+        "checkFor": "<svg onload=alert(1)>"
+    },
+    {
+        "vulnerability": "CORS misconfiguration",
+        "sendIn": "header",
+        "color": "red",
+        "payload": [
+            "Origin",
+            "null",
+            "Origin",
+            "https://doesnot.exists"
+        ],
+        "checkIn": "responseHeader",
+        "checkFor": "Access-Control-Allow-Origin: https://doesnot.exists||||Access-Control-Allow-Origin: null"
+    }
+  ]
+
+
