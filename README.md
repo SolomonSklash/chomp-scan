@@ -7,6 +7,8 @@ A scripted pipeline of tools to simplify the bug bounty/penetration test reconna
 
 ![](screenshots/screenshot01.png)
 
+*If you've found any bugs using this tool, please let me know!*
+
 ### Scope
 Chomp Scan is a Bash script that chains together the fastest and most effective tools (in my opinion/experience) for doing the long and sometimes tedious process of recon. No more looking for word lists and trying to remember when you started a scan and where the output is. Chomp Scan can focus on a list of potentially interesting subdomains, letting you save time and focus on high-value targets. It can even notify you via Notica when it's done running!
 
