@@ -172,8 +172,8 @@ function install_corstest() {
 
 function install_s3scanner() {
 		if [[ -d "$TOOLS"/S3Scanner ]]; then
-				echo -e "$GREEN""Updating S3ScannerCORStest.""$NC";
-				cd "$TOOLS"/S3ScannerCORStest;
+				echo -e "$GREEN""Updating S3Scanner.""$NC";
+				cd "$TOOLS"/S3Scanner;
 				git pull;
 				cd -;
 		else
