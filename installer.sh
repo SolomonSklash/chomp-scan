@@ -74,18 +74,39 @@ function install_pip() {
 }
 
 function install_dnscan() {
+		if [[ -d "$TOOLS"/dnscan ]]; then
+				echo -e "$GREEN""Updating dnscan.""$NC";
+				cd "$TOOLS"/dnscan;
+				git pull;
+				cd -;
+		else
 		echo -e "$GREEN""Installing dnscan from Github.""$NC";
 		git clone https://github.com/rbsec/dnscan.git "$TOOLS"/dnscan;
+		fi
 }
 
 function install_bfac() {
+		if [[ -d "$TOOLS"/bfac ]]; then
+				echo -e "$GREEN""Updating bfac.""$NC";
+				cd "$TOOLS"/bfac;
+				git pull;
+				cd -;
+		else
 		echo -e "$GREEN""Installing bfac from Github.""$NC";
 		git clone https://github.com/mazen160/bfac.git "$TOOLS"/bfac;
+		fi
 }
 
 function install_massdns() {
+		if [[ -d "$TOOLS"/massdns ]]; then
+				echo -e "$GREEN""Updating massdns.""$NC";
+				cd "$TOOLS"/massdns;
+				git pull;
+				cd -;
+		else
 		echo -e "$GREEN""Installing massdns from Github.""$NC";
 		git clone https://github.com/blechschmidt/massdns.git "$TOOLS"/massdns;
+		fi
 		
 		# Compile massdns
 		echo -e "$GREEN""Compiling massdns from source.""$NC";
@@ -98,32 +119,67 @@ function install_aquatone() {
 		echo -e "$GREEN""Installing aquatone from Github.""$NC";
 		mkdir -pv "$TOOLS"/aquatone;
 		wget https://github.com/michenriksen/aquatone/releases/download/v1.4.3/aquatone_linux_amd64_1.4.3.zip -O "$TOOLS"/aquatone/aquatone.zip;
-		unzip "$TOOLS"/aquatone/aquatone.zip -d "$TOOLS"/aquatone;
+		unzip -o "$TOOLS"/aquatone/aquatone.zip -d "$TOOLS"/aquatone;
 }
 
 function install_sublist3r() {
+		if [[ -d "$TOOLS"/Sublist3r ]]; then
+				echo -e "$GREEN""Updating sublist3r.""$NC";
+				cd "$TOOLS"/Sublist3r;
+				git pull;
+				cd -;
+		else
 		echo -e "$GREEN""Installing sublist3r from Github.""$NC";
 		git clone https://github.com/aboul3la/Sublist3r.git "$TOOLS"/Sublist3r;
+		fi
 }
 
 function install_nikto() {
+		if [[ -d "$TOOLS"/nikto ]]; then
+				echo -e "$GREEN""Updating nikto.""$NC";
+				cd "$TOOLS"/nikto;
+				git pull;
+				cd -;
+		else
 		echo -e "$GREEN""Installing nikto from Github.""$NC";
 		git clone https://github.com/sullo/nikto.git "$TOOLS"/nikto;
+		fi
 }
 
 function install_dirsearch() {
+		if [[ -d "$TOOLS"/dirsearch ]]; then
+				echo -e "$GREEN""Updating dirsearch.""$NC";
+				cd "$TOOLS"/dirsearch;
+				git pull;
+				cd -;
+		else
 		echo -e "$GREEN""Installing dirsearch from Github.""$NC";
 		git clone https://github.com/maurosoria/dirsearch.git "$TOOLS"/dirsearch;
+		fi
 }
 
 function install_corstest() {
+		if [[ -d "$TOOLS"/CORStest ]]; then
+				echo -e "$GREEN""Updating CORStest.""$NC";
+				cd "$TOOLS"/CORStest;
+				git pull;
+				cd -;
+		else
 		echo -e "$GREEN""Installing CORStest from Github.""$NC";
 		git clone https://github.com/RUB-NDS/CORStest.git "$TOOLS"/CORStest;
+		fi
 }
 
 function install_s3scanner() {
+		if [[ -d "$TOOLS"/S3Scanner ]]; then
+				echo -e "$GREEN""Updating S3ScannerCORStest.""$NC";
+				cd "$TOOLS"/S3ScannerCORStest;
+				git pull;
+				cd -;
+		else
 		echo -e "$GREEN""Installing S3Scanner from Github.""$NC";
 		git clone https://github.com/sa7mon/S3Scanner.git "$TOOLS"/S3Scanner;
+		fi
 }
 
 function install_go_tools() {
@@ -161,7 +217,7 @@ function install_go() {
 function install_amass() {
 		echo -e "$GREEN""Installing amass from Github.""$NC";
 		wget https://github.com/OWASP/Amass/releases/download/2.9.4/amass_2.9.4_linux_amd64.zip -O "$TOOLS"/amass.zip;
-		unzip "$TOOLS"/amass.zip -d "$TOOLS";
+		unzip -o "$TOOLS"/amass.zip -d "$TOOLS";
 		mv "$TOOLS"/amass_2.9.4_linux_amd64 "$TOOLS"/amass;
 		rm "$TOOLS"/amass.zip;
 }
