@@ -136,7 +136,7 @@ function usage() {
 		echo -e "$BLUE""\\t-C wordlist \\n\\t\\t$ORANGE (optional) The wordlist to use for content discovery. Five built-in lists, small, medium, large, xl, and xxl can be used, as well as the path to a custom wordlist. The default is small.""$NC";
 		echo -e "$BLUE""\\t-P file-path \\n\\t\\t$ORANGE (optional) Set a custom directory for the location of tools. The path must exist and the directory must contain all needed tools.""$NC";
 		echo -e "$BLUE""\\t-s \\n\\t\\t$ORANGE (optional) Enable screenshots using Aquatone.""$NC";
-		echo -e "$BLUE""\\t-i \\n\\t\\t$ORANGE (optional) Enable information gathering phase, using subjack, CORStest, S3Scanner, bfac, whatweb, wafw00f, and nikto.""$NC";
+		echo -e "$BLUE""\\t-i \\n\\t\\t$ORANGE (optional) Enable information gathering phase, using subjack, CORStest, S3Scanner, whatweb, wafw00f, and nikto.""$NC";
 		echo -e "$BLUE""\\t-p \\n\\t\\t$ORANGE (optional) Enable portscanning phase, using masscan (run as root) and nmap.""$NC";
 		echo -e "$BLUE""\\t-I \\n\\t\\t$ORANGE (optional) Enable interactive mode. This allows you to select certain tool options and inputs interactively. This cannot be run with -D.""$NC";
 		echo -e "$BLUE""\\t-D \\n\\t\\t$ORANGE (optional) Enable default non-interactive mode. This mode uses pre-selected defaults and requires no user interaction or options. This cannot be run with -I.""$NC";
@@ -326,6 +326,10 @@ function parse_config() {
 				ENABLE_INCEPTION=1;
 		fi
 
+		if [[ $(grep '^ENABLE_BFAC' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
+				ENABLE_BFAC=1;
+		fi
+
 		if [[ $(grep '^ENABLE_WAYBACKURLS' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
 				ENABLE_WAYBACKURLS=1;
 		fi
@@ -384,10 +388,6 @@ function parse_config() {
 
 		if [[ $(grep '^ENABLE_S3SCANNER' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
 				ENABLE_S3SCANNER=1;
-		fi
-
-		if [[ $(grep '^ENABLE_BFAC' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
-				ENABLE_BFAC=1;
 		fi
 
 		if [[ $(grep '^ENABLE_WHATWEB' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
@@ -1547,6 +1547,7 @@ while true; do
 				   case $CHOICE in
 						   [sS]* )
 								   run_inception "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$ALL_RESOLVED";
+								   run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_waybackurls "$DOMAIN";
 								   run_ffuf "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_gobuster "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -1555,6 +1556,7 @@ while true; do
 								   ;;
 							[mM]* )
 								   run_inception "$DOMAIN" "$MEDIUM" "$WORKING_DIR"/"$ALL_RESOLVED";
+								   run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_waybackurls "$DOMAIN";
 								   run_ffuf "$DOMAIN" "$MEDIUM" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_gobuster "$DOMAIN" "$MEDIUM" "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -1563,6 +1565,7 @@ while true; do
 								   ;;
 							[lL]* )
 								   run_inception "$DOMAIN" "$LARGE" "$WORKING_DIR"/"$ALL_RESOLVED";
+								   run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_waybackurls "$DOMAIN";
 								   run_ffuf "$DOMAIN" "$LARGE" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_gobuster "$DOMAIN" "$LARGE" "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -1571,6 +1574,7 @@ while true; do
 								   ;;
 							[xX]* )
 								   run_inception "$DOMAIN" "$XL" "$WORKING_DIR"/"$ALL_RESOLVED";
+								   run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_waybackurls "$DOMAIN";
 								   run_ffuf "$DOMAIN" "$XL" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_gobuster "$DOMAIN" "$XL" "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -1579,6 +1583,7 @@ while true; do
 								   ;;
 							[2]* )
 								   run_inception "$DOMAIN" "$XXL" "$WORKING_DIR"/"$ALL_RESOLVED";
+								   run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_waybackurls "$DOMAIN";
 								   run_ffuf "$DOMAIN" "$XXL" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_gobuster "$DOMAIN" "$XXL" "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -1616,6 +1621,7 @@ while true; do
 				   case $CHOICE in
 						   [sS]* )
 								   run_inception "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_waybackurls "$DOMAIN";
 								   run_ffuf "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_gobuster "$DOMAIN" "$SMALL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
@@ -1624,6 +1630,7 @@ while true; do
 								   ;;
 							[mM]* )
 								   run_inception "$DOMAIN" "$MEDIUM" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_waybackurls "$DOMAIN";
 								   run_ffuf "$DOMAIN" "$MEDIUM" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_gobuster "$DOMAIN" "$MEDIUM" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
@@ -1632,6 +1639,7 @@ while true; do
 								   ;;
 							[lL]* )
 								   run_inception "$DOMAIN" "$LARGE" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_waybackurls "$DOMAIN";
 								   run_ffuf "$DOMAIN" "$LARGE" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_gobuster "$DOMAIN" "$LARGE" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
@@ -1640,6 +1648,7 @@ while true; do
 								   ;;
 							[xX]* )
 								   run_inception "$DOMAIN" "$XL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_waybackurls "$DOMAIN";
 								   run_ffuf "$DOMAIN" "$XL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_gobuster "$DOMAIN" "$XL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
@@ -1648,6 +1657,7 @@ while true; do
 								   ;;
 							[2]* )
 								   run_inception "$DOMAIN" "$XXL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_waybackurls "$DOMAIN";
 								   run_ffuf "$DOMAIN" "$XXL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_gobuster "$DOMAIN" "$XXL" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
@@ -1901,7 +1911,7 @@ function run_information_gathering() {
 # Ask user to do information gathering on discovered domains
 while true; do
   echo -e "$GREEN""[?] Do you want to begin information gathering on [A]ll/[I]nteresting/[N]o discovered domains?";
-  echo -e "$ORANGE""[i] This will run subjack, CORStest, S3Scanner, bfac, whatweb, wafw00f, and nikto.";
+  echo -e "$ORANGE""[i] This will run subjack, CORStest, S3Scanner, whatweb, wafw00f, and nikto.";
   read -rp "[?] Please enter A/a, I/i, or N/n. " ANSWER
 
   case $ANSWER in
@@ -1920,7 +1930,6 @@ while true; do
 								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_corstest "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_s3scanner "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
-								   run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_nikto "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -1930,7 +1939,6 @@ while true; do
 								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_corstest "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_s3scanner "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
-								   run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_nikto "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -1940,7 +1948,6 @@ while true; do
 								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_corstest "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_s3scanner "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
-								   run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_nikto "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -1950,7 +1957,6 @@ while true; do
 								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_corstest "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_s3scanner "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
-								   run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_nikto "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -1960,7 +1966,6 @@ while true; do
 								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_corstest "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_s3scanner "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
-								   run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_nikto "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -1999,7 +2004,6 @@ while true; do
 								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_corstest "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_s3scanner "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
@@ -2009,7 +2013,6 @@ while true; do
 								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_corstest "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_s3scanner "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_whatweb "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
@@ -2019,7 +2022,6 @@ while true; do
 								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_corstest "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_s3scanner "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_whatweb "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
@@ -2029,7 +2031,6 @@ while true; do
 								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_corstest "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_s3scanner "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
@@ -2039,7 +2040,6 @@ while true; do
 								   run_subjack "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_corstest "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_s3scanner "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
@@ -2220,18 +2220,6 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 				fi
 		fi
 
-		# Run bfac
-		if [[ "$ENABLE_BFAC" -eq 1 ]]; then
-				if [[ "$USE_ALL" -eq 1 ]]; then
-						run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
-				# Make sure there are interesting domains
-				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | awk '{print $1}') -gt 0 ]]; then
-						run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-				else
-						run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
-				fi
-		fi
-
 		# Run whatweb
 		if [[ "$ENABLE_WHATWEB" -eq 1 ]]; then
 				if [[ "$USE_ALL" -eq 1 ]]; then
@@ -2290,6 +2278,18 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 						else
 								run_inception "$DOMAIN" "$SHORT" "$WORKING_DIR"/"$ALL_RESOLVED";
 						fi
+				fi
+		fi
+
+		# Run bfac
+		if [[ "$ENABLE_BFAC" -eq 1 ]]; then
+				if [[ "$USE_ALL" -eq 1 ]]; then
+						run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
+				# Make sure there are interesting domains
+				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | awk '{print $1}') -gt 0 ]]; then
+						run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+				else
+						run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
 				fi
 		fi
 
@@ -2531,7 +2531,7 @@ fi
 
 # -i information gathering
 if [[ "$INFO_GATHERING" -eq 1 ]]; then
-		echo -e "$BLUE""[i] Beginning information gathering with subjack, CORStest, S3Scanner, bfac, whatweb, wafw00f, and nikto.""$NC";
+		echo -e "$BLUE""[i] Beginning information gathering with subjack, CORStest, S3Scanner, whatweb, wafw00f, and nikto.""$NC";
 		sleep 0.5;
 
 		# Call unique to make sure list is up to date for content discovery
@@ -2541,7 +2541,6 @@ if [[ "$INFO_GATHERING" -eq 1 ]]; then
 				run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 				run_corstest "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 				run_s3scanner "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
-				run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
 				run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 				run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 				run_nikto "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -2550,7 +2549,6 @@ if [[ "$INFO_GATHERING" -eq 1 ]]; then
 				run_subjack "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 				run_corstest "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 				run_s3scanner "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
-				run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 				run_whatweb "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 				run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 				run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
@@ -2558,7 +2556,6 @@ if [[ "$INFO_GATHERING" -eq 1 ]]; then
 				run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 				run_corstest "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 				run_s3scanner "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
-				run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
 				run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 				run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 				run_nikto "$WORKING_DIR"/"$ALL_RESOLVED";
