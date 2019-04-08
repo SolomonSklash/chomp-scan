@@ -890,11 +890,15 @@ function run_sublist3r() {
 
 function run_knock() {
 		# Call with domain as $1 and wordlist as $2
+
+		# Trap SIGINT so broken knock runs can be cancelled
+		trap cancel SIGINT;
+
 		echo -e "$GREEN""[i]$BLUE Scanning $1 with knock.""$NC";
-		echo -e "$GREEN""[i]$ORANGE Command: ""$NC";
+		echo -e "$GREEN""[i]$ORANGE Command: knockpy $DOMAIN -w $2 -o $WORKING_DIR/knock-output.txt""$NC";
 
 		START=$(date +%s);
-		"$KNOCK" "$1" -o "$WORKING_DIR"/knock-output.txt;
+		"$KNOCK" "$1" -w "$2" -o "$WORKING_DIR"/knock-output.txt;
 		END=$(date +%s);
 		DIFF=$(( END - START ));
 
@@ -1006,7 +1010,7 @@ function run_massdns() {
 function run_subdomain_brute() {
 		# Ask user for wordlist size
 		while true; do
-		  echo -e "$ORANGE""[i] Beginning subdomain enumeration. This will use dnscan, subfinder, sublist3r, amass, and massdns + goaltdns.";
+		  echo -e "$ORANGE""[i] Beginning subdomain enumeration. This will use dnscan, subfinder, sublist3r, knockpy, amass, and massdns + goaltdns.";
 		  echo -e "$GREEN""[?] What size wordlist would you like to use for subdomain bruteforcing?";
 		  echo -e "$GREEN""[i] Sizes are [S]mall (22k domains), [L]arge (102k domains), and [H]uge (199k domains).";
 		  echo -e "$ORANGE";
@@ -1017,6 +1021,7 @@ function run_subdomain_brute() {
 				   run_dnscan "$DOMAIN" "$SHORT";
 				   run_subfinder "$DOMAIN" "$SHORT";
 				   run_sublist3r "$DOMAIN";
+				   run_knock "$DOMAIN" "$SHORT";
 				   run_amass "$DOMAIN" "$SHORT";
 				   run_massdns "$DOMAIN" "$SHORT";
 				   break
@@ -1026,6 +1031,7 @@ function run_subdomain_brute() {
 				   run_dnscan "$DOMAIN" "$LONG";
 				   run_subfinder "$DOMAIN" "$LONG";
 				   run_sublist3r "$DOMAIN";
+				   run_knock "$DOMAIN" "$LONG";
 				   run_amass "$DOMAIN" "$LONG";
 				   run_massdns "$DOMAIN" "$LONG";
 				   return;
@@ -1035,6 +1041,7 @@ function run_subdomain_brute() {
 				   run_dnscan "$DOMAIN" "$SHORT";
 				   run_subfinder "$DOMAIN" "$HUGE";
 				   run_sublist3r "$DOMAIN";
+				   run_knock "$DOMAIN" "$HUGE";
 				   run_amass "$DOMAIN" "$HUGE";
 				   run_massdns "$DOMAIN" "$HUGE";
 				   break;
@@ -2462,6 +2469,7 @@ if [[ "$DEFAULT_MODE" -eq 1 ]]; then
 		run_dnscan "$DOMAIN" "$SHORT";
 		run_subfinder "$DOMAIN" "$SHORT";
 		run_sublist3r "$DOMAIN";
+		run_knock "$DOMAIN" "$SHORT";
 		run_amass "$DOMAIN" "$SHORT";
 		run_massdns "$DOMAIN" "$SHORT";
 
@@ -2540,7 +2548,7 @@ fi
 
 # Always run subdomain bruteforce tools
 if [[ "$SUBDOMAIN_BRUTE" -eq 1 ]]; then
-		echo -e "$BLUE""[i] Beginning subdomain enumeration dnscan, subfinder, sublist3r, amass, and massdns+goaltdns.""$NC";
+		echo -e "$BLUE""[i] Beginning subdomain enumeration dnscan, subfinder, sublist3r, knockpy, amass, and massdns+goaltdns.""$NC";
 		sleep 0.5;
 
 		# Check if $SUBDOMAIN_WORDLIST is set, else use short as default
@@ -2548,12 +2556,14 @@ if [[ "$SUBDOMAIN_BRUTE" -eq 1 ]]; then
 				run_dnscan "$DOMAIN" "$SUBDOMAIN_WORDLIST";
 				run_subfinder "$DOMAIN" "$SUBDOMAIN_WORDLIST";
 				run_sublist3r "$DOMAIN";
+				run_knock "$DOMAIN" "$SUBDOMAIN_WORDLIST";
 				run_amass "$DOMAIN" "$SUBDOMAIN_WORDLIST";
 				run_massdns "$DOMAIN" "$SUBDOMAIN_WORDLIST";
 		else
 				run_dnscan "$DOMAIN" "$SHORT";
 				run_subfinder "$DOMAIN" "$SHORT";
 				run_sublist3r "$DOMAIN";
+				run_knock "$DOMAIN" "$SHORT";
 				run_amass "$DOMAIN" "$SHORT";
 				run_massdns "$DOMAIN" "$SHORT";
 		fi
