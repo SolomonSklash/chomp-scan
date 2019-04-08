@@ -30,7 +30,7 @@ Please see the [Wiki](https://github.com/SolomonSklash/chomp-scan/wiki) for deta
 * [dnscan](https://github.com/rbsec/dnscan)
 * [subfinder](https://github.com/subfinder/subfinder)
 * [sublist3r](https://github.com/aboul3la/Sublist3r)
-* [knockpy](https://github.com/SolomonSklash/knock) (forked from the original [here](https://github.com/guelfoweb/knock)
+* [knockpy](https://github.com/SolomonSklash/knock) (forked from the original [here](https://github.com/guelfoweb/knock))
 * [amass](https://github.com/OWASP/Amass)
 * [massdns](https://github.com/blechschmidt/massdns) + [goaltdns](https://github.com/subfinder/goaltdns)
 
