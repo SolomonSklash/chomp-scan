@@ -26,6 +26,7 @@ function install_kali() {
 		install_s3scanner;
 		install_amass;
 		install_dirsearch;
+		install_knockpy;
 		install_go;
 		install_go_tools;
 }
@@ -45,6 +46,7 @@ function install_debian() {
 		install_nikto;
 		install_amass;
 		install_dirsearch;
+		install_knockpy;
 		install_go;
 		install_go_tools;
 }
@@ -62,6 +64,7 @@ function install_ubuntu() {
 		install_s3scanner;
 		install_amass;
 		install_dirsearch;
+		install_knockpy;
 		install_go;
 		install_go_tools;
 }
@@ -179,6 +182,21 @@ function install_s3scanner() {
 		else
 		echo -e "$GREEN""Installing S3Scanner from Github.""$NC";
 		git clone https://github.com/sa7mon/S3Scanner.git "$TOOLS"/S3Scanner;
+		fi
+}
+
+function install_knockpy() {
+		if [[ -d "$TOOLS"/knock ]]; then
+				echo -e "$GREEN""Updating Knockpy.""$NC";
+				cd "$TOOLS"/knock;
+				git pull;
+				cd -;
+		else
+		echo -e "$GREEN""Installing Knockpy from Github.""$NC";
+		git clone https://github.com/SolomonSklash/knock.git "$TOOLS"/knock;
+		cd "$TOOLS"/knock;
+		sudo python setup.py install;
+		cd -;
 		fi
 }
 
