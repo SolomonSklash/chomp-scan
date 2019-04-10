@@ -64,6 +64,7 @@ ENABLE_NMAP=0;
 ENABLE_SCREENSHOTS=0;
 ENABLE_RESCOPE=0;
 ENABLE_KNOCK=0;
+ENABLE_WHATWAF=0;
 
 # Other variables
 ALL_IP=all_discovered_ips.txt;
@@ -100,6 +101,7 @@ function set_tool_paths() {
 				CORSTEST=$TOOL_PATH/CORStest/corstest.py;
 				S3SCANNER=$TOOL_PATH/S3Scanner/s3scanner.py;
 				AMASS=$TOOL_PATH/amass/amass;
+				WHATWAF=$TOOL_PATH/WhatWaf/whatwaf.py;
 		else
 				return;
 		fi
@@ -402,6 +404,10 @@ function parse_config() {
 
 		if [[ $(grep '^ENABLE_WAFW00F' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
 				ENABLE_WAFW00F=1;
+		fi
+
+		if [[ $(grep '^ENABLE_WHATWAF' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
+				ENABLE_WHATWAF=1;
 		fi
 
 		if [[ $(grep '^ENABLE_NIKTO' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
@@ -736,6 +742,10 @@ function check_paths() {
 		fi
 		if [[ "$KNOCK" == "" ]] || [[ ! -f "$KNOCK" ]]; then
 				echo -e "$RED""[!] The path or the file specified by the path for knockpy does not exit.";
+				exit 1;
+		fi
+		if [[ "$WHATWAF" == "" ]] || [[ ! -f "$WHATWAF" ]]; then
+				echo -e "$RED""[!] The path or the file specified by the path for whatwaf does not exit.";
 				exit 1;
 		fi
 }
@@ -1864,6 +1874,29 @@ function run_wafw00f() {
 		fi
 }
 
+function run_whatwaf() {
+		# Call with domain as $1 and domain list as $2
+		if [[ $2 == $WORKING_DIR/$ALL_RESOLVED ]]; then
+				echo -e "$GREEN""[i]$BLUE Running whatwaf against all $(wc -l "$2" | awk '{print $1}') unique discovered domains.""$NC";
+				echo -e "$GREEN""[i]$BLUE Command: whatwaf -l $2 -t 40 --skip --hide --ra --timeout 3 --force-ssl -o $WORKING_DIR/whatwaf-output.txt -F -Y.""$NC";
+				# Run whatwaf
+				START=$(date +%s);
+				python "$WHATWAF" -l "$2" -t 40 --skip --hide --ra --timeout 3 --force-ssl -o "$WORKING_DIR"/whatwaf-output.txt -F -Y;
+				END=$(date +%s);
+				DIFF=$(( END - START ));
+				echo -e "$GREEN""[i]$BLUE whatwaf took $DIFF seconds to run.""$NC";
+		else
+				echo -e "$GREEN""[i]$BLUE Running wafw00f against all $(wc -l "$2" | awk '{print $1}') discovered interesting domains.""$NC";
+				echo -e "$GREEN""[i]$BLUE Command: whatwaf -l $w -t 40 --skip --hide --ra --timeout 3 --force-ssl -o $WORKING_DIR/whatwaf-output.txt -F -Y.""$NC";
+				# Run whatwaf
+				START=$(date +%s);
+				python "$WHATWAF" -l "$2" -t 40 --skip --hide --ra --timeout 3 --force-ssl -o "$WORKING_DIR"/whatwaf-output.txt -F -Y;
+				END=$(date +%s);
+				DIFF=$(( END - START ));
+				echo -e "$GREEN""[i]$BLUE whatwaf took $DIFF seconds to run.""$NC";
+		fi
+}
+
 function run_subjack() {
 		# Call with domain as $1 and domain list as $2
 		if [[ $2 == $WORKING_DIR/$ALL_RESOLVED ]]; then
@@ -2303,6 +2336,18 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 						run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 				else
 						run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+				fi
+		fi
+
+		# Run whatwaf
+		if [[ "$ENABLE_WHATWAF" -eq 1 ]]; then
+				if [[ "$USE_ALL" -eq 1 ]]; then
+						run_whatwaf "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+				# Make sure there are interesting domains
+				elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | awk '{print $1}') -gt 0 ]]; then
+						run_whatwaf "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+				else
+						run_whatwaf "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 				fi
 		fi
 
