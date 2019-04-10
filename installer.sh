@@ -223,7 +223,7 @@ function install_go_tools() {
 }
 
 function install_go() {
-		echo -e "$GREEN""Installing Go from golang.org.""$NC";
+		echo -e "$GREEN""Installing Go 1.12 from golang.org.""$NC";
 		wget https://dl.google.com/go/go1.12.linux-amd64.tar.gz;
 		sudo tar -C /usr/local -xzf go1.12.linux-amd64.tar.gz;
 		echo "export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin:" >> "$HOME"/.profile;
