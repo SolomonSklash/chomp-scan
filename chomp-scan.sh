@@ -1400,7 +1400,7 @@ function run_ffuf() {
 		# Call with domain as $1, wordlist size as $2, and domain list as $3
 		if [[ $3 == $WORKING_DIR/$ALL_RESOLVED ]]; then
 				echo -e "$GREEN""[i]$BLUE Running ffuf against all $(wc -l "$3" | awk '{print $1}') unique discovered domains.""$NC";
-				echo -e "$GREEN""[i]$BLUE Command: ffuf -u $HTTP://$DOMAIN/FUZZ -w $2 -sf -se -fc 301,302 -k | tee $WORKING_DIR/ffuf.""$NC";
+				echo -e "$GREEN""[i]$BLUE Command: ffuf -u $HTTP://$DOMAIN/FUZZ -w $2 -sf -se -fc 301,302,404 -k | tee $WORKING_DIR/ffuf.""$NC";
 				# Run ffuf
 				mkdir "$WORKING_DIR"/ffuf;
 				COUNT=$(wc -l "$3" | awk '{print $1}')
@@ -1417,7 +1417,7 @@ function run_ffuf() {
 				echo -e "$GREEN""[i]$BLUE ffuf took $DIFF seconds to run.""$NC";
 		else
 				echo -e "$GREEN""[i]$BLUE Running ffuf against all $(wc -l "$3" | awk '{print $1}') discovered interesting domains.""$NC";
-				echo -e "$GREEN""[i]$BLUE Command: ffuf -u $HTTP://$DOMAIN/FUZZ -w $2 -sf -se -fc 301,302 -k | tee $WORKING_DIR/ffuf.""$NC";
+				echo -e "$GREEN""[i]$BLUE Command: ffuf -u $HTTP://$DOMAIN/FUZZ -w $2 -sf -se -fc 301,302,404 -k | tee $WORKING_DIR/ffuf.""$NC";
 				# Run ffuf
 				mkdir "$WORKING_DIR"/ffuf;
 				COUNT=$(wc -l "$3" | awk '{print $1}')
