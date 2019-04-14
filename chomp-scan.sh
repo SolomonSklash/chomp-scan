@@ -1445,7 +1445,7 @@ function run_ffuf() {
 }
 
 function run_dirsearch() {
-		# Trap SIGINT so broken ffuf runs can be cancelled
+		# Trap SIGINT so broken dirsearch runs can be cancelled
 		trap cancel SIGINT;
 
 		# Call with domain as $1, wordlist size as $2, and domain list as $3
