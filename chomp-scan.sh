@@ -1451,7 +1451,7 @@ function run_dirsearch() {
 		# Call with domain as $1, wordlist size as $2, and domain list as $3
 		if [[ $3 == $WORKING_DIR/$ALL_RESOLVED ]]; then
 				echo -e "$GREEN""[i]$BLUE Running dirsearch against all $(wc -l "$3" | awk '{print $1}') unique discovered domains.""$NC";
-				echo -e "$GREEN""[i]$BLUE Command: dirsearch -u $DOMAIN -e php,aspx,asp -t 20 -x 310,302,404 -F --plain-text-report=$WORKING_DIR/dirsearch/$DOMAIN.txt -w$2""$NC";
+				echo -e "$GREEN""[i]$BLUE Command: dirsearch -u $DOMAIN -e php,aspx,asp -t 20 -x 310,302,404 -F --plain-text-report=$WORKING_DIR/dirsearch/$DOMAIN.txt -w $2""$NC";
 				# Run dirsearch
 				mkdir "$WORKING_DIR"/dirsearch;
 				COUNT=$(wc -l "$3" | awk '{print $1}')
@@ -1468,7 +1468,7 @@ function run_dirsearch() {
 				echo -e "$GREEN""[i]$BLUE Dirsearch took $DIFF seconds to run.""$NC";
 		else
 				echo -e "$GREEN""[i]$BLUE Running dirsearch against all $(wc -l "$3" | awk '{print $1}') discovered interesting domains.""$NC";
-				echo -e "$GREEN""[i]$BLUE Command: dirsearch -u $DOMAIN -e php,aspx,asp -t 20 -x 301,302,404 -F --plain-text-report=$WORKING_DIR/dirsearch/$DOMAIN.txt -w$2""$NC";
+				echo -e "$GREEN""[i]$BLUE Command: dirsearch -u $DOMAIN -e php,aspx,asp -t 20 -x 301,302,404 -F --plain-text-report=$WORKING_DIR/dirsearch/$DOMAIN.txt -w $2""$NC";
 				# Run dirsearch
 				mkdir "$WORKING_DIR"/dirsearch;
 				COUNT=$(wc -l "$3" | awk '{print $1}')
