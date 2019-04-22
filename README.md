@@ -2,6 +2,8 @@
 ![GitHub release](https://img.shields.io/github/release/SolomonSklash/chomp-scan.svg?style=for-the-badge)
 ![GitHub](https://img.shields.io/github/license/SolomonSklash/chomp-scan.svg?style=for-the-badge)
 ![GitHub issues](https://img.shields.io/github/issues/SolomonSklash/chomp-scan.svg?style=for-the-badge)
+[![Beerpay](https://beerpay.io/SolomonSklash/chomp-scan/badge.svg?style=flat-square)](https://beerpay.io/SolomonSklash/chomp-scan)
+[![Beerpay](https://beerpay.io/SolomonSklash/chomp-scan/make-wish.svg)](https://beerpay.io/SolomonSklash/chomp-scan)
 
 A scripted pipeline of tools to simplify the bug bounty/penetration test reconnaissance phase, so you can focus on chomping bugs.
 
