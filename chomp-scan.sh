@@ -1406,7 +1406,7 @@ function run_ffuf() {
 				COUNT=$(wc -l "$3" | awk '{print $1}')
 				START=$(date +%s);
 				while read -r ADOMAIN; do
-						"$FFUF" -u "$HTTP"://"$ADOMAIN"/FUZZ -w "$2" -sf -se -fc 301,302,404 -k -mc all | tee "$WORKING_DIR"/ffuf/"$ADOMAIN";
+						"$FFUF" -u "$HTTP"://"$ADOMAIN"/FUZZ -w "$2" -timeout 3 -sf -se -fc 301,302,404 -k -mc all | tee "$WORKING_DIR"/ffuf/"$ADOMAIN";
 						COUNT=$((COUNT - 1));
 						if [[ "$COUNT" != 0 ]]; then
 								echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
@@ -1423,7 +1423,7 @@ function run_ffuf() {
 				COUNT=$(wc -l "$3" | awk '{print $1}')
 				START=$(date +%s);
 				while read -r ADOMAIN; do
-						"$FFUF" -u "$HTTP"://"$ADOMAIN"/FUZZ -w "$2" -sf -se -fc 301,302,404 -k -mc all | tee "$WORKING_DIR"/ffuf/"$ADOMAIN";
+						"$FFUF" -u "$HTTP"://"$ADOMAIN"/FUZZ -w "$2" -timeout 3 -sf -se -fc 301,302,404 -k -mc all | tee "$WORKING_DIR"/ffuf/"$ADOMAIN";
 						COUNT=$((COUNT - 1));
 						if [[ "$COUNT" != 0 ]]; then
 								echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
