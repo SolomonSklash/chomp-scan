@@ -121,7 +121,7 @@ function install_massdns() {
 function install_aquatone() {
 		echo -e "$GREEN""Installing aquatone from Github.""$NC";
 		mkdir -pv "$TOOLS"/aquatone;
-		wget https://github.com/michenriksen/aquatone/releases/download/v1.4.3/aquatone_linux_amd64_1.4.3.zip -O "$TOOLS"/aquatone/aquatone.zip;
+		wget https://github.com/michenriksen/aquatone/releases/download/v1.5.0/aquatone_linux_amd64_1.5.0.zip -O "$TOOLS"/aquatone/aquatone.zip;
 		unzip -o "$TOOLS"/aquatone/aquatone.zip -d "$TOOLS"/aquatone;
 }
 
