@@ -13,7 +13,7 @@ KALI=;
 TOOLS="$HOME/bounty/tools";
 
 function install_kali() {
-		echo -e "$GREEN""Installing for Kali.""$NC";
+		echo -e "$GREEN""[+] Installing for Kali.""$NC";
 		sudo apt-get update;
 	 	sudo apt-get install git wget curl nmap masscan whatweb sublist3r gobuster nikto wafw00f chromium openssl libnet-ssleay-perl p7zip-full build-essential python-pip python3-pip unzip -y;
 		install_pip;
@@ -31,7 +31,7 @@ function install_kali() {
 		install_go_tools;
 }
 function install_parrot() {
-		echo -e "$GREEN""Installing for ParrotOS.""$NC";
+		echo -e "$GREEN""[+] Installing for ParrotOS.""$NC";
 		sudo apt-get update;
 	 	sudo apt-get install git wget curl nmap masscan whatweb sublist3r gobuster nikto wafw00f chromium openssl libnet-ssleay-perl p7zip-full build-essential python-pip python3-pip unzip -y;
 		install_pip;
@@ -49,7 +49,7 @@ function install_parrot() {
 		install_go_tools;
 }
 function install_debian() {
-		echo -e "$GREEN""Installing for Debian.""$NC";
+		echo -e "$GREEN""[+] Installing for Debian.""$NC";
 		sudo apt-get update;
 		sudo apt-get install git wget curl nmap masscan whatweb chromium openssl libnet-ssleay-perl p7zip-full build-essential python-pip python3-pip unzip -y;
 		install_pip;
@@ -69,7 +69,7 @@ function install_debian() {
 		install_go_tools;
 }
 function install_ubuntu() {
-		echo -e "$GREEN""Installing for Ubuntu.""$NC";
+		echo -e "$GREEN""[+] Installing for Ubuntu.""$NC";
 		sudo apt-get update;
 		sudo apt-get install git wget curl nmap masscan nikto whatweb wafw00f chromium-browser python-pip python3-pip p7zip-full unzip -y;
 		install_pip;
@@ -89,7 +89,7 @@ function install_ubuntu() {
 
 function install_pip() {
 		# Run both pip installs
-		 echo -e "$GREEN""Installing requirements for Python 2 and Python 3.""$NC";
+		 echo -e "$GREEN""[+] Installing requirements for Python 2 and Python 3.""$NC";
 		sudo pip2 install -r requirements2.txt;
 		sudo pip3 install -r requirements3.txt;
 }
@@ -101,7 +101,7 @@ function install_dnscan() {
 				git pull;
 				cd -;
 		else
-		echo -e "$GREEN""Installing dnscan from Github.""$NC";
+		echo -e "$GREEN""[+] Installing dnscan from Github.""$NC";
 		git clone https://github.com/rbsec/dnscan.git "$TOOLS"/dnscan;
 		fi
 }
@@ -113,7 +113,7 @@ function install_bfac() {
 				git pull;
 				cd -;
 		else
-		echo -e "$GREEN""Installing bfac from Github.""$NC";
+		echo -e "$GREEN""[+] Installing bfac from Github.""$NC";
 		git clone https://github.com/mazen160/bfac.git "$TOOLS"/bfac;
 		fi
 }
@@ -125,7 +125,7 @@ function install_massdns() {
 				git pull;
 				cd -;
 		else
-		echo -e "$GREEN""Installing massdns from Github.""$NC";
+		echo -e "$GREEN""[+] Installing massdns from Github.""$NC";
 		git clone https://github.com/blechschmidt/massdns.git "$TOOLS"/massdns;
 		fi
 		
@@ -137,7 +137,7 @@ function install_massdns() {
 }
 
 function install_aquatone() {
-		echo -e "$GREEN""Installing aquatone from Github.""$NC";
+		echo -e "$GREEN""[+] Installing aquatone from Github.""$NC";
 		mkdir -pv "$TOOLS"/aquatone;
 		wget https://github.com/michenriksen/aquatone/releases/download/v1.6.0/aquatone_linux_amd64_1.6.0.zip -O "$TOOLS"/aquatone.zip;
 		unzip -o "$TOOLS"/aquatone.zip -d "$TOOLS"/aquatone;
@@ -150,7 +150,7 @@ function install_sublist3r() {
 				git pull;
 				cd -;
 		else
-		echo -e "$GREEN""Installing sublist3r from Github.""$NC";
+		echo -e "$GREEN""[+] Installing sublist3r from Github.""$NC";
 		git clone https://github.com/aboul3la/Sublist3r.git "$TOOLS"/Sublist3r;
 		fi
 }
@@ -162,7 +162,7 @@ function install_nikto() {
 				git pull;
 				cd -;
 		else
-		echo -e "$GREEN""Installing nikto from Github.""$NC";
+		echo -e "$GREEN""[+] Installing nikto from Github.""$NC";
 		git clone https://github.com/sullo/nikto.git "$TOOLS"/nikto;
 		fi
 }
@@ -174,7 +174,7 @@ function install_dirsearch() {
 				git pull;
 				cd -;
 		else
-		echo -e "$GREEN""Installing dirsearch from Github.""$NC";
+		echo -e "$GREEN""[+] Installing dirsearch from Github.""$NC";
 		git clone https://github.com/maurosoria/dirsearch.git "$TOOLS"/dirsearch;
 		fi
 }
@@ -186,7 +186,7 @@ function install_corstest() {
 				git pull;
 				cd -;
 		else
-		echo -e "$GREEN""Installing CORStest from Github.""$NC";
+		echo -e "$GREEN""[+] Installing CORStest from Github.""$NC";
 		git clone https://github.com/RUB-NDS/CORStest.git "$TOOLS"/CORStest;
 		fi
 }
@@ -198,7 +198,7 @@ function install_s3scanner() {
 				git pull;
 				cd -;
 		else
-		echo -e "$GREEN""Installing S3Scanner from Github.""$NC";
+		echo -e "$GREEN""[+] Installing S3Scanner from Github.""$NC";
 		git clone https://github.com/sa7mon/S3Scanner.git "$TOOLS"/S3Scanner;
 		fi
 }
@@ -210,7 +210,7 @@ function install_knockpy() {
 				git pull;
 				cd -;
 		else
-		echo -e "$GREEN""Installing Knockpy from Github.""$NC";
+		echo -e "$GREEN""[+] Installing Knockpy from Github.""$NC";
 		git clone https://github.com/SolomonSklash/knock.git "$TOOLS"/knock;
 		cd "$TOOLS"/knock;
 		sudo python setup.py install;
@@ -220,28 +220,28 @@ function install_knockpy() {
 
 function install_go_tools() {
 		source $HOME/.profile;
-		echo -e "$GREEN""Installing Go tools from Github.""$NC";
+		echo -e "$GREEN""[+] Installing Go tools from Github.""$NC";
 		sleep 5;
-		echo -e "$GREEN""Installing subfinder from Github.""$NC";
+		echo -e "$GREEN""[+] Installing subfinder from Github.""$NC";
 		go get -u github.com/subfinder/subfinder;
-		echo -e "$GREEN""Installing subjack from Github.""$NC";
+		echo -e "$GREEN""[+] Installing subjack from Github.""$NC";
 		go get -u github.com/haccer/subjack;
-		echo -e "$GREEN""Installing ffuf from Github.""$NC";
+		echo -e "$GREEN""[+] Installing ffuf from Github.""$NC";
 		go get -u github.com/ffuf/ffuf;
-		echo -e "$GREEN""Installing gobuster from Github.""$NC";
+		echo -e "$GREEN""[+] Installing gobuster from Github.""$NC";
 		go get -u github.com/OJ/gobuster;
-		echo -e "$GREEN""Installing inception from Github.""$NC";
+		echo -e "$GREEN""[+] Installing inception from Github.""$NC";
 		go get -u github.com/proabiral/inception;
-		echo -e "$GREEN""Installing waybackurls from Github.""$NC";
+		echo -e "$GREEN""[+] Installing waybackurls from Github.""$NC";
 		go get -u github.com/tomnomnom/waybackurls;
-		echo -e "$GREEN""Installing goaltdns from Github.""$NC";
+		echo -e "$GREEN""[+] Installing goaltdns from Github.""$NC";
 		go get -u github.com/subfinder/goaltdns;
-		echo -e "$GREEN""Installing rescope from Github.""$NC";
+		echo -e "$GREEN""[+] Installing rescope from Github.""$NC";
 		go get -u github.com/root4loot/rescope;
 }
 
 function install_go() {
-		echo -e "$GREEN""Installing Go 1.12 from golang.org.""$NC";
+		echo -e "$GREEN""[+] Installing Go 1.12 from golang.org.""$NC";
 		wget https://dl.google.com/go/go1.12.linux-amd64.tar.gz;
 		sudo tar -C /usr/local -xzf go1.12.linux-amd64.tar.gz;
 		echo "export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin:" >> "$HOME"/.profile;
@@ -254,7 +254,7 @@ function install_amass() {
 		if [[ -d "$TOOLS"/amass ]]; then
 				rm -rf "$TOOLS"/amass;
 		fi
-		echo -e "$GREEN""Installing amass 2.9.8 from Github.""$NC";
+		echo -e "$GREEN""[+] Installing amass 2.9.8 from Github.""$NC";
 		wget https://github.com/OWASP/Amass/releases/download/2.9.8/amass_2.9.8_linux_amd64.zip -O "$TOOLS"/amass.zip;
 		unzip -o "$TOOLS"/amass.zip -d "$TOOLS";
 		mv "$TOOLS"/amass_2.9.8_linux_amd64 "$TOOLS"/amass;
