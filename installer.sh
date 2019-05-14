@@ -30,6 +30,24 @@ function install_kali() {
 		install_go;
 		install_go_tools;
 }
+function install_parrot() {
+		echo -e "$GREEN""Installing for ParrotOS.""$NC";
+		sudo apt-get update;
+	 	sudo apt-get install git wget curl nmap masscan whatweb sublist3r gobuster nikto wafw00f chromium openssl libnet-ssleay-perl p7zip-full build-essential python-pip python3-pip unzip -y;
+		install_pip;
+		install_dnscan;
+		install_bfac;
+		install_massdns;
+		install_aquatone;
+		install_sublist3r;
+		install_corstest;
+		install_s3scanner;
+		install_amass;
+		install_dirsearch;
+		install_knockpy;
+		install_go;
+		install_go_tools;
+}
 function install_debian() {
 		echo -e "$GREEN""Installing for Debian.""$NC";
 		sudo apt-get update;
@@ -263,12 +281,16 @@ grep 'Debian' /etc/issue 1>/dev/null;
 DEBIAN="$?";
 grep 'Kali' /etc/issue 1>/dev/null;
 KALI="$?";
+grep 'Parrot' /etc/issue 1>/dev/null;
+PARROT="$?";
 if [[ "$UBUNTU" == 0 ]]; then 
 		install_ubuntu;
 elif [[ "$DEBIAN" == 0 ]]; then
 		install_debian;
 elif [[ "$KALI" == 0 ]]; then
 		install_kali;
+elif [[ "$PARROT" == 0 ]]; then
+		install_parrot;
 else
 		echo -e "$RED""Unsupported distro detected. Exiting...""$NC";
 		exit 1;
