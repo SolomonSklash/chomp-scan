@@ -96,7 +96,7 @@ function install_pip() {
 
 function install_dnscan() {
 		if [[ -d "$TOOLS"/dnscan ]]; then
-				echo -e "$GREEN""Updating dnscan.""$NC";
+				echo -e "$GREEN""[+] Updating dnscan.""$NC";
 				cd "$TOOLS"/dnscan;
 				git pull;
 				cd -;
@@ -108,7 +108,7 @@ function install_dnscan() {
 
 function install_bfac() {
 		if [[ -d "$TOOLS"/bfac ]]; then
-				echo -e "$GREEN""Updating bfac.""$NC";
+				echo -e "$GREEN""[+] Updating bfac.""$NC";
 				cd "$TOOLS"/bfac;
 				git pull;
 				cd -;
@@ -120,7 +120,7 @@ function install_bfac() {
 
 function install_massdns() {
 		if [[ -d "$TOOLS"/massdns ]]; then
-				echo -e "$GREEN""Updating massdns.""$NC";
+				echo -e "$GREEN""[+] Updating massdns.""$NC";
 				cd "$TOOLS"/massdns;
 				git pull;
 				cd -;
@@ -130,7 +130,7 @@ function install_massdns() {
 		fi
 		
 		# Compile massdns
-		echo -e "$GREEN""Compiling massdns from source.""$NC";
+		echo -e "$GREEN""[+] Compiling massdns from source.""$NC";
 		cd "$TOOLS"/massdns;
 		make;
 		cd -;
@@ -145,7 +145,7 @@ function install_aquatone() {
 
 function install_sublist3r() {
 		if [[ -d "$TOOLS"/Sublist3r ]]; then
-				echo -e "$GREEN""Updating sublist3r.""$NC";
+				echo -e "$GREEN""[+] Updating sublist3r.""$NC";
 				cd "$TOOLS"/Sublist3r;
 				git pull;
 				cd -;
@@ -157,7 +157,7 @@ function install_sublist3r() {
 
 function install_nikto() {
 		if [[ -d "$TOOLS"/nikto ]]; then
-				echo -e "$GREEN""Updating nikto.""$NC";
+				echo -e "$GREEN""[+] Updating nikto.""$NC";
 				cd "$TOOLS"/nikto;
 				git pull;
 				cd -;
@@ -169,7 +169,7 @@ function install_nikto() {
 
 function install_dirsearch() {
 		if [[ -d "$TOOLS"/dirsearch ]]; then
-				echo -e "$GREEN""Updating dirsearch.""$NC";
+				echo -e "$GREEN""[+] Updating dirsearch.""$NC";
 				cd "$TOOLS"/dirsearch;
 				git pull;
 				cd -;
@@ -181,7 +181,7 @@ function install_dirsearch() {
 
 function install_corstest() {
 		if [[ -d "$TOOLS"/CORStest ]]; then
-				echo -e "$GREEN""Updating CORStest.""$NC";
+				echo -e "$GREEN""[+] Updating CORStest.""$NC";
 				cd "$TOOLS"/CORStest;
 				git pull;
 				cd -;
@@ -193,7 +193,7 @@ function install_corstest() {
 
 function install_s3scanner() {
 		if [[ -d "$TOOLS"/S3Scanner ]]; then
-				echo -e "$GREEN""Updating S3Scanner.""$NC";
+				echo -e "$GREEN""[+] Updating S3Scanner.""$NC";
 				cd "$TOOLS"/S3Scanner;
 				git pull;
 				cd -;
@@ -205,7 +205,7 @@ function install_s3scanner() {
 
 function install_knockpy() {
 		if [[ -d "$TOOLS"/knock ]]; then
-				echo -e "$GREEN""Updating Knockpy.""$NC";
+				echo -e "$GREEN""[+] Updating Knockpy.""$NC";
 				cd "$TOOLS"/knock;
 				git pull;
 				cd -;
@@ -296,6 +296,6 @@ else
 		exit 1;
 fi
 
-echo -e "$GREEN""Please run 'source ~/.profile' to add the Go binary path to your \$PATH variable, then run Chomp Scan.""$NC";
-echo -e "$ORANGE""Note: In order to use S3Scanner, you must configure your personal AWS credentials in the aws CLI tool.""$NC";
-echo -e "$ORANGE""See https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html for details.""$NC";
+echo -e "$GREEN""[i] Please run 'source ~/.profile' to add the Go binary path to your \$PATH variable, then run Chomp Scan.""$NC";
+echo -e "$ORANGE""[i] Note: In order to use S3Scanner, you must configure your personal AWS credentials in the aws CLI tool.""$NC";
+echo -e "$ORANGE""[i] See https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html for details.""$NC";
