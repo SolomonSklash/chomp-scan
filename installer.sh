@@ -221,7 +221,7 @@ function install_knockpy() {
 function install_go_tools() {
 		source $HOME/.profile;
 		echo -e "$GREEN""[+] Installing Go tools from Github.""$NC";
-		sleep 5;
+		sleep 1;
 		echo -e "$GREEN""[+] Installing subfinder from Github.""$NC";
 		go get -u github.com/subfinder/subfinder;
 		echo -e "$GREEN""[+] Installing subjack from Github.""$NC";
