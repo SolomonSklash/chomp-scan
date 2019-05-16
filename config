@@ -3,7 +3,7 @@
 
 
 [general]
-# Set domain to scan (required). Do not include a scheme, e.g. https:// or http://. Chomp Scan will add the appropriate scheme as needed.
+# Set comma separated list of domain(s) to scan (required).Do not end a list of domains with a comma. Do not include a scheme, e.g. https:// or http://. Chomp Scan will add the appropriate scheme as needed. 
 DOMAIN=
 # Use HTTP instead of default HTTPS, values are YES or blank
 ENABLE_HTTP=
