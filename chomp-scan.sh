@@ -213,11 +213,11 @@ function parse_config() {
 				echo -e "$RED""[!] No domain was provided in the configuration file.""$NC";
 				exit 1;
 		else
-				DOMAIN_COUNT=$(echo $DOMAIN | awk --field-separator="," "{ print NF }")
+				DOMAIN_COUNT=$(echo "$DOMAIN" | awk --field-separator="," "{ print NF }")
 				if [[ "$DOMAIN_COUNT" -gt 1 ]]; then
 						DOMAIN_ARRAY=();
 						for (( i=1; i<=$DOMAIN_COUNT; i++ )); do
-								DOMAIN_ARRAY+=($(echo $DOMAIN | cut -d ',' -f $i));
+								DOMAIN_ARRAY+=($(echo $DOMAIN | cut -d ',' -f $i | tr -d " "));
 						done
 				fi
 		fi
