@@ -7,7 +7,7 @@
 DOMAIN=
 # Use HTTP instead of default HTTPS, values are YES or blank
 ENABLE_HTTP=
-# Set custom output directory, value are a path to a directory or blank
+# Set custom output directory. If multiple domains are used, this will contain each domain's output in a subdirectory.
 OUTPUT_DIR=
 # Use all discovered domains instead of default interesting discovered domains, values are YES or blank
 USE_ALL=
