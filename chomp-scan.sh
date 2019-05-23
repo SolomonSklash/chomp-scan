@@ -2451,6 +2451,24 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 				exit 0;
 		else
 				# Create output dir normally here
+				if [[ "$CUSTOM_WORKING_DIR" == "" ]]; then
+						WORKING_DIR="$DOMAIN"-$(date +%T);
+						echo "$WORKING_DIR";
+						mkdir "$WORKING_DIR";
+						touch "$WORKING_DIR"/interesting-domains.txt;
+						INTERESTING_DOMAINS=interesting-domains.txt;
+						touch "$WORKING_DIR"/"$ALL_DOMAIN";
+						touch "$WORKING_DIR"/"$ALL_IP";
+						touch "$WORKING_DIR"/"$ALL_RESOLVED";
+				else
+						WORKING_DIR="$CUSTOM_WORKING_DIR"/"$DOMAIN"-$(date +%T);
+						mkdir -p "$WORKING_DIR";
+						touch "$WORKING_DIR"/interesting-domains.txt;
+						INTERESTING_DOMAINS=interesting-domains.txt;
+						touch "$WORKING_DIR"/"$ALL_DOMAIN";
+						touch "$WORKING_DIR"/"$ALL_IP";
+						touch "$WORKING_DIR"/"$ALL_RESOLVED";
+				fi
 				## Subdomain enumeration
 				# Run dnscan
 				if [[ "$ENABLE_DNSCAN" -eq 1 ]]; then
