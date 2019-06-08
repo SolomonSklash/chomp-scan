@@ -1,9 +1,9 @@
 # Chomp Scan
-![GitHub release](https://img.shields.io/github/release/SolomonSklash/chomp-scan.svg?style=for-the-badge)
-![GitHub](https://img.shields.io/github/license/SolomonSklash/chomp-scan.svg?style=for-the-badge)
-![Github language](https://img.shields.io/github/languages/top/SolomonSklash/chomp-scan.svg?style=for-the-badge)
-![GitHub issues](https://img.shields.io/github/issues/SolomonSklash/chomp-scan.svg?style=for-the-badge)
-![Github contributors](https://img.shields.io/github/contributors/SolomonSklash/chomp-scan.svg?style=for-the-badge)
+![GitHub release](https://img.shields.io/github/release/SolomonSklash/chomp-scan.svg?style=flat-square)
+![GitHub](https://img.shields.io/github/license/SolomonSklash/chomp-scan.svg?style=flat-square)
+![Github language](https://img.shields.io/github/languages/top/SolomonSklash/chomp-scan.svg?style=flat-square)
+![GitHub issues](https://img.shields.io/github/issues/SolomonSklash/chomp-scan.svg?style=flat-square)
+![Github contributors](https://img.shields.io/github/contributors/SolomonSklash/chomp-scan.svg?style=flat-square)
 [![Beerpay](https://beerpay.io/SolomonSklash/chomp-scan/badge.svg?style=flat-square)](https://beerpay.io/SolomonSklash/chomp-scan)
 [![Beerpay](https://beerpay.io/SolomonSklash/chomp-scan/make-wish.svg)](https://beerpay.io/SolomonSklash/chomp-scan)
 
