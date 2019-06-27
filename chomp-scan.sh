@@ -1409,13 +1409,13 @@ function run_ffuf() {
 		# Call with domain as $1, wordlist size as $2, and domain list as $3
 		if [[ $3 == $WORKING_DIR/$ALL_RESOLVED ]]; then
 				echo -e "$GREEN""[i]$BLUE Running ffuf against all $(wc -l "$3" | awk '{print $1}') unique discovered domains.""$NC";
-				echo -e "$GREEN""[i]$BLUE Command: ffuf -u $HTTP://$DOMAIN/FUZZ -w $2 -sf -se -fc 301,302,404 -k | tee $WORKING_DIR/ffuf.""$NC";
+				echo -e "$GREEN""[i]$BLUE Command: ffuf -u $HTTP://$DOMAIN/FUZZ -w $2 -sf -se -fc 301,302,404,400,500 -k | tee $WORKING_DIR/ffuf.""$NC";
 				# Run ffuf
 				mkdir "$WORKING_DIR"/ffuf;
 				COUNT=$(wc -l "$3" | awk '{print $1}')
 				START=$(date +%s);
 				while read -r ADOMAIN; do
-						"$FFUF" -u "$HTTP"://"$ADOMAIN"/FUZZ -w "$2" -timeout 3 -sf -se -fc 301,302,404 -k -mc all | tee "$WORKING_DIR"/ffuf/"$ADOMAIN";
+						"$FFUF" -u "$HTTP"://"$ADOMAIN"/FUZZ -w "$2" -timeout 3 -sf -se -fc 301,302,404,400,500 -k -mc all | tee "$WORKING_DIR"/ffuf/"$ADOMAIN".txt;
 						COUNT=$((COUNT - 1));
 						if [[ "$COUNT" != 0 ]]; then
 								echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
@@ -1426,13 +1426,13 @@ function run_ffuf() {
 				echo -e "$GREEN""[i]$BLUE ffuf took $DIFF seconds to run.""$NC";
 		else
 				echo -e "$GREEN""[i]$BLUE Running ffuf against all $(wc -l "$3" | awk '{print $1}') discovered interesting domains.""$NC";
-				echo -e "$GREEN""[i]$BLUE Command: ffuf -u $HTTP://$DOMAIN/FUZZ -w $2 -sf -se -fc 301,302,404 -k | tee $WORKING_DIR/ffuf.""$NC";
+				echo -e "$GREEN""[i]$BLUE Command: ffuf -u $HTTP://$DOMAIN/FUZZ -w $2 -sf -se -fc 301,302,404,400,500 -k | tee $WORKING_DIR/ffuf.""$NC";
 				# Run ffuf
 				mkdir "$WORKING_DIR"/ffuf;
 				COUNT=$(wc -l "$3" | awk '{print $1}')
 				START=$(date +%s);
 				while read -r ADOMAIN; do
-						"$FFUF" -u "$HTTP"://"$ADOMAIN"/FUZZ -w "$2" -timeout 3 -sf -se -fc 301,302,404 -k -mc all | tee "$WORKING_DIR"/ffuf/"$ADOMAIN";
+						"$FFUF" -u "$HTTP"://"$ADOMAIN"/FUZZ -w "$2" -timeout 3 -sf -se -fc 301,302,404,400,500 -k -mc all | tee "$WORKING_DIR"/ffuf/"$ADOMAIN".txt;
 						COUNT=$((COUNT - 1));
 						if [[ "$COUNT" != 0 ]]; then
 								echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
