@@ -879,9 +879,9 @@ function run_sublist3r() {
 		trap cancel SIGINT;
 
 		echo -e "$GREEN""[i]$BLUE Scanning $1 with sublist3r.""$NC";
-		echo -e "$GREEN""[i]$ORANGE Command: $SUBLIST3R -d $1 -v -b -t 50 -o $WORKING_DIR/sublist3r-output.txt.""$NC";
+		echo -e "$GREEN""[i]$ORANGE Command: $SUBLIST3R -d $1 -v -t 50 -o $WORKING_DIR/sublist3r-output.txt.""$NC";
 		START=$(date +%s);
-		"$SUBLIST3R" -d "$1" -v -b -t 50 -o "$WORKING_DIR"/sublist3r-output.txt
+		"$SUBLIST3R" -d "$1" -v -t 50 -o "$WORKING_DIR"/sublist3r-output.txt
 		END=$(date +%s);
 		DIFF=$(( END - START ));
 
