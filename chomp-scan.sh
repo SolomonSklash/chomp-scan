@@ -860,14 +860,14 @@ function run_subfinder() {
 		echo -e "$GREEN""[i]$BLUE Scanning $1 with subfinder.""$NC";
 		echo -e "$GREEN""[i]$ORANGE Command: subfinder -d $1 -o $WORKING_DIR/subfinder-domains.txt -t 25 -w $2.""$NC";
 		START=$(date +%s);
-		"$SUBFINDER" -d "$1" -o "$WORKING_DIR"/subfinder-domains.txt -t 25 -w "$2";
+		"$SUBFINDER" -b -nW -v --timeout 5 -d "$1" -o "$WORKING_DIR"/subfinder-domains.txt -t 25 -w "$2";
 		END=$(date +%s);
 		DIFF=$(( END - START ));
 		
 		cat "$WORKING_DIR"/subfinder-domains.txt >> "$WORKING_DIR"/$ALL_DOMAIN;
 
 		echo -e "$GREEN""[i]$BLUE Subfinder took $DIFF seconds to run.""$NC";
-		echo -e "$GREEN""[!]$ORANGE Subfinder found $(wc -l "$WORKING_DIR"/subfinder-domains.txt | awk '{print $1}') domains.""$N";
+		echo -e "$GREEN""[!]$ORANGE Subfinder found $(wc -l "$WORKING_DIR"/subfinder-domains.txt | awk '{print $1}') domains.""$NC";
 		list_found;
 		sleep 1;
 }
