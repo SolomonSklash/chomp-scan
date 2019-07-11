@@ -238,6 +238,8 @@ function install_go_tools() {
 		go get -u github.com/subfinder/goaltdns;
 		echo -e "$GREEN""[+] Installing rescope from Github.""$NC";
 		go get -u github.com/root4loot/rescope;
+		echo -e "$GREEN""[+] Installing httprobe from Github.""$NC";
+		go get -u github.com/tomnomnom/httprobe
 }
 
 function install_go() {
