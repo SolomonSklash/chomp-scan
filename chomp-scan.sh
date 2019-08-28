@@ -641,7 +641,7 @@ function check_paths() {
 		grep 'Debian' /etc/issue 1>/dev/null;
 		DEBIAN="$?";
 		if [[ "$DEBIAN" -eq 0 ]]; then 
-				NIKTO="$HOME/$TOOL_PATH/nikto/program/nikto.pl";
+				NIKTO="$TOOL_PATH/nikto/program/nikto.pl";
 		fi
 
 		# Check that all paths are set
