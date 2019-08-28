@@ -243,7 +243,7 @@ function install_go_tools() {
 
 function install_go() {
 		if [[ -e /usr/local/go/bin/go ]]; then
-				echo -e "$GREEN""[+] Go is already installed, skipping installation.""$NC";
+				echo -e "$GREEN""[i] Go is already installed, skipping installation.""$NC";
 				return;
 		fi
 		echo -e "$GREEN""[+] Installing Go 1.12 from golang.org.""$NC";
@@ -259,7 +259,7 @@ function install_amass() {
 		if [[ -d "$TOOLS"/amass ]]; then
 				rm -rf "$TOOLS"/amass;
 		fi
-		echo -e "$GREEN""[+] Installing amass 3.0.25 from Github.""$NC";
+		echo -e "$GREEN""[+] Installing amass 3.0.27 from Github.""$NC";
 		wget https://github.com/OWASP/Amass/releases/download/v3.0.27/amass_v3.0.27_linux_amd64.zip -O "$TOOLS"/amass.zip;
 		unzip -o "$TOOLS"/amass.zip -d "$TOOLS"/amass;
 		rm "$TOOLS"/amass.zip;
