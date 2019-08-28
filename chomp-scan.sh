@@ -336,7 +336,7 @@ function parse_config() {
 		fi
 
 		# Check that at least one subdomain enumeration tool is enabled
-		if [[ "$ENABLE_DNSCAN" -eq 0 ]] && [[ "$ENABLE_SUBFINDER" -eq 0 ]] && [[ "$ENABLE_SUBLIST3R" -eq 0 ]] && [[ "$ENABLE_KNOCK" -eq 0 ]] && [[ "ENABLE_AMASS" -eq 0 ]]; then
+		if [[ "$ENABLE_DNSCAN" -eq 0 ]] && [[ "$ENABLE_SUBFINDER" -eq 0 ]] && [[ "$ENABLE_SUBLIST3R" -eq 0 ]] && [[ "$ENABLE_KNOCK" -eq 0 ]] && [[ "$ENABLE_AMASS" -eq 0 ]]; then
 				echo -e "$RED""[!] At least one subdomain enumeration tool must be enabled. Please check the configuration file.""$NC";
 				exit 1;
 		fi
