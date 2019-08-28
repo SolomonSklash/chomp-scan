@@ -2363,7 +2363,7 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 
 						# Run httprobe
 						if [[ "$ENABLE_HTTPROBE" -eq 1 ]]; then
-						run_httprobe "$ALL_RESOLVED";
+								run_httprobe;
 						fi
 						
 						# Run nikto
@@ -2596,11 +2596,6 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 
 				get_interesting "silent";
 
-				# Run httprobe
-				if [[ "$ENABLE_HTTPROBE" -eq 1 ]]; then
-						run_httprobe "$ALL_RESOLVED";
-				fi
-				
 				## Screenshots
 				# Run aquatone
 				if [[ "$ENABLE_SCREENSHOTS" -eq 1 ]]; then
@@ -2682,7 +2677,7 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 						
 				# Run httprobe
 				if [[ "$ENABLE_HTTPROBE" -eq 1 ]]; then
-				run_httprobe "$ALL_RESOLVED";
+						run_httprobe;
 				fi
 
 				# Run nikto
@@ -2882,7 +2877,7 @@ if [[ "$DEFAULT_MODE" -eq 1 ]]; then
 		run_knock "$DOMAIN" "$SHORT";
 		run_amass "$DOMAIN" "$SHORT";
 		run_massdns "$DOMAIN" "$SHORT";
-		run_httprobe "$ALL_RESOLVED";
+		run_httprobe;
 
 		# Call unique to make sure list is up to date for content discovery
 		unique;
