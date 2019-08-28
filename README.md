@@ -52,6 +52,7 @@ Please see the [Wiki](https://github.com/SolomonSklash/chomp-scan/wiki) for deta
 * [bfac](https://github.com/mazen160/bfac)
 * [whatweb](https://github.com/urbanadventurer/whatweb/)
 * [wafw00f](https://github.com/EnableSecurity/wafw00f)
+* [httprobe](https://github.com/tomnomnom/httprobe)
 * [nikto](https://github.com/sullo/nikto)
 
 #### Content Discovery (optional) (4 different sized wordlists)
@@ -100,7 +101,7 @@ Usage of Chomp Scan:
         -s
                  (optional) Enable screenshots using Aquatone.
         -i
-                 (optional) Enable information gathering phase, using subjack, CORStest, S3Scanner, bfac, whatweb, wafw00f, and nikto.
+                 (optional) Enable information gathering phase, using subjack, CORStest, S3Scanner, bfac, whatweb, wafw00f, httprobe, and nikto.
         -p
                  (optional) Enable portscanning phase, using masscan (run as root) and nmap.
         -I
