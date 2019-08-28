@@ -48,6 +48,7 @@ ENABLE_SUBLIST3R=0;
 ENABLE_AMASS=0;
 ENABLE_GOALTDNS=0;
 ENABLE_MASSDNS=1; # Constant
+ENABLE_HTTPROBE=0;
 ENABLE_INCEPTION=0;
 ENABLE_WAYBACKURLS=0;
 ENABLE_FFUF=0;
@@ -305,6 +306,10 @@ function parse_config() {
 				ENABLE_AMASS=1;
 		fi
 
+		if [[ $(grep '^ENABLE_HTTPROBE' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
+				ENABLE_HTTPROBE=1;
+		fi
+		
 		SUB_WORDLIST=$(grep '^SUBDOMAIN_WORDLIST' "$CONFIG_FILE" | cut -d '=' -f 2);
 		# Set to one of the defaults, else use provided wordlist
 		case "$SUB_WORDLIST" in
@@ -1013,6 +1018,20 @@ function run_massdns() {
 		sleep 1;
 
 		list_found;
+		sleep 1;
+}
+
+function run_httprobe() {
+		# Run httprobe to filter $ALL_RESOLVED for running server on port 443,80
+		
+		echo -e "$GREEN""[i]$BLUE Running httprobe against $ALL_RESOLVED"
+		echo -e "$GREEN""[i]$ORANGE Command: cat "$WORKING_DIR"/$ALL_RESOLVED | httprobe | cut -d/ -f3 | sort -u | tee "$WORKING_DIR"/httprobe-out.txt.""$NC";
+		START=$(date +%s);
+		cat "$WORKING_DIR"/$ALL_RESOLVED | httprobe | cut -d/ -f3 | sort -u > "$WORKING_DIR"/httprobe-out.txt
+		END=$(date +%s);
+		DIFF=$(( END - START ));
+		
+		echo -e "$GREEN""[i]$BLUE httprobe took $DIFF seconds to run.""$NC";
 		sleep 1;
 }
 
@@ -2227,6 +2246,11 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 
 						get_interesting "silent";
 
+						# Run httprobe
+						if [[ "$ENABLE_HTTPROBE" -eq 1 ]]; then
+						run_httprobe "$ALL_RESOLVED";
+						fi
+						
 						## Screenshots
 						# Run aquatone
 						if [[ "$ENABLE_SCREENSHOTS" -eq 1 ]]; then
@@ -2514,7 +2538,7 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 								run_amass "$DOMAIN" "$SHORT";
 						fi
 				fi
-
+						
 				# Run masscan and/or goaltdns
 				if [[ "$ENABLE_MASSDNS" -eq 1 ]]; then # Masscan will always run in order to get resolved domains
 						if [[ "$ENABLE_GOALTDNS" -eq 1 ]]; then
@@ -2536,6 +2560,11 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 
 				get_interesting "silent";
 
+				# Run httprobe
+				if [[ "$ENABLE_HTTPROBE" -eq 1 ]]; then
+						run_httprobe "$ALL_RESOLVED";
+				fi
+				
 				## Screenshots
 				# Run aquatone
 				if [[ "$ENABLE_SCREENSHOTS" -eq 1 ]]; then
@@ -2812,6 +2841,7 @@ if [[ "$DEFAULT_MODE" -eq 1 ]]; then
 		run_knock "$DOMAIN" "$SHORT";
 		run_amass "$DOMAIN" "$SHORT";
 		run_massdns "$DOMAIN" "$SHORT";
+		run_httprobe "$ALL_RESOLVED";
 
 		# Call unique to make sure list is up to date for content discovery
 		unique;
