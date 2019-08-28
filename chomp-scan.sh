@@ -1325,13 +1325,13 @@ function run_gobuster() {
 				echo -e "$GREEN""[i]$BLUE Gobuster took $DIFF seconds to run.""$NC";
 		else # Run against all interesting domains
 				echo -e "$GREEN""[i]$BLUE Running gobuster against all $(wc -l "$3" | awk '{print $1}') discovered interesting domains.""$NC";
-				echo -e "$GREEN""[i]$BLUE Command: gobuster -u $HTTP://$DOMAIN -s '200,201,202,204,307,308,400,401,403,405,500,501,502,503' -to 3s -e -k -t 20 -w $2 -o $WORKING_DIR/gobuster""$NC";
+				echo -e "$GREEN""[i]$BLUE Command: gobuster dir -u $HTTP://$DOMAIN -s '200,201,202,204,307,308,400,401,403,405,500,501,502,503' --timeout 3s -e -k -t 20 -w $2 -o $WORKING_DIR/gobuster""$NC";
 				# Run gobuster
 				mkdir "$WORKING_DIR"/gobuster;
 				COUNT=$(wc -l "$3" | awk '{print $1}')
 				START=$(date +%s);
 				while read -r ADOMAIN; do
-						"$GOBUSTER" -u "$HTTP"://"$ADOMAIN" -s '200,201,202,204,307,308,400,401,403,405,500,501,502,503' -to 3s -e -k -t 20 -w "$2" -o "$WORKING_DIR"/gobuster/"$ADOMAIN".txt;
+						"$GOBUSTER" dir -u "$HTTP"://"$ADOMAIN" -s '200,201,202,204,307,308,400,401,403,405,500,501,502,503' --timeout 3s -e -k -t 20 -w "$2" -o "$WORKING_DIR"/gobuster/"$ADOMAIN".txt;
 						COUNT=$((COUNT - 1));
 						if [[ "$COUNT" != 0 ]]; then
 								echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
