@@ -141,7 +141,7 @@ function usage() {
 		echo -e "$BLUE""\\t-C wordlist \\n\\t\\t$ORANGE (optional) The wordlist to use for content discovery. Five built-in lists, small, medium, large, xl, and xxl can be used, as well as the path to a custom wordlist. The default is small.""$NC";
 		echo -e "$BLUE""\\t-P file-path \\n\\t\\t$ORANGE (optional) Set a custom directory for the location of tools. The path must exist and the directory must contain all needed tools.""$NC";
 		echo -e "$BLUE""\\t-s \\n\\t\\t$ORANGE (optional) Enable screenshots using Aquatone.""$NC";
-		echo -e "$BLUE""\\t-i \\n\\t\\t$ORANGE (optional) Enable information gathering phase, using subjack, CORStest, S3Scanner, bfac, whatweb, wafw00f, and nikto.""$NC";
+		echo -e "$BLUE""\\t-i \\n\\t\\t$ORANGE (optional) Enable information gathering phase, using subjack, CORStest, S3Scanner, bfac, whatweb, wafw00f, httprobe, and nikto.""$NC";
 		echo -e "$BLUE""\\t-p \\n\\t\\t$ORANGE (optional) Enable portscanning phase, using masscan (run as root) and nmap.""$NC";
 		echo -e "$BLUE""\\t-I \\n\\t\\t$ORANGE (optional) Enable interactive mode. This allows you to select certain tool options and inputs interactively. This cannot be run with -D.""$NC";
 		echo -e "$BLUE""\\t-D \\n\\t\\t$ORANGE (optional) Enable default non-interactive mode. This mode uses pre-selected defaults and requires no user interaction or options. This cannot be run with -I.""$NC";
@@ -306,10 +306,6 @@ function parse_config() {
 		if [[ $(grep '^ENABLE_AMASS' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
 				ENABLE_AMASS=1;
 		fi
-
-		if [[ $(grep '^ENABLE_HTTPROBE' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
-				ENABLE_HTTPROBE=1;
-		fi
 		
 		SUB_WORDLIST=$(grep '^SUBDOMAIN_WORDLIST' "$CONFIG_FILE" | cut -d '=' -f 2);
 		# Set to one of the defaults, else use provided wordlist
@@ -417,6 +413,10 @@ function parse_config() {
 
 		if [[ $(grep '^ENABLE_WAFW00F' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
 				ENABLE_WAFW00F=1;
+		fi
+
+		if [[ $(grep '^ENABLE_HTTPROBE' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
+				ENABLE_HTTPROBE=1;
 		fi
 
 		if [[ $(grep '^ENABLE_NIKTO' "$CONFIG_FILE" | cut -d '=' -f 2) == "YES" ]]; then
@@ -1028,11 +1028,11 @@ function run_massdns() {
 
 function run_httprobe() {
 		# Run httprobe to filter $ALL_RESOLVED for running server on port 443,80
-		
-		echo -e "$GREEN""[i]$BLUE Running httprobe against $ALL_RESOLVED"
-		echo -e "$GREEN""[i]$ORANGE Command: cat "$WORKING_DIR"/$ALL_RESOLVED | httprobe | cut -d/ -f3 | sort -u | tee "$WORKING_DIR"/httprobe-out.txt.""$NC";
+		echo -e "$GREEN""[i]$BLUE Running httprobe against $ALL_RESOLVED.";
+		echo -e "$GREEN""[i]$ORANGE Command: cat "$WORKING_DIR"/$ALL_RESOLVED | httprobe -c 40 -t 3000 -p http:8443 -p https:8443 -p http:8080 -p https:8080 -p http:8008 -p https:8008 -p http:591 -p https:591 -p http:593 -p https:593 -p http:981 -p https:981 -p http:2480 -p https:2480 -p http:4567 -p https:4567 -p http:5000 -p https:5000 -p http:5800 -p https:5800 -p http:7001 -p https:7001 -p http:7002 -p https:7002 -p http:9080 -p https:9080 -p http:9090 -p https:9090 -p https:9443 -p https:18091 -p https:18092 | sort -u | tee "$WORKING_DIR"/httprobe-out.txt.""$NC";
 		START=$(date +%s);
-		cat "$WORKING_DIR"/$ALL_RESOLVED | httprobe | cut -d/ -f3 | sort -u > "$WORKING_DIR"/httprobe-out.txt
+		cat "$WORKING_DIR"/$ALL_RESOLVED | httprobe -c 40 -t 3000-p http:8443 -p https:8443 -p http:8080 -p https:8080 -p http:8008 -p https:8008 -p http:591 -p https:591 -p http:593 -p https:593 -p http:981 -p https:981 -p http:2480 -p https:2480 -p http:4567 -p https:4567 -p http:5000 -p https:5000 -p http:5800 -p https:5800 -p http:7001 -p https:7001 -p http:7002 -p https:7002 -p http:9080 -p https:9080 -p http:9090 -p https:9090 -p https:9443 -p https:18091 -p https:18092 | sort -u > "$WORKING_DIR"/httprobe-out.txt;
+		cat "$WORKING_DIR"/httprobe-out.txt | cut -d '/' -f 3 | sort -u > httprobe-trimmed-out.txt;
 		END=$(date +%s);
 		DIFF=$(( END - START ));
 		
@@ -1782,7 +1782,28 @@ function run_bfac() {
 
 function run_nikto() {
 		# Call with domain list as $1
-		if [[ $1 == $WORKING_DIR/$ALL_RESOLVED ]]; then
+		# If httprobe was enabled, use its results instead
+		if [[ "$ENABLE_HTTPROBE" == 1 ]]; then
+				if [[ -e "$WORKING_DIR"/httprobe-trimmed-out.txt ]]; then
+						echo -e "$GREEN""[i]$BLUE Running nikto against all $(wc -l "$WORKING_DIR"/httprobe-trimmed-out.txt | awk '{print $1}') httprobe discovered domains.""$NC";
+						echo -e "$GREEN""[i]$BLUE Command: nikto -h $HTTP://$DOMAIN -Format html -output $WORKING_DIR/nikto.""$NC";
+						# Run nikto
+						COUNT=$(wc -l "$1" | awk '{print $1}')
+						mkdir "$WORKING_DIR"/nikto;
+						START=$(date +%s);
+						while read -r ADOMAIN; do
+								"$NIKTO" -h "$HTTP"://"$ADOMAIN" -Format html -output "$WORKING_DIR"/nikto/"$ADOMAIN".html;
+								COUNT=$((COUNT - 1));
+								if [[ "$COUNT" != 0 ]]; then
+										echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
+								fi
+						done < "$WORKING_DIR"/httprobe-trimmed-out.txt
+						END=$(date +%s);
+						DIFF=$(( END - START ));
+						echo -e "$GREEN""[i]$BLUE Nikto took $DIFF seconds to run.""$NC";
+						return;
+				fi
+		elif [[ $1 == $WORKING_DIR/$ALL_RESOLVED ]]; then
 				echo -e "$GREEN""[i]$BLUE Running nikto against all $(wc -l "$1" | awk '{print $1}') unique discovered domains.""$NC";
 				echo -e "$GREEN""[i]$BLUE Command: nikto -h $HTTP://$DOMAIN -Format html -output $WORKING_DIR/nikto.""$NC";
 				# Run nikto
@@ -1996,6 +2017,7 @@ while true; do
 								   run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+								   run_httprobe;
 								   run_nikto "$WORKING_DIR"/"$ALL_RESOLVED";
 								   break;
 								   ;;
@@ -2006,6 +2028,7 @@ while true; do
 								   run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+								   run_httprobe;
 								   run_nikto "$WORKING_DIR"/"$ALL_RESOLVED";
 								   break;
 								   ;;
@@ -2016,6 +2039,7 @@ while true; do
 								   run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+								   run_httprobe;
 								   run_nikto "$WORKING_DIR"/"$ALL_RESOLVED";
 								   break;
 								   ;;
@@ -2026,6 +2050,7 @@ while true; do
 								   run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+								   run_httprobe;
 								   run_nikto "$WORKING_DIR"/"$ALL_RESOLVED";
 								   break;
 								   ;;
@@ -2036,6 +2061,7 @@ while true; do
 								   run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+								   run_httprobe;
 								   run_nikto "$WORKING_DIR"/"$ALL_RESOLVED";
 								   break;
 								   ;;
@@ -2075,6 +2101,7 @@ while true; do
 								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_httprobe;
 								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   break;
 								   ;;
@@ -2085,6 +2112,7 @@ while true; do
 								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_whatweb "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_httprobe;
 								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   break;
 								   ;;
@@ -2095,6 +2123,7 @@ while true; do
 								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_whatweb "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_httprobe;
 								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   break;
 								   ;;
@@ -2105,6 +2134,7 @@ while true; do
 								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_httprobe;
 								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   break;
 								   ;;
@@ -2115,6 +2145,7 @@ while true; do
 								   run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_whatweb "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+								   run_httprobe;
 								   run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 								   break;
 								   ;;
@@ -2251,11 +2282,6 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 
 						get_interesting "silent";
 
-						# Run httprobe
-						if [[ "$ENABLE_HTTPROBE" -eq 1 ]]; then
-						run_httprobe "$ALL_RESOLVED";
-						fi
-						
 						## Screenshots
 						# Run aquatone
 						if [[ "$ENABLE_SCREENSHOTS" -eq 1 ]]; then
@@ -2335,6 +2361,11 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 								fi
 						fi
 
+						# Run httprobe
+						if [[ "$ENABLE_HTTPROBE" -eq 1 ]]; then
+						run_httprobe "$ALL_RESOLVED";
+						fi
+						
 						# Run nikto
 						if [[ "$ENABLE_NIKTO" -eq 1 ]]; then
 								if [[ "$USE_ALL" -eq 1 ]]; then
@@ -2648,6 +2679,11 @@ if [[ "$CONFIG_FILE" != "" ]]; then
 								run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 						fi
 				fi
+						
+				# Run httprobe
+				if [[ "$ENABLE_HTTPROBE" -eq 1 ]]; then
+				run_httprobe "$ALL_RESOLVED";
+				fi
 
 				# Run nikto
 				if [[ "$ENABLE_NIKTO" -eq 1 ]]; then
@@ -2858,6 +2894,7 @@ if [[ "$DEFAULT_MODE" -eq 1 ]]; then
 		run_corstest "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 		run_s3scanner "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 		run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
+		run_httprobe;
 		run_nikto "$WORKING_DIR"/"$ALL_RESOLVED";
 		run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 		run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -2972,6 +3009,7 @@ if [[ "$INFO_GATHERING" -eq 1 ]]; then
 				run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
 				run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 				run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+				run_httprobe;
 				run_nikto "$WORKING_DIR"/"$ALL_RESOLVED";
 		# Make sure there are interesting domains
 		elif [[ $(wc -l "$WORKING_DIR"/"$INTERESTING_DOMAINS" | awk '{print $1}') -gt 0 ]]; then
@@ -2981,6 +3019,7 @@ if [[ "$INFO_GATHERING" -eq 1 ]]; then
 				run_bfac "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 				run_whatweb "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 				run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$INTERESTING_DOMAINS";
+				run_httprobe;
 				run_nikto "$WORKING_DIR"/"$INTERESTING_DOMAINS";
 		else
 				run_subjack "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
@@ -2989,6 +3028,7 @@ if [[ "$INFO_GATHERING" -eq 1 ]]; then
 				run_bfac "$WORKING_DIR"/"$ALL_RESOLVED";
 				run_whatweb "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
 				run_wafw00f "$DOMAIN" "$WORKING_DIR"/"$ALL_RESOLVED";
+				run_httprobe;
 				run_nikto "$WORKING_DIR"/"$ALL_RESOLVED";
 		fi
 fi
