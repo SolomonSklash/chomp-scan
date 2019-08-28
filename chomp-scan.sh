@@ -91,6 +91,7 @@ function set_tool_paths() {
 				GOALTDNS=$(command -v goaltdns);
 				RESCOPE=$(command -v rescope);
 				KNOCK=$(command -v knockpy);
+				HTTPROBE=$(command -v httprobe);
 				SUBLIST3R=$TOOL_PATH/Sublist3r/sublist3r.py;
 				DNSCAN=$TOOL_PATH/dnscan/dnscan.py;
 				MASSDNS_BIN=$TOOL_PATH/massdns/bin/massdns;
@@ -750,6 +751,10 @@ function check_paths() {
 		fi
 		if [[ "$KNOCK" == "" ]] || [[ ! -f "$KNOCK" ]]; then
 				echo -e "$RED""[!] The path or the file specified by the path for knockpy does not exit.";
+				exit 1;
+		fi
+		if [[ "$HTTPROBE" == "" ]] || [[ ! -f "$HTTPROBE" ]]; then
+				echo -e "$RED""[!] The path or the file specified by the path for httprobe does not exit.";
 				exit 1;
 		fi
 }
