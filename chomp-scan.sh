@@ -1787,11 +1787,12 @@ function run_nikto() {
 						echo -e "$GREEN""[i]$BLUE Running nikto against all $(wc -l "$WORKING_DIR"/httprobe-out.txt | awk '{print $1}') httprobe discovered domains.""$NC";
 						echo -e "$GREEN""[i]$BLUE Command: nikto -h $HTTP://$DOMAIN -Format html -output $WORKING_DIR/nikto.""$NC";
 						# Run nikto
-						COUNT=$(wc -l "$1" | awk '{print $1}')
+						COUNT=$(wc -l "$WORKING_DIR"/httprobe-out.txt | awk '{print $1}')
 						mkdir "$WORKING_DIR"/nikto;
 						START=$(date +%s);
 						while read -r ADOMAIN; do
-								"$NIKTO" -h "$ADOMAIN" -Format html -output "$WORKING_DIR"/nikto/"$ADOMAIN".html;
+								TRIMMED=$(echo "$ADOMAIN" | tr -d '/');
+								"$NIKTO" -h "$ADOMAIN" -Format html -output "$WORKING_DIR"/nikto/"$TRIMMED".html;
 								COUNT=$((COUNT - 1));
 								if [[ "$COUNT" != 0 ]]; then
 										echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
