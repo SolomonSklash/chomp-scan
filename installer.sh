@@ -137,10 +137,11 @@ function install_massdns() {
 }
 
 function install_aquatone() {
-		echo -e "$GREEN""[+] Installing aquatone from Github.""$NC";
+		echo -e "$GREEN""[+] Installing aquatone 1.7.0 from Github.""$NC";
 		mkdir -pv "$TOOLS"/aquatone;
 		wget https://github.com/michenriksen/aquatone/releases/download/v1.7.0/aquatone_linux_amd64_1.7.0.zip -O "$TOOLS"/aquatone.zip;
 		unzip -o "$TOOLS"/aquatone.zip -d "$TOOLS"/aquatone;
+		rm "$TOOLS"/aquatone.zip;
 }
 
 function install_sublist3r() {
@@ -223,26 +224,30 @@ function install_go_tools() {
 		echo -e "$GREEN""[+] Installing Go tools from Github.""$NC";
 		sleep 1;
 		echo -e "$GREEN""[+] Installing subfinder from Github.""$NC";
-		go get -u github.com/subfinder/subfinder;
+		go get -u -v github.com/subfinder/subfinder;
 		echo -e "$GREEN""[+] Installing subjack from Github.""$NC";
-		go get -u github.com/haccer/subjack;
+		go get -u -v github.com/haccer/subjack;
 		echo -e "$GREEN""[+] Installing ffuf from Github.""$NC";
-		go get -u github.com/ffuf/ffuf;
+		go get -u -v github.com/ffuf/ffuf;
 		echo -e "$GREEN""[+] Installing gobuster from Github.""$NC";
-		go get -u github.com/OJ/gobuster;
+		go get -u -v github.com/OJ/gobuster;
 		echo -e "$GREEN""[+] Installing inception from Github.""$NC";
-		go get -u github.com/proabiral/inception;
+		go get -u -v github.com/proabiral/inception;
 		echo -e "$GREEN""[+] Installing waybackurls from Github.""$NC";
-		go get -u github.com/tomnomnom/waybackurls;
+		go get -u -v github.com/tomnomnom/waybackurls;
 		echo -e "$GREEN""[+] Installing goaltdns from Github.""$NC";
-		go get -u github.com/subfinder/goaltdns;
+		go get -u -v github.com/subfinder/goaltdns;
 		echo -e "$GREEN""[+] Installing rescope from Github.""$NC";
-		go get -u github.com/root4loot/rescope;
+    go get -u -v github.com/root4loot/rescope;
 		echo -e "$GREEN""[+] Installing httprobe from Github.""$NC";
-		go get -u github.com/tomnomnom/httprobe
+		go get -u -v github.com/tomnomnom/httprobe;
 }
 
 function install_go() {
+		if [[ -e /usr/local/go/bin/go ]]; then
+				echo -e "$GREEN""[i] Go is already installed, skipping installation.""$NC";
+				return;
+		fi
 		echo -e "$GREEN""[+] Installing Go 1.12 from golang.org.""$NC";
 		wget https://dl.google.com/go/go1.12.linux-amd64.tar.gz;
 		sudo tar -C /usr/local -xzf go1.12.linux-amd64.tar.gz;
@@ -256,10 +261,9 @@ function install_amass() {
 		if [[ -d "$TOOLS"/amass ]]; then
 				rm -rf "$TOOLS"/amass;
 		fi
-		echo -e "$GREEN""[+] Installing amass 3.0.16 from Github.""$NC";
-		wget https://github.com/OWASP/Amass/releases/download/3.0.16/amass_3.0.16_linux_amd64.zip -O "$TOOLS"/amass.zip;
-		unzip -o "$TOOLS"/amass.zip -d "$TOOLS";
-		mv "$TOOLS"/amass_3.0.16_linux_amd64 "$TOOLS"/amass;
+		echo -e "$GREEN""[+] Installing amass 3.0.27 from Github.""$NC";
+		wget https://github.com/OWASP/Amass/releases/download/v3.0.27/amass_v3.0.27_linux_amd64.zip -O "$TOOLS"/amass.zip;
+		unzip -j "$TOOLS"/amass.zip -d "$TOOLS"/amass;
 		rm "$TOOLS"/amass.zip;
 }
 

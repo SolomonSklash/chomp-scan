@@ -213,7 +213,7 @@ function parse_config() {
 				echo -e "$RED""[!] No domain was provided in the configuration file.""$NC";
 				exit 1;
 		else
-				DOMAIN_COUNT=$(echo "$DOMAIN" | awk --field-separator="," "{ print NF }")
+				DOMAIN_COUNT=$(echo "$DOMAIN" | awk -F "," "{ print NF }")
 				if [[ "$DOMAIN_COUNT" -gt 1 ]]; then
 						DOMAIN_ARRAY=();
 						for (( i=1; i<=$DOMAIN_COUNT; i++ )); do
@@ -641,7 +641,7 @@ function check_paths() {
 		grep 'Debian' /etc/issue 1>/dev/null;
 		DEBIAN="$?";
 		if [[ "$DEBIAN" -eq 0 ]]; then 
-				NIKTO="$HOME/$TOOL_PATH/nikto/program/nikto.pl";
+				NIKTO="$TOOL_PATH/nikto/program/nikto.pl";
 		fi
 
 		# Check that all paths are set
@@ -858,16 +858,16 @@ function run_subfinder() {
 
 		# Check for wordlist argument, else run without
 		echo -e "$GREEN""[i]$BLUE Scanning $1 with subfinder.""$NC";
-		echo -e "$GREEN""[i]$ORANGE Command: subfinder -d $1 -o $WORKING_DIR/subfinder-domains.txt -t 25 -w $2.""$NC";
+		echo -e "$GREEN""[i]$ORANGE Command: subfinder -b -nW -v --timeout 5 -d $1 -o $WORKING_DIR/subfinder-domains.txt -t 25 -w $2.""$NC";
 		START=$(date +%s);
-		"$SUBFINDER" -d "$1" -o "$WORKING_DIR"/subfinder-domains.txt -t 25 -w "$2";
+		"$SUBFINDER" -b -nW -v --timeout 5 -d "$1" -o "$WORKING_DIR"/subfinder-domains.txt -t 25 -w "$2";
 		END=$(date +%s);
 		DIFF=$(( END - START ));
 		
 		cat "$WORKING_DIR"/subfinder-domains.txt >> "$WORKING_DIR"/$ALL_DOMAIN;
 
 		echo -e "$GREEN""[i]$BLUE Subfinder took $DIFF seconds to run.""$NC";
-		echo -e "$GREEN""[!]$ORANGE Subfinder found $(wc -l "$WORKING_DIR"/subfinder-domains.txt | awk '{print $1}') domains.""$N";
+		echo -e "$GREEN""[!]$ORANGE Subfinder found $(wc -l "$WORKING_DIR"/subfinder-domains.txt | awk '{print $1}') domains.""$NC";
 		list_found;
 		sleep 1;
 }
@@ -930,7 +930,7 @@ function run_amass() {
 		echo -e "$GREEN""[i]$BLUE Scanning $1 with amass.""$NC";
 		echo -e "$GREEN""[i]$ORANGE Command: amass enum -d $1 -w $2 -ip -rf resolvers.txt -active -o $WORKING_DIR/amass-output.txt -min-for-recursive 3 -bl $BLACKLIST""$NC";
 		START=$(date +%s);
-		"$AMASS" enum -d "$1" -brute -w "$2" -ip -rf resolvers.txt -active -o "$WORKING_DIR"/amass-output.txt -min-for-recursive 3 -bl "$BLACKLIST";
+		"$AMASS" enum -d "$1" -brute -w "$2" -ipv4 -rf resolvers.txt -active -o "$WORKING_DIR"/amass-output.txt -min-for-recursive 3 -bl "$BLACKLIST";
 		END=$(date +%s);
 		DIFF=$(( END - START ));
 
@@ -1308,13 +1308,13 @@ function run_gobuster() {
 		# Call with domain as $1, wordlist size as $2, and domain list as $3
 		if [[ $3 == $WORKING_DIR/$ALL_RESOLVED ]]; then # Run against all resolvable domains
 				echo -e "$GREEN""[i]$BLUE Running gobuster against all $(wc -l "$3" | awk '{print $1}') unique discovered domains.""$NC";
-				echo -e "$GREEN""[i]$BLUE Command: gobuster -u https://$DOMAIN -s '200,201,202,204,307,308,400,401,403,405,500,501,502,503' -to 3s -e -k -t 20 -w $2 -o gobuster.""$NC";
+				echo -e "$GREEN""[i]$BLUE Command: gobuster dir -u https://$DOMAIN -s '200,201,202,204,307,308,400,401,403,405,500,501,502,503' --timeout 3s -e -k -t 20 -w $2 -o gobuster.""$NC";
 				# Run gobuster
 				mkdir "$WORKING_DIR"/gobuster;
 				COUNT=$(wc -l "$3" | awk '{print $1}')
 				START=$(date +%s);
 				while read -r ADOMAIN; do
-						"$GOBUSTER" -u "$HTTP"://"$ADOMAIN" -s '200,201,202,204,307,308,400,401,403,405,500,501,502,503' -to 3s -e -k -t 20 -w "$2" -o "$WORKING_DIR"/gobuster/"$ADOMAIN".txt;
+						"$GOBUSTER" dir -u "$HTTP"://"$ADOMAIN" -s '200,201,202,204,307,308,400,401,403,405,500,501,502,503' --timeout 3s -e -k -t 20 -w "$2" -o "$WORKING_DIR"/gobuster/"$ADOMAIN".txt;
 						COUNT=$((COUNT - 1));
 						if [[ "$COUNT" != 0 ]]; then
 								echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
@@ -1325,13 +1325,13 @@ function run_gobuster() {
 				echo -e "$GREEN""[i]$BLUE Gobuster took $DIFF seconds to run.""$NC";
 		else # Run against all interesting domains
 				echo -e "$GREEN""[i]$BLUE Running gobuster against all $(wc -l "$3" | awk '{print $1}') discovered interesting domains.""$NC";
-				echo -e "$GREEN""[i]$BLUE Command: gobuster -u $HTTP://$DOMAIN -s '200,201,202,204,307,308,400,401,403,405,500,501,502,503' -to 3s -e -k -t 20 -w $2 -o $WORKING_DIR/gobuster""$NC";
+				echo -e "$GREEN""[i]$BLUE Command: gobuster dir -u $HTTP://$DOMAIN -s '200,201,202,204,307,308,400,401,403,405,500,501,502,503' --timeout 3s -e -k -t 20 -w $2 -o $WORKING_DIR/gobuster""$NC";
 				# Run gobuster
 				mkdir "$WORKING_DIR"/gobuster;
 				COUNT=$(wc -l "$3" | awk '{print $1}')
 				START=$(date +%s);
 				while read -r ADOMAIN; do
-						"$GOBUSTER" -u "$HTTP"://"$ADOMAIN" -s '200,201,202,204,307,308,400,401,403,405,500,501,502,503' -to 3s -e -k -t 20 -w "$2" -o "$WORKING_DIR"/gobuster/"$ADOMAIN".txt;
+						"$GOBUSTER" dir -u "$HTTP"://"$ADOMAIN" -s '200,201,202,204,307,308,400,401,403,405,500,501,502,503' --timeout 3s -e -k -t 20 -w "$2" -o "$WORKING_DIR"/gobuster/"$ADOMAIN".txt;
 						COUNT=$((COUNT - 1));
 						if [[ "$COUNT" != 0 ]]; then
 								echo -e "$GREEN""[i]$BLUE $COUNT domain(s) remaining.""$NC";
