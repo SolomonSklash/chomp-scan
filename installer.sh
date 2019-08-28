@@ -242,6 +242,10 @@ function install_go_tools() {
 }
 
 function install_go() {
+		if [[ -e /usr/local/go/bin/go ]]; then
+				echo -e "$GREEN""[+] Go is already installed, skipping installation.""$NC";
+				return;
+		fi
 		echo -e "$GREEN""[+] Installing Go 1.12 from golang.org.""$NC";
 		wget https://dl.google.com/go/go1.12.linux-amd64.tar.gz;
 		sudo tar -C /usr/local -xzf go1.12.linux-amd64.tar.gz;
