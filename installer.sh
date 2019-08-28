@@ -238,7 +238,7 @@ function install_go_tools() {
 		echo -e "$GREEN""[+] Installing goaltdns from Github.""$NC";
 		go get -u -v github.com/subfinder/goaltdns;
 		echo -e "$GREEN""[+] Installing rescope from Github.""$NC";
-    go get -u -v github.com/root4loot/rescope;
+        go get -u -v github.com/root4loot/rescope;
 		echo -e "$GREEN""[+] Installing httprobe from Github.""$NC";
 		go get -u -v github.com/tomnomnom/httprobe;
 }
