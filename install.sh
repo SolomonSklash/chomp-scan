@@ -139,7 +139,7 @@ function install_massdns() {
 function install_aquatone() {
 		echo -e "$GREEN""[+] Installing aquatone 1.7.0 from Github.""$NC";
 		mkdir -pv "$TOOLS"/aquatone;
-		wget https://github.com/michenriksen/aquatone/releases/download/v1.7.0/aquatone_linux_amd64_1.7.0.zip -O "$TOOLS"/aquatone.zip;
+		wget -nv https://github.com/michenriksen/aquatone/releases/download/v1.7.0/aquatone_linux_amd64_1.7.0.zip -O "$TOOLS"/aquatone.zip;
 		unzip -o "$TOOLS"/aquatone.zip -d "$TOOLS"/aquatone;
 		rm "$TOOLS"/aquatone.zip;
 }
@@ -249,7 +249,7 @@ function install_go() {
 				return;
 		fi
 		echo -e "$GREEN""[+] Installing Go 1.12 from golang.org.""$NC";
-		wget https://dl.google.com/go/go1.12.linux-amd64.tar.gz;
+		wget -nv https://dl.google.com/go/go1.12.linux-amd64.tar.gz;
 		sudo tar -C /usr/local -xzf go1.12.linux-amd64.tar.gz;
 		echo "export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin:" >> "$HOME"/.profile;
 		echo "export GOPATH=$HOME/go" >> "$HOME"/.profile;
@@ -262,7 +262,7 @@ function install_amass() {
 				rm -rf "$TOOLS"/amass;
 		fi
 		echo -e "$GREEN""[+] Installing amass 3.0.27 from Github.""$NC";
-		wget https://github.com/OWASP/Amass/releases/download/v3.0.27/amass_v3.0.27_linux_amd64.zip -O "$TOOLS"/amass.zip;
+		wget -nv https://github.com/OWASP/Amass/releases/download/v3.0.27/amass_v3.0.27_linux_amd64.zip -O "$TOOLS"/amass.zip;
 		unzip -j "$TOOLS"/amass.zip -d "$TOOLS"/amass;
 		rm "$TOOLS"/amass.zip;
 }
