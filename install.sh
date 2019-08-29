@@ -90,8 +90,8 @@ function install_ubuntu() {
 function install_pip() {
 		# Run both pip installs
 		 echo -e "$GREEN""[+] Installing requirements for Python 2 and Python 3.""$NC";
-		sudo pip2 install -r requirements2.txt;
-		sudo pip3 install -r requirements3.txt;
+		sudo pip2 install -q -r requirements2.txt;
+		sudo pip3 install -q -r requirements3.txt;
 }
 
 function install_dnscan() {
@@ -224,23 +224,23 @@ function install_go_tools() {
 		echo -e "$GREEN""[+] Installing Go tools from Github.""$NC";
 		sleep 1;
 		echo -e "$GREEN""[+] Installing subfinder from Github.""$NC";
-		go get -u -v github.com/subfinder/subfinder;
+		go get -u github.com/subfinder/subfinder;
 		echo -e "$GREEN""[+] Installing subjack from Github.""$NC";
-		go get -u -v github.com/haccer/subjack;
+		go get -u github.com/haccer/subjack;
 		echo -e "$GREEN""[+] Installing ffuf from Github.""$NC";
-		go get -u -v github.com/ffuf/ffuf;
+		go get -u github.com/ffuf/ffuf;
 		echo -e "$GREEN""[+] Installing gobuster from Github.""$NC";
-		go get -u -v github.com/OJ/gobuster;
+		go get -u github.com/OJ/gobuster;
 		echo -e "$GREEN""[+] Installing inception from Github.""$NC";
-		go get -u -v github.com/proabiral/inception;
+		go get -u github.com/proabiral/inception;
 		echo -e "$GREEN""[+] Installing waybackurls from Github.""$NC";
-		go get -u -v github.com/tomnomnom/waybackurls;
+		go get -u github.com/tomnomnom/waybackurls;
 		echo -e "$GREEN""[+] Installing goaltdns from Github.""$NC";
-		go get -u -v github.com/subfinder/goaltdns;
+		go get -u github.com/subfinder/goaltdns;
 		echo -e "$GREEN""[+] Installing rescope from Github.""$NC";
-        go get -u -v github.com/root4loot/rescope;
+        go get -u github.com/root4loot/rescope;
 		echo -e "$GREEN""[+] Installing httprobe from Github.""$NC";
-		go get -u -v github.com/tomnomnom/httprobe;
+		go get -u github.com/tomnomnom/httprobe;
 }
 
 function install_go() {
