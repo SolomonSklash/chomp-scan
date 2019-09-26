@@ -687,10 +687,10 @@ function check_paths() {
 				echo -e "$RED""[!] The path or the file specified by the path for masscan does not exit.";
 				exit 1;
 		fi
-		if [[ "$INCEPTION" == "" ]] || [[ ! -f "$INCEPTION" ]]; then
-				echo -e "$RED""[!] The path or the file specified by the path for inception does not exit.";
-				exit 1;
-		fi
+		# if [[ "$INCEPTION" == "" ]] || [[ ! -f "$INCEPTION" ]]; then
+		# 		echo -e "$RED""[!] The path or the file specified by the path for inception does not exit.";
+		# 		exit 1;
+		# fi
 		if [[ "$WAYBACKURLS" == "" ]] || [[ ! -f "$WAYBACKURLS" ]]; then
 				echo -e "$RED""[!] The path or the file specified by the path for waybackurls does not exit.";
 				exit 1;
