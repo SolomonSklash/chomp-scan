@@ -231,8 +231,8 @@ function install_go_tools() {
 		go get -u github.com/ffuf/ffuf;
 		echo -e "$GREEN""[+] Installing gobuster from Github.""$NC";
 		go get -u github.com/OJ/gobuster;
-		echo -e "$GREEN""[+] Installing inception from Github.""$NC";
-		go get -u github.com/proabiral/inception;
+		# echo -e "$GREEN""[+] Installing inception from Github.""$NC";
+		# go get -u github.com/proabiral/inception;
 		echo -e "$GREEN""[+] Installing waybackurls from Github.""$NC";
 		go get -u github.com/tomnomnom/waybackurls;
 		echo -e "$GREEN""[+] Installing goaltdns from Github.""$NC";
@@ -262,7 +262,7 @@ function install_amass() {
 				rm -rf "$TOOLS"/amass;
 		fi
 		echo -e "$GREEN""[+] Installing amass 3.1.9 from Github.""$NC";
-		wget -nv https://github.com/OWASP/Amass/releases/download/v3.1.9/amass_v3.1.9.zip -O "$TOOLS"/amass.zip;
+		wget -nv https://github.com/OWASP/Amass/releases/download/v3.1.9/amass_v3.1.9_linux_amd64.zip -O "$TOOLS"/amass.zip;
 		unzip -j "$TOOLS"/amass.zip -d "$TOOLS"/amass;
 		rm "$TOOLS"/amass.zip;
 }
