@@ -868,9 +868,9 @@ function run_subfinder() {
 
 		# Check for wordlist argument, else run without
 		echo -e "$GREEN""[i]$BLUE Scanning $1 with subfinder.""$NC";
-		echo -e "$GREEN""[i]$ORANGE Command: subfinder -b -nW -v --timeout 5 -d $1 -o $WORKING_DIR/subfinder-domains.txt -t 25 -w $2.""$NC";
+		echo -e "$GREEN""[i]$ORANGE Command: subfinder -nW -v --timeout 5 -d $1 -o $WORKING_DIR/subfinder-domains.txt -t 25.""$NC";
 		START=$(date +%s);
-		"$SUBFINDER" -b -nW -v --timeout 5 -d "$1" -o "$WORKING_DIR"/subfinder-domains.txt -t 25 -w "$2";
+		"$SUBFINDER" -nW -v --timeout 5 -d "$1" -o "$WORKING_DIR"/subfinder-domains.txt -t 25;
 		END=$(date +%s);
 		DIFF=$(( END - START ));
 		
