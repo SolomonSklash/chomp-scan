@@ -600,6 +600,7 @@ while getopts ":hu:d:L:C:sicb:IaADX:po:Hn:P:r" opt; do
 				o ) # -o output directory
 						if [[ -w "$OPTARG" ]]; then
 								WORKING_DIR="$OPTARG";
+								CUSTOM_WORKING_DIR="$OPTARG";
 						else
 								echo -e "$RED""[!] Provided output directory $OPTARG is not writable or doesn't exist.""$NC";
 								usage;
